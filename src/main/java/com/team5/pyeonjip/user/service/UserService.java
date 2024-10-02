@@ -53,11 +53,11 @@ public class UserService {
 
     /* READ */
 
-    public List<User> getAllUsers() {
+    public List<User> findAllUsers() {
         return userRepository.findAll();
     }
 
-    public User getUser(Long id) {
+    public User findUser(Long id) {
         User findedUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
