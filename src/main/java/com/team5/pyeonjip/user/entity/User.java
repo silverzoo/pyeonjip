@@ -71,7 +71,7 @@ public class User {
     @PrePersist
     public void setDefaultRole() {
         if (this.role == null) {
-            this.role = Role.USER;
+            this.role = Role.ROLE_USER;
         }
         if (this.grade == null) {
             this.grade = Grade.BRONZE;
