@@ -44,36 +44,10 @@
                                     </div>
 
                                     <hr class="my-3">
-                                    <div th:each="item : ${items}"
-                                         class="row mb-2 d-flex justify-content-between align-itemTests-center cart-item">
-                                        <div class="form-check col-md-1 col-lg-1">
-                                            <input class="form-check-input" type="checkbox" value=""
-                                                   id="flexCheckDefault"
-                                                   th:attr="data-price=${item.price}, data-item-id=${item.id}, data-name=${item.name}, data-category=${item.category}, data-image=${item.image}">
+                                    <div id="cartItemsContainer"></div>
 
-                                            <label class="form-check-label" for="flexCheckDefault"></label>
-                                        </div>
-                                        <div class="col-md-2 col-lg-2 col-xl-1">
-                                            <img th:src="${item.image}" class="img-fluid rounded-3">
-                                        </div>
-                                        <div class="col-md-3 col-lg-3 col-xl-3">
-                                            <h6 class="text-muted" th:text="${item.category}"></h6>
-                                            <h6 class="mb-0" th:text="${item.name}"></h6>
-                                        </div>
-                                        <div class="col-md-2 col-lg-1 col-xl-2">
-                                            <input type="number" class="form-control quantity" value="1" min="0"
-                                                   th:attr="data-price=${item.price}">
-                                        </div>
-                                        <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-2">
-                                            <h6 class="mb-0"
-                                                th:text="'₩' + ${#numbers.formatInteger(item.price, 3, 'COMMA')}"></h6>
-                                        </div>
-                                        <div class="col-md-1 col-lg-1">
-                                            <a href="#!" class="text-muted delete-item"><i
-                                                    class="bi bi-trash3-fill"></i></a>
-                                        </div>
-                                        <hr class="my-4">
-                                    </div>
+
+
                                     <div class="row mb-2 d-flex justify-content-between align-itemTests-center">
                                         <h6 class="mb-0 text-muted"><i class="bi bi-arrow-left"></i> 뒤로가기</h6>
                                     </div>
@@ -141,6 +115,7 @@
     </div>
 
 </section>
+
 
 <!-- 타임리프 사용시 JS 경로지정할 때 static을 경로에서 빼줘야 함-->
 <script th:inline="javascript">
