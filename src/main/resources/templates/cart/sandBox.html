@@ -22,7 +22,7 @@
                                 <div class="p-5">
                                     <h3>Available Items</h3>
                                     <div class="row">
-                                        <!-- Loop through items from the model -->
+
                                         <div th:each="item : ${items}" class="col-md-4">
                                             <div class="card mb-3">
                                                 <img th:src="${item.image}" class="card-img-top" alt="Item Image">
@@ -32,7 +32,7 @@
                                                        th:text="'Price: ' + ${item.price} + ' KRW'"></p>
                                                     <p class="card-text" th:text="'Category: ' + ${item.category}"></p>
 
-                                                    <!-- Button to add item to localStorage -->
+
                                                     <button class="btn btn-primary"
                                                             th:data-id="${item.id}"
                                                             th:data-name="${item.name}"
@@ -122,7 +122,7 @@
 
 
     function addToCart(button) {
-        // Retrieve data attributes from the button
+        // 데이터 종합해서 JSON화 시키기
         const item = {
             id: button.dataset.id,
             name: button.dataset.name,
@@ -132,24 +132,23 @@
             quantity: button.dataset.quantity
         };
 
-        // Get existing cart from localStorage
+        // 로컬 스토리지 중복 검사 로직
         let cart = localStorage.getItem('cart');
         if (!cart) {
             cart = [];
         } else {
             cart = JSON.parse(cart);
         }
-
-        // Check if the item is already in the cart
         const itemExists = cart.some(cartItem => cartItem.id === item.id);
 
         if (itemExists) {
             alert(item.name + " is already in the cart!");
-        } else {
-            // Add item to the cart
+        }
+        else {
+            // 장바구니에 추가
             cart.push(item);
 
-            // Update localStorage
+            // 로컬스토리지 업데이트
             localStorage.setItem('cart', JSON.stringify(cart));
             alert(item.name + " added to cart!");
         }
