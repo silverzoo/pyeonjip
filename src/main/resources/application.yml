@@ -10,6 +10,7 @@ spring:
     properties:
       hibernate:
         format_sql: 'true'
+        auto_quote_keyword: 'true'
     hibernate:
       ddl-auto: create
     show-sql: 'true'
