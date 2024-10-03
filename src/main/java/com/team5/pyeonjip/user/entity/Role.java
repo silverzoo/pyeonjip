@@ -1,6 +1,6 @@
 package com.team5.pyeonjip.user.entity;
 
 public enum Role {
-    ADMIN,
-    USER;
+    ROLE_ADMIN,
+    ROLE_USER;
 }
