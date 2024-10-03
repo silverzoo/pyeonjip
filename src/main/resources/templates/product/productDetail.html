@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>제품 상세 페이지</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			display: flex;
+			justify-content: center;
+			margin: 0;
+			padding: 20px;
+		}
+		.product-container {
+			display: flex;
+			max-width: 1200px;
+		}
+		.product-images {
+			flex: 2;
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+			margin-right: 20px;
+		}
+		.product-images img {
+			width: 100%;
+			cursor: pointer;
+		}
+		.product-details {
+			flex: 1;
+			padding: 20px;
+			background: #f0f0f0;
+			border-radius: 10px;
+		}
+		.product-details h1 {
+			margin: 0 0 10px;
+		}
+		.product-details p {
+			font-size: 16px;
+			color: #444;
+			line-height: 1.5;
+		}
+		.product-price {
+			font-size: 20px;
+			color: #000;
+			margin: 15px 0;
+		}
+		.option-button, .add-to-cart, .buy-now {
+			display: block;
+			width: 100%;
+			padding: 10px;
+			margin: 10px 0;
+			text-align: center;
+			background: #000;
+			color: #fff;
+			cursor: pointer;
+			border: none;
+			border-radius: 5px;
+		}
+		.dropdown {
+			display: none;
+			margin-top: 10px;
+			background: #fff;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+			box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+		}
+		.dropdown-item {
+			padding: 10px;
+			cursor: pointer;
+			border-bottom: 1px solid #eee;
+		}
+		.dropdown-item:last-child {
+			border-bottom: none;
+		}
+		.dropdown-item:hover {
+			background: #f5f5f5;
+		}
+	</style>
+</head>
+<body>
+
+<div class="product-container">
+	<!-- 제품 이미지 영역 -->
+	<div class="product-images">
+		<img src="image1.jpg" alt="Product Image 1">
+		<img src="image2.jpg" alt="Product Image 2">
+	</div>
+
+	<!-- 제품 정보 패널 -->
+	<div class="product-details">
+		<h1>상품 이름</h1>
+		<p>상품 설명.</p>
+		<p class="product-price">₩0</p>
+
+		<button class="option-button">옵션 선택</button>
+		<div class="dropdown">
+			<div class="dropdown-item">옵션 1</div>
+			<div class="dropdown-item">옵션 2</div>
+			<div class="dropdown-item">옵션 3</div>
+		</div>
+
+		<button class="buy-now">구매</button>
+		<button class="add-to-cart">장바구니</button>
+	</div>
+</div>
+
+<script>
+	// 옵션 버튼 클릭 시 드롭다운 표시
+	const optionButton = document.querySelector('.option-button');
+	const dropdown = document.querySelector('.dropdown');
+
+	optionButton.addEventListener('click', () => {
+		dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+	});
+
+	// 드롭다운 항목 클릭 시 선택 항목 표시
+	document.querySelectorAll('.dropdown-item').forEach(item => {
+		item.addEventListener('click', () => {
+			optionButton.textContent = item.textContent + " 선택";
+			dropdown.style.display = 'none';
+		});
+	});
+
+	// 장바구니, 구매 버튼 이벤트
+	document.querySelector('.buy-now').addEventListener('click', () => {
+		alert('구매 페이지로 이동합니다.');
+	});
+
+	document.querySelector('.add-to-cart').addEventListener('click', () => {
+		alert('장바구니에 추가되었습니다.');
+	});
+</script>
+
+</body>
+</html>
