@@ -1,6 +1,6 @@
 package com.team5.pyeonjip.user.controller;
 
-import com.team5.pyeonjip.user.dto.UserCreateDto;
+import com.team5.pyeonjip.user.dto.SignUpDto;
 import com.team5.pyeonjip.user.dto.UserUpdateDto;
 import com.team5.pyeonjip.user.entity.User;
 import com.team5.pyeonjip.user.service.UserService;
@@ -23,7 +23,7 @@ public class UserApiController {
     /* CREATE */
 
     @PostMapping(value = "/new")
-    public ResponseEntity<String> createUser(@RequestBody UserCreateDto dto) {
+    public ResponseEntity<String> createUser(@RequestBody SignUpDto dto) {
 
         try {
             // UserService의 유저 생성 메서드 실행

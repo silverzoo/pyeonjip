@@ -2,7 +2,7 @@ package com.team5.pyeonjip.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.team5.pyeonjip.user.dto.UserCreateDto;
+import com.team5.pyeonjip.user.dto.SignUpDto;
 import com.team5.pyeonjip.user.dto.UserUpdateDto;
 import com.team5.pyeonjip.user.entity.User;
 import com.team5.pyeonjip.user.repository.UserRepository;
@@ -66,7 +66,7 @@ public class UserApiControllerTest {
         final String pwHint = "blue";
 
         // 유저 생성
-        UserCreateDto dto = new UserCreateDto();
+        SignUpDto dto = new SignUpDto();
         dto.setEmail(email);
         dto.setName(name);
         dto.setPhoneNum(phoneNum);
@@ -103,7 +103,7 @@ public class UserApiControllerTest {
         final String pwHint = "blue";
 
         // 유저 생성
-        UserCreateDto createDto = new UserCreateDto();
+        SignUpDto createDto = new SignUpDto();
         createDto.setEmail(email);
         createDto.setName(name);
         createDto.setPhoneNum(phoneNum);
@@ -148,7 +148,7 @@ public class UserApiControllerTest {
         final String pwHint = "blue";
 
         // 유저 생성
-        UserCreateDto createDto = new UserCreateDto();
+        SignUpDto createDto = new SignUpDto();
         createDto.setEmail(email);
         createDto.setName(name);
         createDto.setPhoneNum(phoneNum);
@@ -193,7 +193,7 @@ public class UserApiControllerTest {
         final String pwHint = "blue";
 
         // 유저 생성
-        UserCreateDto createDto = new UserCreateDto();
+        SignUpDto createDto = new SignUpDto();
         createDto.setEmail(email);
         createDto.setName(name);
         createDto.setPhoneNum(phoneNum);
@@ -240,7 +240,7 @@ public class UserApiControllerTest {
         final String pwHint = "blue";
 
         // 유저 생성
-        UserCreateDto createDto = new UserCreateDto();
+        SignUpDto createDto = new SignUpDto();
         createDto.setEmail(email);
         createDto.setName(name);
         createDto.setPhoneNum(phoneNum);
@@ -269,7 +269,7 @@ public class UserApiControllerTest {
         final String pwHint = "blue";
 
         // 유저 생성
-        UserCreateDto createDto = new UserCreateDto();
+        SignUpDto createDto = new SignUpDto();
         createDto.setEmail(email);
         createDto.setName(name);
         createDto.setPhoneNum(phoneNum);
@@ -301,7 +301,7 @@ public class UserApiControllerTest {
         final String pwHint = "blue";
 
         // 유저 생성
-        UserCreateDto createDto = new UserCreateDto();
+        SignUpDto createDto = new SignUpDto();
         createDto.setEmail(email);
         createDto.setName(name);
         createDto.setPhoneNum(phoneNum);

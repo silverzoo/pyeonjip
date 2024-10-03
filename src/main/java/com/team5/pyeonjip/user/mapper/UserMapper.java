@@ -1,6 +1,6 @@
 package com.team5.pyeonjip.user.mapper;
 
-import com.team5.pyeonjip.user.dto.UserCreateDto;
+import com.team5.pyeonjip.user.dto.SignUpDto;
 import com.team5.pyeonjip.user.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -14,5 +14,5 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "role", ignore = true)
     @Mapping(target = "grade", ignore = true)
-    User toEntity(UserCreateDto dto);
+    User toEntity(SignUpDto dto);
 }

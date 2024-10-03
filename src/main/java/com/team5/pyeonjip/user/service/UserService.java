@@ -1,6 +1,6 @@
 package com.team5.pyeonjip.user.service;
 
-import com.team5.pyeonjip.user.dto.UserCreateDto;
+import com.team5.pyeonjip.user.dto.SignUpDto;
 import com.team5.pyeonjip.user.mapper.UserMapper;
 import com.team5.pyeonjip.user.dto.UserUpdateDto;
 import com.team5.pyeonjip.user.entity.User;
@@ -18,7 +18,7 @@ public class UserService {
 
     /* CREATE */
 
-    public void createUser(UserCreateDto dto) {
+    public void createUser(SignUpDto dto) {
         User user = UserMapper.INSTANCE.toEntity(dto);
 
         userRepository.save(user);
