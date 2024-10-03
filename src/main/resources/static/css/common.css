@@ -1,0 +1,56 @@
+/* 모든 요소 초기화 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 리스트의 기본 스타일 제거 */
+ul, ol {
+    list-style: none;
+}
+
+/* 링크 기본 스타일 제거 */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* 사이드바 스타일 */
+aside {
+    height: calc(100vh - 70px); /* 푸터 높이를 고려하여 사이드바 높이 설정 */
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 35px;
+    background-color: #f8f8f8;
+}
+
+/* 메인 콘텐츠 스타일 */
+main {
+    margin-left: 250px; /* 사이드바 너비만큼의 마진 */
+    padding: 35px;
+    background-color: #ffffff;
+}
+
+/* 푸터 스타일 */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px;
+    text-align: center;
+}
+
+/* 로고 스타일 */
+.logo {
+    margin-bottom: 30px;
+}
+
+/* 네비게이션 스타일 */
+.navi li {
+    margin-bottom: 7px;
+    font-size: 90%;
+}
