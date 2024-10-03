@@ -36,7 +36,7 @@ public class CartTestController {
 
     @GetMapping("/test")
     public String signIn(Model model) {
-        List<Coupon> coupons = new ArrayList<>();
+
         items.clear();
         items.add(itemTest1);
         items.add(itemTest2);
@@ -44,6 +44,7 @@ public class CartTestController {
 
         model.addAttribute("items", items);
 
+        List<Coupon> coupons = new ArrayList<>();
         Coupon coupon1 = new Coupon("test", 10);
         Coupon coupon2 = new Coupon("asdf", 20);
         Coupon coupon3 = new Coupon("qwer", 30);
