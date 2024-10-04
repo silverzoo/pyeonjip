@@ -42,20 +42,25 @@ function loadCartFromLocalStorage() {
 
     cartItems.forEach(item => {
         const cartItemHtml = `
-            <div class="row mb-2 d-flex justify-content-between align-items-center cart-item">
-                <div class="form-check col-md-1 col-lg-1">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"
-                        data-price="${item.price}" data-item-id="${item.id}" 
-                        data-name="${item.name}" data-category="${item.category}" 
-                        data-image="${item.image}" >  <!-- checked 쓰면 디폴트 체크 -->
+    <div class="row mb-2 d-flex justify-content-between align-items-center cart-item">
+        <div class="form-check col-md-1 col-lg-1">
+            <input class="form-check-input" type="checkbox" ${item.check ? 'checked' : ''} 
+             value="${item.check}" id="flexCheckDefault"
+                data-price="${item.price}" data-item-id="${item.id}" 
+                data-name="${item.name}" data-category="${item.category}" 
+                data-image="${item.image}">  <!-- checked 쓰면 디폴트 체크 -->
                     <label class="form-check-label" for="flexCheckDefault"></label>
                 </div>
                 <div class="col-md-2 col-lg-2 col-xl-1">
+                <a href='/cart/sandbox'>
                     <img src="${item.image}" class="img-fluid rounded-3">
+                    </a>
                 </div>
                 <div class="col-md-3 col-lg-3 col-xl-3">
+                <a href='/cart/sandbox'>
                     <h6 class="text-muted">${item.category}</h6>
                     <h6 class="mb-0">${item.name}</h6>
+                </a>
                 </div>
                 <div class="col-md-2 col-lg-1 col-xl-2">
                     <input type="number" class="form-control quantity" value="${item.quantity}" min="0" data-price="${item.price}">
@@ -238,7 +243,7 @@ function deleteItem(event) {
     const cartItem = event.target.closest('.cart-item');
     cartItem.remove(); // 해당 항목 제거
 
-s
+    s
     const itemId = cartItem.querySelector('.form-check-input').getAttribute('data-item-id'); // 아이템 ID 가져오기
     // 로컬 스토리지에서 장바구니 항목 가져오기
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
@@ -260,6 +265,25 @@ function addEventListeners() {
     checkboxes.forEach((checkbox, index) => {
         checkbox.addEventListener('change', updateItemCount);
         checkbox.addEventListener('change', updateTotalPrice); // 체크박스 변경 시 총 가격 업데이트
+
+        checkbox.addEventListener('change', function () {
+            // 로컬 스토리지에서 장바구니 항목 가져오기
+            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+
+            const itemId = checkbox.getAttribute('data-item-id'); // 아이템 ID 가져오기
+            const isChecked = checkbox.checked; // 체크 상태 확인
+
+            // 해당 아이템을 찾아서 체크 상태 업데이트
+            const itemToUpdate = cartItems.find(item => item.id === itemId);
+            if (itemToUpdate) {
+                itemToUpdate.check = isChecked; // 체크 상태 업데이트
+            }
+
+            // 업데이트된 장바구니 항목을 로컬 스토리지에 저장
+            localStorage.setItem('cart', JSON.stringify(cartItems));
+        });
+
+
     });
 
     quantities.forEach((quantity, index) => {
