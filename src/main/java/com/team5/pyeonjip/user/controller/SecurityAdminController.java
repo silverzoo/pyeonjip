@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @ResponseBody
 public class SecurityAdminController {
 
-    @GetMapping("/admin")
+    // 매핑 중복으로 /admin -> /admin-test
+    @GetMapping("/admin-test")
     public String adminP() {
 
         return "Admin Controller";

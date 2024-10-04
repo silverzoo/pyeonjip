@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @ResponseBody
 public class SecurityMainController {
 
-    @GetMapping("/")
+    // HomeController와 매핑 중복으로 / -> /security
+    @GetMapping("/securitymain-test")
     public String mainP() {
 
         return "Main Controller";
