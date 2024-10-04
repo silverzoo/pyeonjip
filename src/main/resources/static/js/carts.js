@@ -243,7 +243,6 @@ function deleteItem(event) {
     const cartItem = event.target.closest('.cart-item');
     cartItem.remove(); // 해당 항목 제거
 
-    s
     const itemId = cartItem.querySelector('.form-check-input').getAttribute('data-item-id'); // 아이템 ID 가져오기
     // 로컬 스토리지에서 장바구니 항목 가져오기
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
