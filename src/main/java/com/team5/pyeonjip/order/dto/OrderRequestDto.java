@@ -9,5 +9,5 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Builder
-public class OrderDetailDto {
+public class OrderRequestDto {
 }
