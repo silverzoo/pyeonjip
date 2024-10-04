@@ -40,6 +40,7 @@
                                                             th:data-image="${item.image}"
                                                             th:data-category="${item.category}"
                                                             th:data-quantity="1"
+                                                            th:data-check="true"
                                                             onclick="addToCart(this)">
                                                         Add to Cart
                                                     </button>
@@ -129,7 +130,9 @@
             price: button.dataset.price,
             image: button.dataset.image,
             category: button.dataset.category,
-            quantity: button.dataset.quantity
+            quantity: button.dataset.quantity,
+            check: button.dataset.check
+
         };
 
         // 로컬 스토리지 중복 검사 로직
