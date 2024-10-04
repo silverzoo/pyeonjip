@@ -56,9 +56,9 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/", "/signup").permitAll()
                         .requestMatchers("/admin").hasAnyAuthority("ROLE_ADMIN")
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        //.anyRequest().permitAll());
+                        .anyRequest().permitAll());
                         // 우선 주석처리
-                        .anyRequest().authenticated());
+//                        .anyRequest().authenticated());
 
         // 필터 등록
         http
