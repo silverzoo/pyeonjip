@@ -21,7 +21,7 @@ public class CategoryRequest {
 
     private int dept;
 
-    private Category parent;
+    private Long parentId;
 
     private List<Category> child = new ArrayList<>();
 }

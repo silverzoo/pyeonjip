@@ -21,7 +21,7 @@ public class CategoryResponse {
 
     private int dept;
 
-    private Category parent;
+    private Long parentId;
 
     private List<CategoryResponse> child = new ArrayList<>();
 }
