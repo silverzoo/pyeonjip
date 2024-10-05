@@ -1,14 +1,13 @@
 package com.team5.pyeonjip.category.controller;
 
 
+import com.team5.pyeonjip.category.dto.CategoryRequest;
 import com.team5.pyeonjip.category.dto.CategoryResponse;
 import com.team5.pyeonjip.category.service.CategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,7 +24,18 @@ public class CategoryController {
         List<CategoryResponse> categories = categoryService.getCategories();
 
         return ResponseEntity
-                .status(categories.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK)  // 상태 코드 설정
+                .status(categories.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK)
                 .body(categories);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CategoryResponse> updateCategory(@PathVariable Long id,
+                                                           @RequestBody CategoryRequest request) {
+
+        CategoryResponse category = categoryService.updateCategory(id, request);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(category);
     }
 }
