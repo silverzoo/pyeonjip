@@ -45,12 +45,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
-        // super.successfulAuthentication(request, response, chain, authResult);
+
+        System.out.println("로그인에 성공했습니다.");
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        // super.unsuccessfulAuthentication(request, response, failed);
+
+        System.out.println("로그인에 실패했습니다.");
     }
 
     // 정적 클래스 정의
