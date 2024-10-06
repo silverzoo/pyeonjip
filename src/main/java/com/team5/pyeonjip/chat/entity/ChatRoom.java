@@ -24,7 +24,7 @@ public class ChatRoom extends BaseTimeEntity {
     private String category;
 
     @Column(name = "is_closed")
-    private boolean isClosed;
+    private boolean isClosed = false;
 
     @Column(name = "closed_at")
     private Timestamp closedAt;

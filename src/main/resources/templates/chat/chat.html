@@ -7,18 +7,23 @@
     <link href="/css/chat/chat.css" rel="stylesheet">
 </head>
 <body>
+
 <div class="chat-container">
     <div class="header">
         편집에 문의하기
     </div>
 
-    <div class="chat-body">
+    <div class="chatBody" id="chatBody">
 
     </div>
+
     <div class="input-container">
-        <input type="text" placeholder="메시지를 입력해주세요.">
-        <button>전송</button>
+        <input type="text" id="messageInput" placeholder="메시지를 입력해주세요.">
+        <button id="sendButton">전송</button>
     </div>
 </div>
+
+<script src="/js/chat/chat.js"></script>
+
 </body>
 </html>
