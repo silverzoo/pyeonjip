@@ -32,7 +32,10 @@ public class CategoryService {
                 .orElseThrow(() -> new IllegalArgumentException("Category not found with id: " + id));
 
         Category updatedCategory = Category.builder()
+                .id(existingCategory.getId())
                 .name(request.getName())
+                .parent(existingCategory.getParent())
+                .child(existingCategory.getChild())
                 .build();
 
         categoryRepository.save(updatedCategory);
