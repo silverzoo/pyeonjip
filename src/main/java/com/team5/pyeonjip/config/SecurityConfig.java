@@ -1,5 +1,6 @@
 package com.team5.pyeonjip.config;
 
+import com.team5.pyeonjip.jwt.JWTUtil;
 import com.team5.pyeonjip.jwt.LoginFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final JWTUtil jwtUtil;
 
 
     @Bean
@@ -62,7 +64,7 @@ public class SecurityConfig {
 
         // 필터 등록
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration)), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         // 세션 설정
         http

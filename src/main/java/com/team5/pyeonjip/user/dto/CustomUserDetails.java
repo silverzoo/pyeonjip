@@ -37,7 +37,8 @@ public class CustomUserDetails implements UserDetails {
     }
 
 
-    // 이메일로 로그인하려는 의도에 맞게 getEmail() 메서드를 사용
+    // 이메일로 로그인하려는 의도에 맞게 getEmail() 메서드를 사용.
+    // 오버라이드해야 되기 때문에 getUsername 메서드명을 사용.
     @Override
     public String getUsername() {
         return user.getEmail();
