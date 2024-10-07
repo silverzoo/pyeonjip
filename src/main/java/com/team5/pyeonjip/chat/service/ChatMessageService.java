@@ -13,7 +13,7 @@ public class ChatMessageService {
 
     public void sendMessage(Long chatRoomId, String message){
         ChatMessage chatMessage = ChatMessage.builder()
-                .chatId(chatRoomId)
+                .chatRoomId(chatRoomId)
                 .message(message)
                 .senderEmail("abc@naver.com")
                 .build();
