@@ -1,5 +1,6 @@
 package com.team5.pyeonjip.config;
 
+import com.team5.pyeonjip.jwt.JWTFilter;
 import com.team5.pyeonjip.jwt.JWTUtil;
 import com.team5.pyeonjip.jwt.LoginFilter;
 import lombok.RequiredArgsConstructor;
@@ -58,11 +59,15 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/", "/signup").permitAll()
                         .requestMatchers("/admin").hasAnyAuthority("ROLE_ADMIN")
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .anyRequest().permitAll());
-                        // 우선 주석처리
-//                        .anyRequest().authenticated());
+                        // 필요에 따라 주석처리
+//                        .anyRequest().permitAll());
+                        .anyRequest().authenticated());
 
         // 필터 등록
+//      JWTFilter
+        http
+                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
+//      LoginFilter
         http
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
 

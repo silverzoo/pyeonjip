@@ -17,7 +17,6 @@ public class JWTUtil {
     // secret key를 저장할 객체
     private SecretKey secretKey;
 
-
 //    오류 발생.
 //    public JWTUtil(@Value("{spring.jwt.secret") String secret) {
 //
@@ -56,10 +55,23 @@ public class JWTUtil {
     }
 
 
+    // 토큰 만료 시간 확인
+    public Date getExpirationDate(String token) {
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getExpiration();
+    }
+
+
     // 토큰 만료 여부 확인
     public Boolean isExpired(String token) {
 
         return Jwts.parser()
+                // 오차 시간 허용
+                .clockSkewSeconds(30)
                 .verifyWith(secretKey)
                 .build()
                 .parseSignedClaims(token)
@@ -73,6 +85,7 @@ public class JWTUtil {
     public String createJwt(String email, String role, Long expiredMs) {
 
         return Jwts.builder()
+                .setHeaderParam("typ", "JWP")
                 // 키에 대한 특정 데이터를 담는다.
                 .claim("email", email)
                 .claim("role", role)
