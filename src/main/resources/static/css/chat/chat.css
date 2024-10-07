@@ -32,9 +32,34 @@ body {
     display : flex;
     flex-direction : column;
 }
+
 .message {
-    margin-bottom: 20px;
+    display: inline-block;
+    max-width: 70%; /* 메시지 최대 너비 */
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 15px; /* 모서리를 둥글게 */
+    background-color: #f1f1f1; /* 메시지 배경색 */
+    color: #333; /* 메시지 텍스트 색상 */
+    word-wrap: break-word; /* 길게 입력된 단어를 줄바꿈 */
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 박스 그림자 */
 }
+
+/* 내가 보낸 메시지 */
+.message.sent {
+    background-color: #4e73f3; /* 보낸 메시지 배경색 */
+    color: white;
+    align-self: flex-end; /* 오른쪽 정렬 */
+}
+
+/* 상대방이 보낸 메시지 */
+.message.received {
+    background-color: #e2e2e2; /* 받은 메시지 배경색 */
+    color: black;
+    align-self: flex-start; /* 왼쪽 정렬 */
+}
+
 .message p {
     margin: 5px 0;
 }
