@@ -1,5 +1,6 @@
 package com.team5.pyeonjip.product.entity;
 
+import com.team5.pyeonjip.category.entity.Category;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;
@@ -20,9 +21,9 @@ public class Product {
 
     private String description;
 
-//    @ManyToOne
-//    @JoinColumn(name = "cartegory_id")
-//    private Category category;
+    @ManyToOne
+    @JoinColumn(name = "cartegory_id")
+    private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<ProductDetail> productDetails;
