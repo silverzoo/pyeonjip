@@ -2,6 +2,8 @@ package com.team5.pyeonjip.chat.entity;
 
 import com.team5.pyeonjip.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +25,8 @@ public class ChatMessage extends BaseTimeEntity {
     private String senderEmail;
 
     @Column(name = "message", nullable = false)
+    @NotEmpty
+    @Size(max = 200)
     private String message;
 
     @Column(name = "chat_id", nullable = false)
