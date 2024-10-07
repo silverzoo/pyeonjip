@@ -2,15 +2,13 @@ package com.team5.pyeonjip.category.entity;
 
 import com.team5.pyeonjip.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@ToString
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,7 +29,7 @@ public class Category extends BaseTimeEntity {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private List<Category> child = new ArrayList<>();
 
-    @Builder
+    @Builder(toBuilder = true)
     public Category(Long id, String name, Category parent, List<Category> child) {
         this.id = id;
         this.name = name;
