@@ -24,7 +24,7 @@ public class CartController {
     Coupon coupon3 = new Coupon("qwer", 30);
 
     @GetMapping("/sandbox")
-    public Object sandbox() {
+    public List<Item_Test>  sandbox() {
         items.clear();
         items.add(itemTest1);
         items.add(itemTest2);
@@ -34,7 +34,7 @@ public class CartController {
     }
 
     @GetMapping
-    public Object cart(){
+    public List<Coupon> cart(){
         coupons.add(coupon1);
         coupons.add(coupon2);
         coupons.add(coupon3);
@@ -63,11 +63,11 @@ class Item_Test {
 @Data
 class Coupon {
 
-    private String promoCode;
+    private String promocode;
     private Integer percent;
 
-    public Coupon(String promoCode, Integer percent) {
-        this.promoCode = promoCode;
+    public Coupon(String promocode, Integer percent) {
+        this.promocode = promocode;
         this.percent = percent;
     }
 }
