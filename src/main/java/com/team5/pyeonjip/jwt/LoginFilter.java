@@ -38,8 +38,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String email = loginRequest.getEmail();
         String password = loginRequest.getPassword();
 
-        System.out.println(email);
-
         // 세 번째 인자는 우선 null
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password, null);
 
@@ -69,15 +67,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         // Bearer 인증방식
         response.addHeader("Authorization", "Bearer " + token);
 
-        System.out.println("로그인에 성공했습니다.");
+        response.setStatus(200);
     }
 
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         response.setStatus(401);
-
-        System.out.println("로그인에 실패했습니다.");
     }
 
 
