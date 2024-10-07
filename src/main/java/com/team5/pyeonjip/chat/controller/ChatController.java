@@ -33,5 +33,10 @@ public class ChatController {
         return ResponseEntity.ok().body(createChatRoom);
     }
 
-
+    // 메시지 보내기
+    @PostMapping("/message")
+    public ResponseEntity<Void> sendMessage(@RequestBody String message, @RequestParam Long chatRoomId){
+        chatMessageService.sendMessage(chatRoomId, message);
+        return ResponseEntity.ok().build();
+    }
 }
