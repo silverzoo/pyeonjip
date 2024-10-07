@@ -30,7 +30,7 @@ public class ChatMessage extends BaseTimeEntity {
     private String message;
 
     @Column(name = "chat_id", nullable = false)
-    private Long chatId;
+    private Long chatRoomId;
 
 
     /* mapping
