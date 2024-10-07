@@ -3,6 +3,7 @@ package com.team5.pyeonjip.config;
 import com.team5.pyeonjip.jwt.JWTFilter;
 import com.team5.pyeonjip.jwt.JWTUtil;
 import com.team5.pyeonjip.jwt.LoginFilter;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.Collections;
 
 @RequiredArgsConstructor
 @Configuration
@@ -41,6 +46,33 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
+        http
+                .cors((cors) -> cors
+                        .configurationSource(new CorsConfigurationSource() {
+                            @Override
+                            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+
+                                CorsConfiguration configuration = new CorsConfiguration();
+
+                                // 데이터를 보내는 3000번 포트를 허용
+                                configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+
+                                // 모든 메서드 허용
+                                configuration.setAllowedMethods(Collections.singletonList("*"));
+
+                                configuration.setAllowCredentials(true);
+
+                                // 허용할 헤더
+                                configuration.setAllowedHeaders(Collections.singletonList("*"));
+
+                                // 허용 시간
+                                configuration.setMaxAge(3600L);
+
+                                configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+
+                                return configuration;
+                            }
+                        }));
         // csrf 비활성화. JWT는 세션을 stateless로 관리하기 때문
         http
                 .csrf((auth) -> auth.disable());
