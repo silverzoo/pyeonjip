@@ -21,4 +21,10 @@ public class ProductImage {
     @JoinColumn(name = "product_id")
     private Product product;
 
+    // 필요한 생성자 추가
+    public ProductImage(Product product, String imageUrl) {
+        this.product = product;
+        this.imageUrl = imageUrl;
+    }
+
 }
