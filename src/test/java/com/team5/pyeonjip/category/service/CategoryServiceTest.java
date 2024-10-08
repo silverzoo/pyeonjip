@@ -37,8 +37,8 @@ class CategoryServiceTest {
 
         // given
         List<Category> categories = Arrays.asList(
-                new Category(1L, "침대", 1, null, List.of()),
-                new Category(2L, "소파", 1, null, List.of())
+                new Category(1L, "침대", null, List.of()),
+                new Category(2L, "소파", null, List.of())
         );
 
         when(categoryRepository.findByParentIsNull()).thenReturn(categories);
@@ -64,9 +64,9 @@ class CategoryServiceTest {
         Long id = 1L;
         String newName = "침대2";
 
-        Category category = new Category(id, "침대", 1,null, List.of());
+        Category category = new Category(id, "침대",null, List.of());
 
-        CategoryRequest request = new CategoryRequest(id, "침대2", 1, null, List.of());
+        CategoryRequest request = new CategoryRequest(id, "침대2", null, List.of());
 
         when(categoryRepository.findById(id)).thenReturn(Optional.of(category));
 

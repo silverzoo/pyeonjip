@@ -23,19 +23,15 @@ public class CategoryController {
 
         List<CategoryResponse> categories = categoryService.getCategories();
 
-        return ResponseEntity
-                .status(categories.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK)
-                .body(categories);
+        return ResponseEntity.status(HttpStatus.OK).body(categories);
     }
 
     @PutMapping("/{categoryId}")
-    public ResponseEntity<CategoryResponse> updateCategory(@PathVariable Long categoryId,
+    public ResponseEntity<CategoryResponse> updateCategory(@PathVariable("categoryId") Long id,
                                                            @RequestBody CategoryRequest request) {
 
-        CategoryResponse category = categoryService.updateCategory(categoryId, request);
+        CategoryResponse category = categoryService.updateCategory(id, request);
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(category);
+        return ResponseEntity.status(HttpStatus.OK).body(category);
     }
 }

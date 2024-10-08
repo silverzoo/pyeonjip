@@ -6,9 +6,7 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@ToString
-@Getter
-@Builder
+@Getter @ToString
 @AllArgsConstructor
 public class CategoryResponse {
 
