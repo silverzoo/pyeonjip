@@ -4,6 +4,7 @@ import com.team5.pyeonjip.global.entity.BaseTimeEntity;
 import com.team5.pyeonjip.order.enums.DeliveryStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Comment;
 
 @Entity
 @Getter
@@ -16,14 +17,16 @@ public class Delivery extends BaseTimeEntity {
     private Long id;
 
     @Enumerated(EnumType.STRING)
+    @Comment(value = "배송 상태")
     @Column(name = "status", nullable = false)
-    private DeliveryStatus status; // 배송 상태
+    private DeliveryStatus status;
 
     @Column(name = "address")
-    private String address; // 배송지
+    @Comment(value = "배송지")
+    private String address;
 
     @OneToOne(mappedBy = "delivery")
-    private Order order; // 주문
+    private Order order;
 
     // 배송 상태 변경 메서드
     public void updateStatus(DeliveryStatus newStatus) {

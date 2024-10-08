@@ -18,8 +18,8 @@ public class OrderRequestDto {
     private String recipient;
 
     @NotBlank(message = "연락처는 필수 입력 항목입니다.")
-    @Size(min = 11, message = "연락처는 - 없이 11자리여야 합니다.")
-    private String phoneNum; // 유효성 검사
+    @Size(min = 11, message = "연락처는 '-' 없이 11자리이어야 합니다.")
+    private String phoneNumber;
 
     private String requirement;
 
@@ -27,4 +27,10 @@ public class OrderRequestDto {
 
     @NotBlank(message = "배송지는 필수 입력 항목입니다.")
     private DeliveryRequestDto delivery;
+
+    private Long totalPrice;
+
+    private String quantity;
+
+    private Long deliveryPrice;
 }

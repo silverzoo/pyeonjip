@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Comment;
 
 @Entity
 @Getter
@@ -17,21 +18,28 @@ public class OrderDetail extends BaseTimeEntity {
     private Long id;
 
     @Column(name = "quantity", nullable = false)
-    private Long quantity; // 수량
+    @Comment(value = "수량")
+    private Long quantity;
 
     @Column(name = "product_name", nullable = false)
-    private String productName; // 상품 명
+    @Comment(value = "주문 상품 명")
+    private String productName;
 
     @Column(name = "product_price", nullable = false)
-    private Long productPrice; // 상품 가격
+    @Comment(value = "주문 상품 가격")
+    private Long productPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
-    private Order order;  // 주문
+    private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Product_id")
     private Product product;
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
 
     // 생성 메서드
     @Builder
