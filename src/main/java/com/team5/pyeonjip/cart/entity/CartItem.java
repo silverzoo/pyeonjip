@@ -3,8 +3,15 @@ package com.team5.pyeonjip.cart.entity;
 import com.team5.pyeonjip.product.entity.ProductDetail;
 import com.team5.pyeonjip.product.entity.ProductImage;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class CartItem {
 
     @Id
