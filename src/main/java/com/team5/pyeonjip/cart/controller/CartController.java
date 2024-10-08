@@ -28,8 +28,12 @@ public class CartController {
     @GetMapping("/sandbox")
     public List<CartItemResponseDTO> sandbox() {
         List<CartItemResponseDTO> target = new ArrayList<>();
-        CartItemResponseDTO dto1 = cartService.getProduct(1L);
+        CartItemResponseDTO dto1 = cartService.getProduct(1L, 2L);
+        CartItemResponseDTO dto2 = cartService.getProduct(2L, 4L);
+        CartItemResponseDTO dto3 = cartService.getProduct(3L, 6L);
         target.add(dto1);
+        target.add(dto2);
+        target.add(dto3);
 
         return target;
     }

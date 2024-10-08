@@ -9,6 +9,9 @@ import java.util.List;
 public class CartItemResponseDTO {
     private Long id;
     private String name;
-
-    private List<Options> productDetails;
+    private String optionName;
+    private Long optionPrice;
+    private Long quantity;
+    private Long maxQuantity;
+    private String url;
 }
