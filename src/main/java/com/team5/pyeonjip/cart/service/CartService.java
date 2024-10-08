@@ -23,59 +23,16 @@ public class CartService {
     private final ProductDetailRepository productDetailRepository;
     private final ProductImageRepository productImageRepository;
 
-    // 장바구니 조회
-    public Cart getCartByUserId(Long userId) {
-        return cartRepository.findByUserId(userId).orElse(new Cart());
-    }
+   public Cart getCartByUserId(Long userId) {
+       Cart target = cartRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Cart not found"));
+       return target;
+   }
 
-    // 장바구니에 항목 추가
-    @Transactional
-    public Cart addItemToCart(Long userId, Long productDetailId, Long productImageId, Long quantity) {
-        // 사용자 ID로 장바구니 조회, 없으면 새로 생성
-        Cart cart = cartRepository.findById(userId).orElse(new Cart());
-        cart.setUserId(userId);
+   public Cart saveCart(Cart cart){
+       return cartRepository.save(cart);
+   }
 
-        // 상품 옵션조회
-        ProductDetail productDetail = productDetailRepository.findById(productDetailId)
-                .orElseThrow(() -> new IllegalArgumentException("상품 옵션을 찾을 수 없습니다.")); // 추후 변경 예정
-        ProductImage productImage = productImageRepository.findById(productImageId)
-                .orElseThrow(() -> new IllegalArgumentException("상품 옵션을 찾을 수 없습니다.")); // 추후 변경 예정
-
-        // 장바구니에 동일 상품이 이미 있는지 검토
-        Optional<CartItem> existingCartItem = cart.getItems().stream()
-                .filter(item -> item.getProductDetail().getId().equals(productDetailId))
-                .findFirst();
-        if(existingCartItem.isPresent()) {
-            // 이미 있는 상품이라면 수량만 증가
-            CartItem cartItem = existingCartItem.get();
-            cartItem.setQuantity(cartItem.getQuantity() + quantity);
-        }
-        else{
-            CartItem cartItem = new CartItem();
-            cartItem.setProductDetail(productDetail);
-            cartItem.setProductImage(productImage);
-            cartItem.setQuantity(quantity);
-            cartItem.setCart(cart);
-            cart.getItems().add(cartItem);
-        }
-
-        return cartRepository.save(cart);
-    }
-    // 장바구니 항목 삭제
-    @Transactional
-    public void removeItemFromCart(Long userId, Long cartItemId){
-        Cart cart = cartRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("장바구니를 찾을 수 없습니다.")); // 추후 변경 예정
-        cart.getItems().removeIf(item -> item.getId().equals(cartItemId));
-        cartRepository.save(cart);
-    }
-
-    // 장바구니 총 금액 계산
-    public Long calculateTotalPrice(Long userId) {
-        Cart cart = getCartByUserId(userId);
-        return cart.getItems().stream()
-                .mapToLong(item -> item.getProductDetail().getPrice() * item.getQuantity()).sum();
-    }
-
-
+   public void clearCart(Long userId) {
+       cartRepository.deleteByUserId(userId);
+   }
 }

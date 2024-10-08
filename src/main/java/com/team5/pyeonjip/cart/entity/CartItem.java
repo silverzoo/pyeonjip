@@ -21,14 +21,14 @@ public class CartItem {
     private Long quantity;
 
     @ManyToOne
-    @JoinColumn(name = "cart_id")
+    @JoinColumn(name = "cart_id", nullable = false)
     private Cart cart;
 
     @ManyToOne
-    @JoinColumn(name = "product_detail_id")
+    @JoinColumn(name = "product_detail_id", nullable = false)
     private ProductDetail productDetail;
 
     @ManyToOne
-    @JoinColumn(name = "product_image_id")
+    @JoinColumn(name = "product_image_id", nullable = false)
     private ProductImage productImage;
 }
