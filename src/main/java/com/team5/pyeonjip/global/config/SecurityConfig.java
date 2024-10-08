@@ -1,8 +1,8 @@
-package com.team5.pyeonjip.config;
+package com.team5.pyeonjip.global.config;
 
-import com.team5.pyeonjip.jwt.JWTFilter;
-import com.team5.pyeonjip.jwt.JWTUtil;
-import com.team5.pyeonjip.jwt.LoginFilter;
+import com.team5.pyeonjip.global.jwt.JWTFilter;
+import com.team5.pyeonjip.global.jwt.JWTUtil;
+import com.team5.pyeonjip.global.jwt.LoginFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

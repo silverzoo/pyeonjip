@@ -1,4 +1,4 @@
-package com.team5.pyeonjip.jwt;
+package com.team5.pyeonjip.global.jwt;
 
 import com.team5.pyeonjip.user.dto.CustomUserDetails;
 import com.team5.pyeonjip.user.entity.Role;
@@ -14,7 +14,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Date;
 
 
 @RequiredArgsConstructor

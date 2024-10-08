@@ -1,4 +1,4 @@
-package com.team5.pyeonjip.jwt;
+package com.team5.pyeonjip.global.jwt;
 
 
 import io.jsonwebtoken.Jwts;
