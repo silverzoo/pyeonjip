@@ -12,11 +12,6 @@ import org.springframework.web.bind.annotation.*;
 public class CouponController {
     private final CouponService couponService;
 
-    @GetMapping("/create")
-    public void createCoupon() {
-
-    }
-
     // 랜덤 쿠폰 생성 API
     @PostMapping("/create")
     public ResponseEntity<Coupon> createCoupon(@RequestParam Long discount) {
