@@ -21,18 +21,18 @@ public class SignUpService {
 //      1. 중복 이메일 검증
         Boolean isExist = userRepository.existsByEmail(dto.getEmail());
 
-        if (isExist) {
-            System.out.println("동일한 이메일이 존재합니다.");
-            return;
-        }
+        if (isExist) return;
 
 //      2. 중복 이메일이 없으면 회원가입 절차 실행
 
-//      2 - 1. 비밀번호 인코딩하여 Dto에 저장
-        dto.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
+//      2 - 1. 비밀번호 인코딩
+        String encodedPassword = bCryptPasswordEncoder.encode(dto.getPassword());
 
-//      2 - 2. 엔티티화 및 저장
+//      2 - 2. dto 엔티티화
         User user = UserMapper.INSTANCE.toEntity(dto);
+
+//      2 - 3. user 객체에 인코딩된 비밀번호 값을 설정
+        user.setPassword(encodedPassword);
 
         userRepository.save(user);
     }
