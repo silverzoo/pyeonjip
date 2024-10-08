@@ -29,10 +29,10 @@ public class CategoryController {
     }
 
     @PutMapping("/{categoryId}")
-    public ResponseEntity<CategoryResponse> updateCategory(@PathVariable Long categoryId,
+    public ResponseEntity<CategoryResponse> updateCategory(@PathVariable("categoryId") Long id,
                                                            @RequestBody CategoryRequest request) {
 
-        CategoryResponse category = categoryService.updateCategory(categoryId, request);
+        CategoryResponse category = categoryService.updateCategory(id, request);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
