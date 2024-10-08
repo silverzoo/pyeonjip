@@ -30,7 +30,7 @@ public class UserService {
     public void updateUserInfo(Long userId, UserUpdateDto dto) {
 
 //      주소, 비밀번호 힌트 전부 null인 경우, 정보를 변경하지 않는다.
-        if (dto.getAddress() == null && dto.getPwHint() == null) {
+        if (dto.getAddress() == null && dto.getPasswordHint() == null) {
             return;
         }
 
@@ -43,8 +43,8 @@ public class UserService {
         }
 
 //      2. 비밀번호 힌트만 변경하는 경우
-        if (dto.getPwHint() != null) {
-            findedUser.setPwHint(dto.getPwHint());
+        if (dto.getPasswordHint() != null) {
+            findedUser.setPasswordHint(dto.getPasswordHint());
         }
 
         userRepository.save(findedUser);
