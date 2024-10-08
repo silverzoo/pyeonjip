@@ -91,9 +91,9 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/", "/signup").permitAll()
                         .requestMatchers("/admin").hasAnyAuthority("ROLE_ADMIN")
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        // 필요에 따라 주석처리
-//                        .anyRequest().permitAll());
-                        .anyRequest().authenticated());
+                        // 개발 편의를 위해 전체 허용
+                        .anyRequest().permitAll());
+//                        .anyRequest().authenticated());
 
         // 필터 등록
 //      JWTFilter
