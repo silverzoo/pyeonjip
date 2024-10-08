@@ -1,5 +1,6 @@
 package com.team5.pyeonjip.product.service;
 
+import com.team5.pyeonjip.global.exception.ResourceNotFoundException;
 import com.team5.pyeonjip.product.dto.ProductRequest;
 import com.team5.pyeonjip.product.dto.ProductResponse;
 import com.team5.pyeonjip.product.entity.Product;
@@ -40,7 +41,7 @@ public class ProductService {
 
     public ProductResponse getProductById(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("product not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("해당 상품을 찾을 수 없습니다: " + id));
         return productMapper.toDto(product, product.getProductDetails(), product.getProductImages());
     }
 
@@ -48,7 +49,7 @@ public class ProductService {
     public ProductResponse updateProduct(Long id, ProductRequest productRequest) {
         // 1. 기존 상품 정보 조회 및 업데이트
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("product not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("해당 상품을 찾을 수 없습니다: " + id));
         product.setName(productRequest.getName());
         product.setDescription(productRequest.getDescription());
 
@@ -59,7 +60,7 @@ public class ProductService {
     @Transactional
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("product not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("해당 상품을 찾을 수 없습니다: " + id));
         productRepository.delete(product);
     }
 }

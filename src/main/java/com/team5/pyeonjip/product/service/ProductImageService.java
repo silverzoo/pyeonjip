@@ -1,5 +1,6 @@
 package com.team5.pyeonjip.product.service;
 
+import com.team5.pyeonjip.global.exception.ResourceNotFoundException;
 import com.team5.pyeonjip.product.dto.ProductRequest;
 import com.team5.pyeonjip.product.entity.Product;
 import com.team5.pyeonjip.product.entity.ProductImage;
@@ -34,7 +35,7 @@ public class ProductImageService {
     @Transactional
     public void deleteProductImageById(Long imageId) {
         ProductImage image = productImageRepository.findById(imageId)
-                .orElseThrow(() -> new IllegalArgumentException("Image not found with id: " + imageId));
+                .orElseThrow(() -> new ResourceNotFoundException("해당 이미지를 찾을 수 없습니다: " + imageId));
         productImageRepository.delete(image);
     }
 }
