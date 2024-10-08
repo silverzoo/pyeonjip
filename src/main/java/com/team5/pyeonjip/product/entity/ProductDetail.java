@@ -25,4 +25,12 @@ public class ProductDetail {
     @JoinColumn(name = "product_id")
     private Product product;
 
+    // 필요한 필드만 사용하는 커스텀 생성자 추가
+    public ProductDetail(Product product, String name, Long price, Long quantity) {
+        this.product = product;
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+    }
+
 }
