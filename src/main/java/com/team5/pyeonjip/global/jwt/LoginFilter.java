@@ -2,6 +2,8 @@ package com.team5.pyeonjip.global.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.team5.pyeonjip.user.dto.CustomUserDetails;
+import com.team5.pyeonjip.user.entity.Refresh;
+import com.team5.pyeonjip.user.repository.RefreshRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -18,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 
 @RequiredArgsConstructor
@@ -25,6 +28,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
+    private final RefreshRepository refreshRepository;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -47,31 +51,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         return authenticationManager.authenticate(authToken);
     }
 
-    // 단일 토큰 발급 방식에서 로그인 성공 시 사용했던 메서드
-//    @Override
-//    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
-//
-//        // 특정 유저를 확인
-//        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-//
-//        String email = customUserDetails.getUsername();
-//
-//        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-//        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-//        GrantedAuthority auth = iterator.next();
-//
-//        String role = auth.getAuthority();
-//
-//        // Jwt 생성
-//        String token = jwtUtil.createJwt(email, role, 60 * 60 * 5L * 1000);
-//
-//        // Jwt를 Header에 담아 응답
-//        // Bearer 인증방식
-//        response.addHeader("Authorization", "Bearer " + token);
-//
-//        response.setStatus(200);
-//    }
-
 
     // 로그인 시 access & refresh 토큰 발급
     @Override
@@ -89,6 +68,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String access = jwtUtil.createJwt("access", email, role, 600000L);
         String refresh = jwtUtil.createJwt("refresh", email, role, 86400000L);
 
+        // Repository에 refresh 토큰 저장
+        addRefresh(email, refresh, 86400000L);
+
         // 응답 설정
         response.setHeader("access", access);
         response.addCookie(createCookie("refresh", refresh));
@@ -98,6 +80,22 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         response.setStatus(401);
+    }
+
+
+    // Todo: Mapper 사용해보기
+    // Repository에 Refresh 토큰을 저장
+    private void addRefresh(String email, String refresh, Long expiredMs) {
+
+        // 만료일 설정
+        Date date = new Date(System.currentTimeMillis() + expiredMs);
+
+        Refresh newRefresh = new Refresh();
+        newRefresh.setEmail(email);
+        newRefresh.setRefresh(refresh);
+        newRefresh.setExpiration(date.toString());
+
+        refreshRepository.save(newRefresh);
     }
 
 
