@@ -23,7 +23,7 @@ public class OrderApiController {
         // 기존 배송지
         OrderRequestDto orderRequestDto = OrderRequestDto.builder()
                 .recipient(user.getName())   // 사용자 이름
-                .phoneNum(user.getPhoneNum()) // 사용자 전화번호
+                .phoneNum(user.getPhoneNumber()) // 사용자 전화번호
                 .delivery(new DeliveryRequestDto(user.getAddress())) // 사용자 주소
                 .build();
 

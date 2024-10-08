@@ -29,7 +29,7 @@ public class OrderMapper {
 
         return Order.builder()
                 .recipient(orderRequestDto.getRecipient() != null ? orderRequestDto.getRecipient() : user.getName()) // 수령인, 유저 기본 이름 사용
-                .phoneNumber(orderRequestDto.getPhoneNum() != null ? orderRequestDto.getPhoneNum() : user.getPhoneNum())   // 연락처, 유저 기본 연락처 사용
+                .phoneNumber(orderRequestDto.getPhoneNum() != null ? orderRequestDto.getPhoneNum() : user.getPhoneNumber())   // 연락처, 유저 기본 연락처 사용
                 .requirement(orderRequestDto.getRequirement()) // 요청사항은 입력받은 값 사용
                 .status(OrderStatus.ORDER)                     // 주문 상태는 기본적으로 ORDER로 설정
                 .delivery(delivery)                            // 배송 정보 저장
