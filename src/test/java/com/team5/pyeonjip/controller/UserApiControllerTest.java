@@ -63,16 +63,16 @@ public class UserApiControllerTest {
         final String phoneNum = "01012345678";
         final String password = "1234";
         final String address = "test address";
-        final String pwHint = "blue";
+        final String passwordHint = "blue";
 
         // 유저 생성
         SignUpDto dto = new SignUpDto();
         dto.setEmail(email);
         dto.setName(name);
-        dto.setPhoneNum(phoneNum);
+        dto.setPhoneNumber(phoneNum);
         dto.setPassword(password);
         dto.setAddress(address);
-        dto.setPwHint(pwHint);
+        dto.setPasswordHint(passwordHint);
 
 
         //when
@@ -100,26 +100,26 @@ public class UserApiControllerTest {
         final String phoneNum = "01012345678";
         final String password = "1234";
         final String address = "test address";
-        final String pwHint = "blue";
+        final String passwordHint = "blue";
 
         // 유저 생성
         SignUpDto createDto = new SignUpDto();
         createDto.setEmail(email);
         createDto.setName(name);
-        createDto.setPhoneNum(phoneNum);
+        createDto.setPhoneNumber(phoneNum);
         createDto.setPassword(password);
         createDto.setAddress(address);
-        createDto.setPwHint(pwHint);
+        createDto.setPasswordHint(passwordHint);
         userService.createUser(createDto);
 
         User savedUser = userRepository.findAll().get(0);
 
 
         final String newAddress = "new address";
-        final String newPwHint = "green";
+        final String newPasswordHint = "green";
         UserUpdateDto updateDto = new UserUpdateDto();
         updateDto.setAddress(newAddress);
-        updateDto.setPwHint(newPwHint);
+        updateDto.setPasswordHint(newPasswordHint);
 
         String requestBody = objectMapper.writeValueAsString(updateDto);
 
@@ -131,7 +131,7 @@ public class UserApiControllerTest {
 
         User updatedUser = userRepository.findById(savedUser.getId()).orElseThrow();
         assertEquals(newAddress, updatedUser.getAddress());
-        assertEquals(newPwHint, updatedUser.getPwHint());
+        assertEquals(newPasswordHint, updatedUser.getPasswordHint());
     }
 
 
@@ -145,16 +145,16 @@ public class UserApiControllerTest {
         final String phoneNum = "01012345678";
         final String password = "1234";
         final String address = "test address";
-        final String pwHint = "blue";
+        final String passwordHint = "blue";
 
         // 유저 생성
         SignUpDto createDto = new SignUpDto();
         createDto.setEmail(email);
         createDto.setName(name);
-        createDto.setPhoneNum(phoneNum);
+        createDto.setPhoneNumber(phoneNum);
         createDto.setPassword(password);
         createDto.setAddress(address);
-        createDto.setPwHint(pwHint);
+        createDto.setPasswordHint(passwordHint);
         userService.createUser(createDto);
 
         User savedUser = userRepository.findAll().get(0);
@@ -175,14 +175,14 @@ public class UserApiControllerTest {
         User updatedUser = userRepository.findById(savedUser.getId()).orElseThrow();
         assertEquals(newAddress, updatedUser.getAddress());
 
-        // pwHint는 기존과 동일해야 함.
-        assertEquals(pwHint, updatedUser.getPwHint());
+        // passwordHint는 기존과 동일해야 함.
+        assertEquals(passwordHint, updatedUser.getPasswordHint());
     }
 
 
     @DisplayName("updateUserInfo: 유저 정보 비밀번호 힌트 업데이트")
     @Test
-    public void updateUserInfoPwHint() throws Exception {
+    public void updateUserInfoPasswordHint() throws Exception {
         // given
         final String url = "/api/user/update/{id}";
         final String email = "test@test.com";
@@ -190,24 +190,24 @@ public class UserApiControllerTest {
         final String phoneNum = "01012345678";
         final String password = "1234";
         final String address = "test address";
-        final String pwHint = "blue";
+        final String passwordHint = "blue";
 
         // 유저 생성
         SignUpDto createDto = new SignUpDto();
         createDto.setEmail(email);
         createDto.setName(name);
-        createDto.setPhoneNum(phoneNum);
+        createDto.setPhoneNumber(phoneNum);
         createDto.setPassword(password);
         createDto.setAddress(address);
-        createDto.setPwHint(pwHint);
+        createDto.setPasswordHint(passwordHint);
         userService.createUser(createDto);
 
         User savedUser = userRepository.findAll().get(0);
 
 
-        final String newPwHint = "green";
+        final String newPasswordHint = "green";
         UserUpdateDto updateDto = new UserUpdateDto();
-        updateDto.setPwHint(newPwHint);
+        updateDto.setPasswordHint(newPasswordHint);
 
         String requestBody = objectMapper.writeValueAsString(updateDto);
 
@@ -221,7 +221,7 @@ public class UserApiControllerTest {
 
         // address는 기존과 동일해야 함.
         assertEquals(address, updatedUser.getAddress());
-        assertEquals(newPwHint, updatedUser.getPwHint());
+        assertEquals(newPasswordHint, updatedUser.getPasswordHint());
     }
 
 
@@ -237,16 +237,16 @@ public class UserApiControllerTest {
         final String phoneNum = "01012345678";
         final String password = "1234";
         final String address = "test address";
-        final String pwHint = "blue";
+        final String passwordHint = "blue";
 
         // 유저 생성
         SignUpDto createDto = new SignUpDto();
         createDto.setEmail(email);
         createDto.setName(name);
-        createDto.setPhoneNum(phoneNum);
+        createDto.setPhoneNumber(phoneNum);
         createDto.setPassword(password);
         createDto.setAddress(address);
-        createDto.setPwHint(pwHint);
+        createDto.setPasswordHint(passwordHint);
         userService.createUser(createDto);
 
         // when & then
@@ -266,16 +266,16 @@ public class UserApiControllerTest {
         final String phoneNum = "01012345678";
         final String password = "1234";
         final String address = "test address";
-        final String pwHint = "blue";
+        final String passwordHint = "blue";
 
         // 유저 생성
         SignUpDto createDto = new SignUpDto();
         createDto.setEmail(email);
         createDto.setName(name);
-        createDto.setPhoneNum(phoneNum);
+        createDto.setPhoneNumber(phoneNum);
         createDto.setPassword(password);
         createDto.setAddress(address);
-        createDto.setPwHint(pwHint);
+        createDto.setPasswordHint(passwordHint);
         userService.createUser(createDto);
 
         User savedUser = userRepository.findAll().get(0);
@@ -298,16 +298,16 @@ public class UserApiControllerTest {
         final String phoneNum = "01012345678";
         final String password = "1234";
         final String address = "test address";
-        final String pwHint = "blue";
+        final String passwordHint = "blue";
 
         // 유저 생성
         SignUpDto createDto = new SignUpDto();
         createDto.setEmail(email);
         createDto.setName(name);
-        createDto.setPhoneNum(phoneNum);
+        createDto.setPhoneNumber(phoneNum);
         createDto.setPassword(password);
         createDto.setAddress(address);
-        createDto.setPwHint(pwHint);
+        createDto.setPasswordHint(passwordHint);
         userService.createUser(createDto);
 
         User savedUser = userRepository.findAll().get(0);

@@ -8,5 +8,5 @@ public class UserUpdateDto {
 
     private String address;
 
-    private String pwHint;
+    private String passwordHint;
 }

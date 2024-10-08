@@ -14,6 +14,8 @@ public class SignUpController {
 
     private final SignUpService signUpService;
 
+
+    // Todo: 현재 항상 "ok"를 반환하도록 구성되어 있음. 추후 성공 / 실패 결과를 나누어 보여줄 것.
     @PostMapping("/signup")
     public String signUpProcess(SignUpDto dto) {
 

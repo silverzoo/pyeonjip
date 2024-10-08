@@ -27,14 +27,14 @@ public class UserService {
 
     /* UPDATE */
 
-    public void updateUserInfo(Long id, UserUpdateDto dto) {
+    public void updateUserInfo(Long userId, UserUpdateDto dto) {
 
 //      주소, 비밀번호 힌트 전부 null인 경우, 정보를 변경하지 않는다.
-        if (dto.getAddress() == null && dto.getPwHint() == null) {
-            throw new IllegalArgumentException("변경할 정보가 없습니다.");
+        if (dto.getAddress() == null && dto.getPasswordHint() == null) {
+            return;
         }
 
-        User findedUser = userRepository.findById(id)
+        User findedUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
 //      1. 주소만 변경하는 경우
@@ -43,8 +43,8 @@ public class UserService {
         }
 
 //      2. 비밀번호 힌트만 변경하는 경우
-        if (dto.getPwHint() != null) {
-            findedUser.setPwHint(dto.getPwHint());
+        if (dto.getPasswordHint() != null) {
+            findedUser.setPasswordHint(dto.getPasswordHint());
         }
 
         userRepository.save(findedUser);
@@ -57,8 +57,8 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User findUser(Long id) {
-        User findedUser = userRepository.findById(id)
+    public User findUser(Long userId) {
+        User findedUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         return findedUser;
@@ -67,9 +67,9 @@ public class UserService {
 
     /* DELETE */
 
-    public void deleteUser(Long id) {
+    public void deleteUser(Long userId) {
 
-        User findedUser = userRepository.findById(id)
+        User findedUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         userRepository.delete(findedUser);

@@ -15,7 +15,7 @@ public class SignUpDto {
     private String name;
 
     @NotNull
-    private String phoneNum;
+    private String phoneNumber;
 
     @NotNull
     private String password;
@@ -24,5 +24,5 @@ public class SignUpDto {
     private String address;
 
     @NotNull
-    private String pwHint;
+    private String passwordHint;
 }

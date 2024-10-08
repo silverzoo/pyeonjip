@@ -22,7 +22,7 @@ public class UserApiController {
 
     /* CREATE */
 
-    @PostMapping(value = "/new")
+    @PostMapping
     public ResponseEntity<String> createUser(@RequestBody SignUpDto dto) {
 
         try {
@@ -43,68 +43,65 @@ public class UserApiController {
 
     // 모든 유저 조회
     @GetMapping
-    public ResponseEntity<?> getAllUsers() {
+    public ResponseEntity<List<User>> getAllUsers() {
 
         try {
             // UserService의 전체 유저 조회 메서드 실행
-            List<User> users = userService.findAllUsers();
-
-            return ResponseEntity.ok(users);
+            return ResponseEntity.ok(userService.findAllUsers());
         } catch (Exception e) {
+
+            // Todo: 추후 구체적으로 작성할 것
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
+                    .body(null);
         }
     }
 
 
     // 단일 유저 조회
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getUser(@PathVariable("id") Long id) {
+    @GetMapping("/{userId}")
+    public ResponseEntity<User> getUser(@PathVariable("userId") Long userId) {
 
         try {
             // UserService의 단일 유저 조회 메서드 실행
-            User user = userService.findUser(id);
-
-            return ResponseEntity.ok(user);
+            return ResponseEntity.ok(userService.findUser(userId));
         } catch (Exception e) {
+            // Todo: 위와 마찬가지
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
+                    .body(null);
         }
     }
 
 
     /* UPDATE */
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateUserInfo(@PathVariable("id") Long id, @RequestBody UserUpdateDto dto) {
+    @PutMapping("/information/{userId}")
+    public ResponseEntity<String> updateUserInfo(@PathVariable("userId") Long userId, @RequestBody UserUpdateDto dto) {
 
         try {
             // UserService의 유저 정보 수정 메서드 실행
-            userService.updateUserInfo(id, dto);
+            userService.updateUserInfo(userId, dto);
 
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body("정보가 수정되었습니다.");
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
+                    .body(null);
         }
     }
 
 
     /* DELETE */
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable("id") Long id) {
+    @DeleteMapping("/delete/{userId}")
+    public ResponseEntity<String> deleteUser(@PathVariable("userId") Long userId) {
 
         try {
             // UserService의 유저 삭제 메서드 실행
-            userService.deleteUser(id);
+            userService.deleteUser(userId);
 
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body("사용자 삭제 완료");
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
+                    .body(null);
         }
     }
 
