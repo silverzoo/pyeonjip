@@ -62,15 +62,28 @@ public class ReissueController {
 
         /* 여기까지 Refresh 토큰 검증 로직 */
 
-        String username = jwtUtil.getEmail(refreshToken);
+        String email = jwtUtil.getEmail(refreshToken);
         String role = jwtUtil.getRole(refreshToken);
 
-        // JWT를 새로 생성
-        String newAccessToken = jwtUtil.createJwt("access", username, role, 600000L);
+        // Access, Refresh JWT를 새로 생성.
+        String newAccessToken = jwtUtil.createJwt("access", email, role, 600000L);
+        String newRefreshToken = jwtUtil.createJwt("refresh", email, role, 86400000L);
 
         response.setHeader("access", newAccessToken);
+        response.addCookie(createCookie("refresh", newRefreshToken));
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+
+    private Cookie createCookie(String key, String value) {
+
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(24 * 60 * 60);
+        // cookie.setSecure(true);
+        // cookie.setPath("/");
+        cookie.setHttpOnly(true);
+
+        return cookie;
+    }
 }
