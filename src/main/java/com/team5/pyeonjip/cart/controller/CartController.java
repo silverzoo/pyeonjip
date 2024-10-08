@@ -1,7 +1,13 @@
 package com.team5.pyeonjip.cart.controller;
 
+import com.team5.pyeonjip.cart.entity.Cart;
+import com.team5.pyeonjip.cart.service.CartService;
 import com.team5.pyeonjip.coupon.entity.Coupon;
+import com.team5.pyeonjip.coupon.repository.CouponRepository;
+import com.team5.pyeonjip.product.entity.Product;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -10,7 +16,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/cart")
+@RequiredArgsConstructor
 public class CartController {
+    private final CouponRepository couponRepository;
+    private final CartService cartService;
 
     // 테스트용 List
     List<itemTest> items = new ArrayList<>();
@@ -19,11 +28,7 @@ public class CartController {
     itemTest itemTest3 = new itemTest(3, "5단 아이보리 책장", 100000, "https://static.hyundailivart.co.kr/upload_mall/goods/P100001245/GM40404792_img.jpg/dims/resize/x890/optimize", "책장");
     itemTest itemTest4 = new itemTest(4, "음표 조명", 30000, "https://cafe24.poxo.com/ec01/jangpaulkr/Xeym8gXyw/uNs04t9Tz1DnvB60CCR9J8JOszC+e7D8cjj75tYI5LpPsCXBLoBM50y3zQXUybY8eJLnC6bSYxHA==/_/web/product/big/202008/ed42f11b708b33283387ba663fa6be77.jpg", "조명");
 
-    // 테스트용 List
-    List<Coupon> coupons = new ArrayList<>();
-    Coupon coupon1 = new Coupon("test",10L,true, LocalDateTime.now().plusWeeks(1));
-    Coupon coupon2 = new Coupon("asdf", 20L, true, LocalDateTime.now().minusDays(1));
-    Coupon coupon3 = new Coupon("qwer", 30L, false,LocalDateTime.now().plusWeeks(1));
+
 
     // 테스트 샌드박스용 페이지
     @GetMapping("/sandbox")
@@ -39,10 +44,22 @@ public class CartController {
     // 장바구니 페이지
     @GetMapping
     public List<Coupon> cart(){
-        coupons.add(coupon1);
-        coupons.add(coupon2);
-        coupons.add(coupon3);
+        List<Coupon> coupons = couponRepository.findAll();
+
         return coupons;
+    }
+
+    @GetMapping("/sync")
+    public ResponseEntity<Cart> getCartByUserId(@PathVariable Long userId){
+        Cart cart = cartService.getCartByUserId(userId);
+        return ResponseEntity.ok(cart);
+    }
+
+
+    @PostMapping("/save")
+    public ResponseEntity<Cart> saveCart(@RequestBody Cart cart) {
+        Cart savedCart = cartService.saveCart(cart);
+        return ResponseEntity.ok(savedCart);
     }
 }
 
