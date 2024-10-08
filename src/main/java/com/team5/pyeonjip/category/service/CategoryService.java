@@ -4,6 +4,7 @@ import com.team5.pyeonjip.category.dto.CategoryRequest;
 import com.team5.pyeonjip.category.dto.CategoryResponse;
 import com.team5.pyeonjip.category.entity.Category;
 import com.team5.pyeonjip.category.repository.CategoryRepository;
+import com.team5.pyeonjip.global.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,17 +35,13 @@ public class CategoryService {
 
         // RuntimeException 은 모두 롤백
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Category not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("해당 카테고리를 찾을 수 없습니다: " + id));
 
         category = category.toBuilder()
                 .name(request.getName())
                 .build();
 
-        log.debug("\n\n수정카테고리: {} \n\n", category);
-
         Category savedCategory = categoryRepository.save(category);
-
-        log.debug("\n\n수정카테고리 res: {} \n\n", savedCategory);
 
         return CategoryResponse.toResponse(savedCategory);
     }
