@@ -1,30 +1,30 @@
 package com.team5.pyeonjip.cart.controller;
 
 import lombok.Data;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @RestController
 @RequestMapping("/cart")
 public class CartController {
 
-    List<Item_Test> items = new ArrayList<>();
-    Item_Test itemTest1 = new Item_Test(1, "페브릭 소파", 250000, "https://godomall.speedycdn.net/dd670437e41588ed97aae4c43ebb109a/goods/1000005635/image/detail/register_detail_089.jpg", "소파");
-    Item_Test itemTest2 = new Item_Test(2, "월넛 모션데스크", 500000, "https://www.emons.co.kr/shop/data/goods/66qo7IWY642w7Iqk7YGs_1400.jpg", "책상");
-    Item_Test itemTest3 = new Item_Test(3, "5단 아이보리 책장", 100000, "https://static.hyundailivart.co.kr/upload_mall/goods/P100001245/GM40404792_img.jpg/dims/resize/x890/optimize", "책장");
-    Item_Test itemTest4 = new Item_Test(4, "음표 조명", 30000, "https://cafe24.poxo.com/ec01/jangpaulkr/Xeym8gXyw/uNs04t9Tz1DnvB60CCR9J8JOszC+e7D8cjj75tYI5LpPsCXBLoBM50y3zQXUybY8eJLnC6bSYxHA==/_/web/product/big/202008/ed42f11b708b33283387ba663fa6be77.jpg", "조명");
+    // 테스트용 List
+    List<itemTest> items = new ArrayList<>();
+    itemTest itemTest1 = new itemTest(1, "페브릭 소파", 250000, "https://godomall.speedycdn.net/dd670437e41588ed97aae4c43ebb109a/goods/1000005635/image/detail/register_detail_089.jpg", "소파");
+    itemTest itemTest2 = new itemTest(2, "월넛 모션데스크", 500000, "https://www.emons.co.kr/shop/data/goods/66qo7IWY642w7Iqk7YGs_1400.jpg", "책상");
+    itemTest itemTest3 = new itemTest(3, "5단 아이보리 책장", 100000, "https://static.hyundailivart.co.kr/upload_mall/goods/P100001245/GM40404792_img.jpg/dims/resize/x890/optimize", "책장");
+    itemTest itemTest4 = new itemTest(4, "음표 조명", 30000, "https://cafe24.poxo.com/ec01/jangpaulkr/Xeym8gXyw/uNs04t9Tz1DnvB60CCR9J8JOszC+e7D8cjj75tYI5LpPsCXBLoBM50y3zQXUybY8eJLnC6bSYxHA==/_/web/product/big/202008/ed42f11b708b33283387ba663fa6be77.jpg", "조명");
 
     List<Coupon> coupons = new ArrayList<>();
     Coupon coupon1 = new Coupon("test", 10);
     Coupon coupon2 = new Coupon("asdf", 20);
     Coupon coupon3 = new Coupon("qwer", 30);
 
+    // 테스트 샌드박스용 페이지
     @GetMapping("/sandbox")
-    public List<Item_Test>  sandbox() {
+    public List<itemTest> sandbox() {
         items.clear();
         items.add(itemTest1);
         items.add(itemTest2);
@@ -33,6 +33,7 @@ public class CartController {
         return items;
     }
 
+    // 장바구니 페이지
     @GetMapping
     public List<Coupon> cart(){
         coupons.add(coupon1);
@@ -43,7 +44,7 @@ public class CartController {
 }
 
 @Data
-class Item_Test {
+class itemTest {
 
     private Integer id;
     private String name;
@@ -51,7 +52,7 @@ class Item_Test {
     private String image;
     private String category;
 
-    public Item_Test(Integer id, String name, Integer price, String image, String category) {
+    public itemTest(Integer id, String name, Integer price, String image, String category) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -63,11 +64,11 @@ class Item_Test {
 @Data
 class Coupon {
 
-    private String promocode;
+    private String code;
     private Integer percent;
 
-    public Coupon(String promocode, Integer percent) {
-        this.promocode = promocode;
+    public Coupon(String code, Integer percent) {
+        this.code = code;
         this.percent = percent;
     }
 }
