@@ -12,5 +12,7 @@ spring:
         format_sql: 'true'
         auto_quote_keyword: 'true'
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: 'true'
+  jwt:
+    secret: dc5e9dd80f65e4ac4f67b718c01d50f02cf84b697d5ba6cfe2f4dddf2ecda8ff

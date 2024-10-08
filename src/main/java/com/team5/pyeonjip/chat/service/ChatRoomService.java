@@ -19,6 +19,7 @@ public class ChatRoomService {
 
     public List<ChatRoomDto> getChatRooms(){
         List<ChatRoom> chatRooms = chatRoomRepository.findAll();
+
         List<ChatRoomDto> chatRoomDtos = new ArrayList<>();
 
         for (ChatRoom chatRoom : chatRooms) {
@@ -41,6 +42,7 @@ public class ChatRoomService {
 
     public List<ChatRoomDto> getChatRoomsByUserId(Long userId){
         List<ChatRoom> chatRooms = chatRoomRepository.findByUserId(userId);
+
         List<ChatRoomDto> chatRoomDtos = new ArrayList<>();
         for (ChatRoom chatRoom : chatRooms) {
             chatRoomDtos.add(chatRoomMapper.toDTO(chatRoom));

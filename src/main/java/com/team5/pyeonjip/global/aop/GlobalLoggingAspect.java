@@ -1,33 +1,37 @@
 package com.team5.pyeonjip.global.aop;
 
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
+@Slf4j
 @Aspect
 @Component
-public class UserLoggingAspect {
+public class GlobalLoggingAspect {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    @Pointcut("execution(* com.team5.pyeonjip..*(..))")
+    private void globalPointcut(){
 
-    @Before("execution(* com.team5.pyeonjip.user..*(..))")
+    }
+
+    @Before("globalPointcut()")
     public void logBeforeMethod(JoinPoint joinPoint) {
         String methodName = joinPoint.getSignature().toShortString();
         Object[] args = joinPoint.getArgs();
 
-        System.out.printf("[실행 메서드]: %s\n[매개변수]: %s\n\n", methodName, Arrays.toString(args));
+        log.info("[실행 메서드]: {} [매개변수]: {}", methodName, Arrays.toString(args));
     }
 
-    @AfterReturning(value = "execution(* com.team5.pyeonjip.user..*(..))", returning = "result")
+    @AfterReturning(value = "globalPointcut()", returning = "result")
     public void logAfterMethod(JoinPoint joinPoint, Object result) {
         String methodName = joinPoint.getSignature().toShortString();
 
-        System.out.printf("[종료 메서드]: %s\n[반환값]: %s\n\n", methodName, result);
+        log.info("[종료 메서드]: {} [반환값]: {}", methodName, result);
     }
 }

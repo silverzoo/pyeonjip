@@ -20,14 +20,14 @@ public class ChatController {
     private final ChatMessageService chatMessageService;
 
     // userId에 따른 채팅이력 리스트
-    @GetMapping("/chat-rooms/{userId}")
+    @GetMapping("/chat_room/{userId}")
     public ResponseEntity<List<ChatRoomDto>> getChatRooms(@PathVariable("userId") Long userId){
-        List<ChatRoomDto> chatRooms = chatRoomService.getChatRoomsByUserId(userId);
-        return ResponseEntity.ok().body(chatRooms);
+        List<ChatRoomDto> chatRoom = chatRoomService.getChatRoomsByUserId(userId);
+        return ResponseEntity.ok().body(chatRoom);
     }
 
     // 채팅방 생성
-    @PostMapping("/room")
+    @PostMapping("/chat_room")
     public ResponseEntity<ChatRoomDto> createChatRoom(@RequestBody ChatRoomDto chatRoomDto){
         ChatRoomDto createChatRoom = chatRoomService.createChatRoom(chatRoomDto);
         return ResponseEntity.ok().body(createChatRoom);
