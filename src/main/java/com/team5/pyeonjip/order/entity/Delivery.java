@@ -15,6 +15,7 @@ public class Delivery extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private DeliveryStatus status; // 배송 상태
 
@@ -23,4 +24,9 @@ public class Delivery extends BaseTimeEntity {
 
     @OneToOne(mappedBy = "delivery")
     private Order order; // 주문
+
+    // 배송 상태 변경 메서드
+    public void updateStatus(DeliveryStatus newStatus) {
+        this.status = newStatus;
+    }
 }

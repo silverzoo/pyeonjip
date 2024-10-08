@@ -1,21 +1,22 @@
 package com.team5.pyeonjip.order.service;
 
-import com.team5.pyeonjip.order.dto.DeliveryRequestDto;
-import com.team5.pyeonjip.order.dto.OrderRequestDto;
-import com.team5.pyeonjip.order.dto.OrderResponseDto;
+import com.team5.pyeonjip.order.dto.*;
 import com.team5.pyeonjip.order.entity.Order;
+import com.team5.pyeonjip.order.entity.OrderDetail;
 import com.team5.pyeonjip.user.entity.User;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 public interface OrderService {
 
     // 주문 생성
-    OrderResponseDto createOrder(OrderRequestDto requestDto, DeliveryRequestDto deliveryDto, User user);
+    OrderResponseDto createOrder(OrderRequestDto orderDto, DeliveryRequestDto deliveryDto, User user, List<OrderDetailDto> orderDetailDto);
+
+    // 사용자 이름으로 주문 내역 검색
+    List<Order> findAllOrdersByUserName(String userName);
 
     // 주문 수정
-    void updateOrderbyId(Long id);
+    public void updateOrder(Long id, OrderUpdateRequestDto requestDto);
 
     // 주문 삭제
     void deleteOrderById(Long id);
@@ -27,5 +28,5 @@ public interface OrderService {
     Order findOrderDetail(Long id);
 
     // 주문 취소
-    // void cancelOrder(Long id);
+    void cancelOrder(Long id);
 }

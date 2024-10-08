@@ -5,10 +5,9 @@ import com.team5.pyeonjip.order.entity.Delivery;
 import com.team5.pyeonjip.order.entity.Order;
 import com.team5.pyeonjip.order.entity.OrderDetail;
 import com.team5.pyeonjip.order.enums.DeliveryStatus;
+import com.team5.pyeonjip.order.enums.OrderStatus;
 import com.team5.pyeonjip.order.mapper.OrderMapper;
 import com.team5.pyeonjip.order.repository.OrderRepository;
-import com.team5.pyeonjip.product.entity.Product;
-import com.team5.pyeonjip.product.entity.ProductDetail;
 import com.team5.pyeonjip.product.repository.ProductDetailRepository;
 import com.team5.pyeonjip.product.repository.ProductRepository;
 import com.team5.pyeonjip.user.entity.User;
@@ -32,7 +31,7 @@ public class OrderServiceImpl implements OrderService{
     // 주문 생성
     @Transactional
     @Override
-    public OrderResponseDto createOrder(OrderRequestDto requestDto, DeliveryRequestDto deliveryDto, User user) {
+    public OrderResponseDto createOrder(OrderRequestDto orderDto, DeliveryRequestDto deliveryDto, User user, List<OrderDetailDto> orderDetailDto) {
 
         // 유저 조회
         User foundUser = userRepository.findById(user.getId())
@@ -40,48 +39,45 @@ public class OrderServiceImpl implements OrderService{
 
         // 배송 정보 생성
         Delivery delivery = Delivery.builder()
-                .address(deliveryDto.getAddress())
-                .status(DeliveryStatus.READY)
+                .address(orderDto.getDelivery().getAddress())
+                .status(DeliveryStatus.READY) // 초기 배송 상태
                 .build();
-
-        // 주문 상세 리스트 생성
-        List<OrderDetail> orderItems = requestDto.getOrderDetails().stream()
-                .map(detailDto -> {
-                    // 상품 조회
-                    ProductDetail productDetail = productDetailRepository.findById(detailDto.getProductDetailId())
-                            .orElseThrow(() -> new IllegalArgumentException("상품 옵션을 찾을 수 없습니다."));
-
-                    Product product = productDetail.getProduct();
-
-                    // image 제외
-                    return OrderDetail.builder()
-                            .productName(product.getName())
-                            .productPrice(productDetail.getPrice())
-                            .quantity(productDetail.getQuantity())
-                            .build();
-                })
-                .collect(Collectors.toList());
 
         // 주문 생성
         Order order = Order.builder()
-                .user(foundUser)
+                .recipient(orderDto.getRecipient())
+                .phoneNum(orderDto.getPhoneNum())
+                .requirement(orderDto.getRequirement())
                 .delivery(delivery)
-                .orderDetails(orderItems)
+                .user(foundUser)
                 .build();
 
+        // 주문 상세 정보 생성
+        List<OrderDetail> orderDetails = orderDetailDto.stream()
+                .map(productDto -> OrderDetail.builder()
+                        .productName(productDto.getProductName())  // 상품명
+                        .productPrice(productDto.getProductPrice())  // 상품 가격
+                        .quantity(productDto.getQuantity())  // 수량
+                        .order(order)  // 해당 주문과 연관 관계 설정
+                        .build())
+                .collect(Collectors.toList());
+
         // 주문 저장
+        order.getOrderDetails().addAll(orderDetails);
         orderRepository.save(order);
 
-        return OrderMapper.toDto(order);
+        return OrderMapper.toDto(order, orderDetails);
     }
 
-    // 주문 수정
+    // 관리자 - 주문 수정
     @Transactional
     @Override
-    public void updateOrderbyId(Long id){
+    public void updateOrder(Long id, OrderUpdateRequestDto requestDto){
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
-        // 수정 로직 추가
+        // 배송 상태 변경
+        Delivery delivery = order.getDelivery();
+        delivery.updateStatus(requestDto.getDeliveryStatus());
 
         orderRepository.save(order);
     }
@@ -95,11 +91,18 @@ public class OrderServiceImpl implements OrderService{
         orderRepository.delete(order);
     }
 
-    // 주문 전체 조회
+    // 관리자 - 주문 전체 조회
     @Transactional(readOnly = true)
     @Override
     public List<Order> findAllOrders() {
         return orderRepository.findAll();
+    }
+
+    // 관리자 - 사용자 이름으로 주문 조회
+    @Transactional(readOnly = true)
+    @Override
+    public List<Order> findAllOrdersByUserName(String userName) {
+        return orderRepository.findAllByUser_Name(userName);
     }
 
     // 주문 상세 조회
@@ -111,5 +114,11 @@ public class OrderServiceImpl implements OrderService{
     }
 
     // 주문 취소
-    // @Transactional
+    @Transactional
+    @Override
+    public void cancelOrder(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
+        order.cancel();
+     }
 }

@@ -8,5 +8,5 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class DeliveryRequestDto {
-    private String address;
+    private String address; // 배송지 직접 입력
 }

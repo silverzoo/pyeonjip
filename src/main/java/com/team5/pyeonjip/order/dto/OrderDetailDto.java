@@ -6,8 +6,9 @@ import lombok.Getter;
 // 주문 상세 요청
 @Getter
 @Builder
-public class OrderDetailRequestDto {
+public class OrderDetailDto {
     private Long productDetailId;
-    private int quantity;
+    private String productName;
+    private Long quantity;
     private Long productPrice; // 상품 개별 가격
 }

@@ -5,14 +5,17 @@ import com.team5.pyeonjip.order.dto.OrderRequestDto;
 import com.team5.pyeonjip.order.dto.OrderResponseDto;
 import com.team5.pyeonjip.order.entity.Delivery;
 import com.team5.pyeonjip.order.entity.Order;
+import com.team5.pyeonjip.order.entity.OrderDetail;
 import com.team5.pyeonjip.order.enums.DeliveryStatus;
 import com.team5.pyeonjip.order.enums.OrderStatus;
 import com.team5.pyeonjip.user.entity.User;
 
+import java.util.List;
+
 public class OrderMapper {
 
     // entity -> dto
-    public static OrderResponseDto toDto(Order order) {
+    public static OrderResponseDto toDto(Order order, List<OrderDetail> orderDetails) {
         return OrderResponseDto.builder()
                 .build();
     }
