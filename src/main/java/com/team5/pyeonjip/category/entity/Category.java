@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter @ToString
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Category extends BaseTimeEntity {
 
@@ -37,6 +37,13 @@ public class Category extends BaseTimeEntity {
         this.parent = parent;
         this.child = child;
     }
+
+    // toString() 무한 재귀호출 방지
+    @Override
+    public String toString() {
+        return String.format("Category{id=%d, name='%s'}", id, name);
+    }
+
 
     public void addChildCategory(Category child) {
         this.child.add(child);
