@@ -22,8 +22,8 @@ public class Order extends BaseTimeEntity {
     @Column(name = "recipient", nullable = false)
     private String recipient; // 수령인
 
-    @Column(name = "phone_num", nullable = false, length = 11)
-    private String phoneNum; // 전화번호
+    @Column(name = "phone_number", nullable = false, length = 11)
+    private String phoneNumber; // 전화번호
 
     @Column(name = "requirement")
     private String requirement; // 주문 시 요청사항
@@ -50,9 +50,9 @@ public class Order extends BaseTimeEntity {
     private User user; // 유저
 
     // == 주문 수정 메서드 == //
-    public void updateOrder(String recipient, String phoneNum, String requirement, Long deliveryPrice, Long totalPrice) {
+    public void updateOrder(String recipient, String phoneNumber, String requirement, Long deliveryPrice, Long totalPrice) {
         this.recipient = recipient;
-        this.phoneNum = phoneNum;
+        this.phoneNumber = phoneNumber;
         this.requirement = requirement;
         this.deliveryPrice = deliveryPrice;
         this.totalPrice = totalPrice;

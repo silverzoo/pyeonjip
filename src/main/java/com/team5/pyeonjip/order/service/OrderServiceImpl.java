@@ -46,7 +46,7 @@ public class OrderServiceImpl implements OrderService{
         // 주문 생성
         Order order = Order.builder()
                 .recipient(orderDto.getRecipient())
-                .phoneNum(orderDto.getPhoneNum())
+                .phoneNumber(orderDto.getPhoneNum())
                 .requirement(orderDto.getRequirement())
                 .delivery(delivery)
                 .user(foundUser)

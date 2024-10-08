@@ -2,7 +2,6 @@ package com.team5.pyeonjip.order.service;
 
 import com.team5.pyeonjip.order.dto.*;
 import com.team5.pyeonjip.order.entity.Order;
-import com.team5.pyeonjip.order.entity.OrderDetail;
 import com.team5.pyeonjip.user.entity.User;
 
 import java.util.List;
@@ -16,7 +15,7 @@ public interface OrderService {
     List<Order> findAllOrdersByUserName(String userName);
 
     // 주문 수정
-    public void updateOrder(Long id, OrderUpdateRequestDto requestDto);
+    void updateOrder(Long id, OrderUpdateRequestDto requestDto);
 
     // 주문 삭제
     void deleteOrderById(Long id);
