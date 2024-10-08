@@ -26,8 +26,8 @@ public class User {
     private String name;
 
     @NotNull
-    @Column(name = "phone_num", nullable = false)
-    private String phoneNum;
+    @Column(name = "phone_number", nullable = false)
+    private String phoneNumber;
 
     @NotNull
     @Column(name = "password", nullable = false)
@@ -38,8 +38,8 @@ public class User {
     private String address;
 
     @NotNull
-    @Column(name = "pw_hint", nullable = false)
-    private String pwHint;
+    @Column(name = "password_hint", nullable = false)
+    private String passwordHint;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -67,7 +67,7 @@ public class User {
 //    private Cart cart;
 
 
-    // 기본 권한을 "USER", 등급을 "BRONZE"로 설정
+    // 회원가입 시 기본 권한을 "ROLE_USER", 등급을 "BRONZE"로 설정
     @PrePersist
     public void setDefaultRole() {
         if (this.role == null) {
