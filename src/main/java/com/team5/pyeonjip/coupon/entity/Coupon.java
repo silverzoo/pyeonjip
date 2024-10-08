@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class Coupon {
 
@@ -30,4 +29,12 @@ public class Coupon {
     private boolean active;
     @NotNull
     private LocalDateTime expiryDate; // 만료 날짜
+
+    public Coupon(String code, Long discount, boolean active, LocalDateTime expiryDate) {
+        this.code = code;
+        this.discount = discount;
+        this.active = active;
+        this.expiryDate = expiryDate;
+    }
+
 }
