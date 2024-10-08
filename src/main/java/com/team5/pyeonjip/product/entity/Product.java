@@ -22,7 +22,7 @@ public class Product {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "cartegory_id")
+    @JoinColumn(name = "category_id")
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
