@@ -2,12 +2,13 @@ package com.team5.pyeonjip.order.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+// 주문 상세 요청
 @Getter
-@Setter
-@NoArgsConstructor
 @Builder
 public class OrderDetailDto {
+    private Long productDetailId;
+    private String productName;
+    private Long quantity;
+    private Long productPrice; // 상품 개별 가격
 }

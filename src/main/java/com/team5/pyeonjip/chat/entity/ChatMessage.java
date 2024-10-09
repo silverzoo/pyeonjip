@@ -29,7 +29,7 @@ public class ChatMessage extends BaseTimeEntity {
     @Size(max = 200)
     private String message;
 
-    @Column(name = "chat_id", nullable = false)
+    @Column(name = "chat_room_id", nullable = false)
     private Long chatRoomId;
 
 

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+//todo:피드백: 쿼리시에 스키마 명까지 입력하는 습관이 좋다
 @Repository
 public interface ProductDetailRepository extends JpaRepository<ProductDetail, Long> {
 
@@ -16,7 +17,8 @@ public interface ProductDetailRepository extends JpaRepository<ProductDetail, Lo
     List<ProductDetail> findByProductId(@Param("product_Id") Long productId);
 
     // 특정 Product ID에 연결된 모든 ProductDetail 삭제
-    @Modifying
-    @Query("DELETE FROM ProductDetail pd WHERE pd.product.id = :product_Id")
-    void deleteByProductId(@Param("product_Id") Long productId);
+    //todo: cascade 옵션으로 삭제
+//    @Modifying
+//    @Query("DELETE FROM ProductDetail pd WHERE pd.product.id = :product_Id")
+//    void deleteByProductId(@Param("product_Id") Long productId);
 }
