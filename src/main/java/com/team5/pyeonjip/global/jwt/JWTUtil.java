@@ -55,6 +55,18 @@ public class JWTUtil {
     }
 
 
+    // access / refresh 토큰 구별을 위한 카테고리 getter
+    public String getCategory(String token) {
+
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("category", String.class);
+    }
+
+
     // 토큰 만료 시간 확인
     public Date getExpirationDate(String token) {
         return Jwts.parser()
@@ -81,12 +93,14 @@ public class JWTUtil {
     }
 
 
-    // Todo: 기존에는 email이 username이었음.
-    public String createJwt(String email, String role, Long expiredMs) {
+    // category는 access / refresh 토큰을 구별하기 위해 사용한다.
+    // 참고: 기존에는 email이 username이었음.
+    public String createJwt(String category, String email, String role, Long expiredMs) {
 
         return Jwts.builder()
                 .setHeaderParam("typ", "JWP")
                 // 키에 대한 특정 데이터를 담는다.
+                .claim("category", category)
                 .claim("email", email)
                 .claim("role", role)
 

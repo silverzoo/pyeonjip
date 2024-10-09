@@ -1,8 +1,10 @@
 package com.team5.pyeonjip.global.config;
 
+import com.team5.pyeonjip.global.jwt.CustomLogoutFilter;
 import com.team5.pyeonjip.global.jwt.JWTFilter;
 import com.team5.pyeonjip.global.jwt.JWTUtil;
 import com.team5.pyeonjip.global.jwt.LoginFilter;
+import com.team5.pyeonjip.user.repository.RefreshRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +17,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -27,6 +30,7 @@ public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
+    private final RefreshRepository refreshRepository;
 
 
     @Bean
@@ -91,6 +95,7 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/", "/signup").permitAll()
                         .requestMatchers("/admin").hasAnyAuthority("ROLE_ADMIN")
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/reissue").permitAll()
                         // 개발 편의를 위해 전체 허용
                         .anyRequest().permitAll());
 //                        .anyRequest().authenticated());
@@ -101,8 +106,10 @@ public class SecurityConfig {
                 .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 //      LoginFilter
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
-
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshRepository), UsernamePasswordAuthenticationFilter.class);
+//      LogoutFilter
+        http
+                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);
         // 세션 설정
         http
                 .sessionManagement((session) -> session

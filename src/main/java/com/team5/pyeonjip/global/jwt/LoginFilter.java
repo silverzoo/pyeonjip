@@ -2,11 +2,15 @@ package com.team5.pyeonjip.global.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.team5.pyeonjip.user.dto.CustomUserDetails;
+import com.team5.pyeonjip.user.entity.Refresh;
+import com.team5.pyeonjip.user.repository.RefreshRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 
 @RequiredArgsConstructor
@@ -23,6 +28,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
+    private final RefreshRepository refreshRepository;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -45,47 +51,51 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         return authenticationManager.authenticate(authToken);
     }
 
-    // 단일 토큰 발급 방식에서 로그인 성공 시 사용했던 메서드
+
+    // 로그인 시 access & refresh 토큰 발급
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
 
-        // 특정 유저를 확인
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-
-        String email = customUserDetails.getUsername();
+        // 토큰에 유저 정보와 role을 stream으로 받아온다.
+        String email = authentication.getName();
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-        GrantedAuthority auth = iterator.next();
-
+        Iterator<? extends GrantedAuthority> iter = authorities.iterator();
+        GrantedAuthority auth = iter.next();
         String role = auth.getAuthority();
 
-        // Jwt 생성
-        String token = jwtUtil.createJwt(email, role, 60 * 60 * 5L * 1000);
+        // access & refresh 토큰 생성
+        String access = jwtUtil.createJwt("access", email, role, 600000L);
+        String refresh = jwtUtil.createJwt("refresh", email, role, 86400000L);
 
-        // Jwt를 Header에 담아 응답
-        // Bearer 인증방식
-        response.addHeader("Authorization", "Bearer " + token);
+        // Repository에 refresh 토큰 저장
+        addRefresh(email, refresh, 86400000L);
 
-        response.setStatus(200);
+        // 응답 설정
+        response.setHeader("access", access);
+        response.addCookie(createCookie("refresh", refresh));
+        response.setStatus(HttpStatus.OK.value());
     }
-
-
-//    @Override
-//    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
-//
-//        // 토큰에 유저 정보와 role을 stream으로 받아온다.
-//        String email = authentication.getName();
-//
-//        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-//        Iterator<? extends GrantedAuthority> iter = authorities.iterator();
-//        GrantedAuthority auth = iter.next();
-//        String role = auth.getAuthority();
-//    }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         response.setStatus(401);
+    }
+
+
+    // Todo: Mapper 사용해보기
+    // Repository에 Refresh 토큰을 저장
+    private void addRefresh(String email, String refresh, Long expiredMs) {
+
+        // 만료일 설정
+        Date date = new Date(System.currentTimeMillis() + expiredMs);
+
+        Refresh newRefresh = new Refresh();
+        newRefresh.setEmail(email);
+        newRefresh.setRefresh(refresh);
+        newRefresh.setExpiration(date.toString());
+
+        refreshRepository.save(newRefresh);
     }
 
 
@@ -102,5 +112,24 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         public String getPassword() {
             return password;
         }
+    }
+
+
+    // value에는 JWT가 들어감.
+    private Cookie createCookie(String key, String value) {
+
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(24 * 60 * 60);
+
+        // https 통신 시
+        // cookie.setSecure(true);
+
+        // 쿠키가 적용될 범위
+        // cookie.setPath("/");
+
+        // js 등에서 쿠키에 접근하지 못하도록.
+        cookie.setHttpOnly(true);
+
+        return cookie;
     }
 }
