@@ -14,4 +14,5 @@ public class ProductDetailResponse {
     private String name;    // 옵션 이름 (예: 색깔-사이즈)
     private Long price;     // 가격
     private Long quantity;  // 재고 수량
+    private String mainImage;  // 대표 이미지 URL 필드 추가
 }
