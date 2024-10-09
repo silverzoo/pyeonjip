@@ -1,6 +1,5 @@
 package com.team5.pyeonjip.product.mapper;
 
-import com.team5.pyeonjip.product.dto.ProductDetailResponse;
 import com.team5.pyeonjip.product.dto.ProductRequest;
 import com.team5.pyeonjip.product.dto.ProductResponse;
 import com.team5.pyeonjip.product.entity.Product;
