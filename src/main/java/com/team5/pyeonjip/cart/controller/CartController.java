@@ -1,18 +1,15 @@
 package com.team5.pyeonjip.cart.controller;
 
-import com.team5.pyeonjip.cart.dto.CartItemResponseDTO;
+import com.team5.pyeonjip.cart.dto.CartDto;
 import com.team5.pyeonjip.cart.entity.Cart;
 import com.team5.pyeonjip.cart.service.CartService;
 import com.team5.pyeonjip.coupon.entity.Coupon;
 import com.team5.pyeonjip.coupon.repository.CouponRepository;
-import com.team5.pyeonjip.product.entity.Product;
 import com.team5.pyeonjip.product.repository.ProductRepository;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,16 +25,16 @@ public class CartController {
 
     // 테스트 샌드박스용 페이지
     @GetMapping("/sandbox")
-    public List<CartItemResponseDTO> sandbox() {
-        List<CartItemResponseDTO> target = new ArrayList<>();
-        CartItemResponseDTO dto1 = cartService.getProduct(1L,1L);
-        CartItemResponseDTO dto2 = cartService.getProduct( 2L,1L);
-        CartItemResponseDTO dto3 = cartService.getProduct( 3L,1L);
-        CartItemResponseDTO dto4 = cartService.getProduct( 4L,1L);
-        CartItemResponseDTO dto5 = cartService.getProduct( 5L,1L);
-        CartItemResponseDTO dto6 = cartService.getProduct( 6L,1L);
-        CartItemResponseDTO dto7 = cartService.getProduct( 7L,1L);
-        CartItemResponseDTO dto8 = cartService.getProduct( 8L,1L);
+    public List<CartDto> sandbox() {
+        List<CartDto> target = new ArrayList<>();
+        CartDto dto1 = cartService.getProduct(1L,1L);
+        CartDto dto2 = cartService.getProduct( 2L,1L);
+        CartDto dto3 = cartService.getProduct( 3L,1L);
+        CartDto dto4 = cartService.getProduct( 4L,1L);
+        CartDto dto5 = cartService.getProduct( 5L,1L);
+        CartDto dto6 = cartService.getProduct( 6L,1L);
+        CartDto dto7 = cartService.getProduct( 7L,1L);
+        CartDto dto8 = cartService.getProduct( 8L,1L);
 
         target.add(dto1);
         target.add(dto2);
