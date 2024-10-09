@@ -91,7 +91,7 @@ document.getElementById('editMessage').addEventListener('click', function() {
 });
 
 
-// 전송 버튼 클릭 시 메시지 전송
+// 메시지 전송
 sendButton.onclick = function() {
     const message = messageInput.value.trim(); // 메시지 앞뒤 공백 제거
     if (message) {
@@ -127,3 +127,30 @@ sendButton.onclick = function() {
     }
 };
 
+// "메시지 삭제" 클릭 시 이벤트 처리
+document.getElementById('deleteMessage').addEventListener('click', function() {
+    if (selectedMessageId) {
+        // 서버로 삭제할 메시지 전송
+        fetch(`/api/chat/message/${selectedMessageId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json', // 변경된 타입
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('메시지 삭제 실패');
+            }
+        })
+        .then(() => {
+            // 삭제 후 클라이언트에서 메시지 삭제
+            const messageElement = document.querySelector(`[data-message-id="${selectedMessageId}"]`);
+            if (messageElement) {
+                messageElement.remove(); // 메시지 삭제
+            }
+        })
+        .catch(error => {
+            console.error('메시지 삭제 중 오류 발생:', error);
+        });
+    }
+});
