@@ -32,8 +32,8 @@ public class ChatRoomService {
         ChatRoom chatRoom = ChatRoom.builder()
                 .category(chatRoomDto.getCategory())
                 .isClosed(chatRoomDto.isClosed())
-                .userId(2L)
-                .adminId(1L)
+                .userId(1L)
+                .adminId(2L)
                 .build();
 
         ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
