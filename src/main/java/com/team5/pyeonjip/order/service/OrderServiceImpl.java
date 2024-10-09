@@ -9,11 +9,13 @@ import com.team5.pyeonjip.order.enums.DeliveryStatus;
 import com.team5.pyeonjip.order.enums.OrderStatus;
 import com.team5.pyeonjip.order.mapper.OrderMapper;
 import com.team5.pyeonjip.order.repository.DeliveryRepository;
+import com.team5.pyeonjip.order.repository.OrderDetailRepository;
 import com.team5.pyeonjip.order.repository.OrderRepository;
 import com.team5.pyeonjip.product.entity.Product;
 import com.team5.pyeonjip.product.entity.ProductDetail;
 import com.team5.pyeonjip.product.repository.ProductDetailRepository;
 import com.team5.pyeonjip.product.repository.ProductRepository;
+import com.team5.pyeonjip.user.entity.Grade;
 import com.team5.pyeonjip.user.entity.User;
 import com.team5.pyeonjip.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,77 +28,54 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class OrderServiceImpl implements OrderService{
+public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final DeliveryRepository deliveryRepository;
-    private final ProductRepository productRepository;
-    private final ProductDetailRepository productDetailRepository;
+    private final OrderDetailRepository orderDetailRepository;
+    private final ProductDetailRepository productRepository;
+
+    private User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("유저를 찾을 수 없습니다."));
+    }
+
+    private Delivery createDelivery(String address) {
+        return Delivery.builder()
+                .address(address)
+                .status(DeliveryStatus.READY) // 초기 배송 상태
+                .build();
+    }
+
+    private ProductDetail findProductById(Long productId) {
+        return productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("상품이 존재하지 않습니다."));
+    }
 
     // 주문 생성
     @Transactional
     @Override
-    public OrderResponseDto createOrder(OrderRequestDto orderRequestDto, User user) {
+    public void createOrder(OrderRequestDto orderRequestDto, Long userId) {
 
         // 유저 조회
-        User foundUser = userRepository.findById(user.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("유저를 찾을 수 없습니다."));
+        User user = getUserById(userId);
 
         // 배송 정보 생성
-        Delivery delivery = Delivery.builder()
-                .address(orderRequestDto.getDelivery().getAddress())
-                .status(DeliveryStatus.READY) // 초기 배송 상태
-                .build();
+        Delivery delivery = createDelivery(orderRequestDto.getAddress());
         deliveryRepository.save(delivery);
-
-        Long deliveryPrice = calculateDeliveryPrice(foundUser);
 
         Long cartTotalPrice = 100000L; // 장바구니 쿠폰 적용 후 가격 예시
 
         Long totalPrice = calculateTotalPrice(user, cartTotalPrice);
 
         // 주문 생성
-        Order order = Order.builder()
-                .recipient(orderRequestDto.getRecipient())
-                .phoneNumber(orderRequestDto.getPhoneNumber())
-                .requirement(orderRequestDto.getRequirement())
-                .delivery(delivery)
-                .totalPrice(totalPrice)  // 총 금액
-                .deliveryPrice(deliveryPrice)  // 배송비
-                .status(OrderStatus.ORDER)  // 주문 상태
-                .build();
+        Order order = OrderMapper.toEntity(orderRequestDto, delivery, user, totalPrice);
         orderRepository.save(order);
 
-//        // orderDetails가 null일 경우 빈 리스트로 초기화
-//        if (order.getOrderDetails() == null) {
-//            order.setOrderDetails(new ArrayList<>());
-//        }
-
         // 주문 상세 정보 생성
-        List<OrderDetail> orderDetails = orderRequestDto.getOrderDetails().stream()
-                .map(orderDetailDto -> {
-                    Product product = productRepository.findById(orderDetailDto.getProductId())
-                            .orElseThrow(() -> new ResourceNotFoundException("상품을 찾을 수 없습니다."));
-
-                    ProductDetail productDetail = product.getProductDetails().stream()
-                            .filter(detail -> detail.getId().equals(orderDetailDto.getProductId())) // ProductDetailId로 필터링
-                            .findFirst()
-                            .orElseThrow(() -> new ResourceNotFoundException("상품 세부 정보를 찾을 수 없습니다."));
-
-                    return OrderDetail.builder()
-                            .productName(product.getName())  // 상품명
-                            .productPrice(productDetail.getPrice())  // 상품 가격
-                            .quantity(orderDetailDto.getQuantity())  // 수량
-                            .order(order)  // 해당 주문 연결
-                            .build();
-                })
-                .collect(Collectors.toList());
-
-        // 주문 객체에 상세 정보 추가
-        orderDetails.forEach(order::addOrderDetail);
-
-        return OrderMapper.toDto(order);
+        orderRequestDto.getOrderDetails().forEach(orderDetailDto ->
+                orderDetailRepository.save(OrderMapper.toEntity(order,
+                        findProductById(orderDetailDto.getProductId()), orderDetailDto)));
     }
 
     // 회원 등급에 따른 배송비 계산
@@ -104,7 +83,7 @@ public class OrderServiceImpl implements OrderService{
         // 기본 배송비 3000원
         Long deliveryPrice = 3000L;
 
-        if (user.getGrade().equals("GOLD")) {
+        if (user.getGrade().equals(Grade.GOLD)) {
             deliveryPrice = 0L;
         }
         return deliveryPrice;
@@ -114,7 +93,7 @@ public class OrderServiceImpl implements OrderService{
     private double calculateDiscountRate(User user) {
         double discountRate = 0.0;
 
-        switch(user.getGrade()) {
+        switch (user.getGrade()) {
             case GOLD:
                 discountRate = 0.1; // 10% 할인
                 break;
@@ -146,44 +125,6 @@ public class OrderServiceImpl implements OrderService{
         return totalPrice;
     }
 
-    // 관리자 - 주문 수정
-    @Transactional
-    @Override
-    public OrderResponseDto updateOrder(Long id, OrderUpdateRequestDto orderUpdateRequestDto){
-        Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("주문을 찾을 수 없습니다."));
-        // 배송 상태 변경
-        Delivery delivery = order.getDelivery();
-        delivery.updateStatus(DeliveryStatus.valueOf(orderUpdateRequestDto.getDeliveryStatus()));
-
-        deliveryRepository.save(delivery);
-
-        return OrderMapper.toDto(order);
-    }
-
-    // 주문 삭제
-    @Transactional
-    @Override
-    public void deleteOrderById(Long id) {
-        Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("주문을 찾을 수 없습니다."));
-        orderRepository.delete(order);
-    }
-
-    // 관리자 - 주문 전체 조회
-    @Transactional(readOnly = true)
-    @Override
-    public List<Order> findAllOrders() {
-        return orderRepository.findAll();
-    }
-
-    // 관리자 - 사용자 이름으로 주문 조회
-    @Transactional(readOnly = true)
-    @Override
-    public List<Order> findAllOrdersByUserName(String userName) {
-        return orderRepository.findAllOrdersByUserName(userName);
-    }
-
     @Transactional(readOnly = true)
     @Override
     public List<OrderResponseDto> findOrdersByUserId(Long userId) {
@@ -193,7 +134,7 @@ public class OrderServiceImpl implements OrderService{
         // 주문 목록 -> OrderResponseDto로 변환
         return orders.stream()
                 .map(OrderMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // 주문 상세 조회
@@ -207,8 +148,8 @@ public class OrderServiceImpl implements OrderService{
     // 주문 취소
     @Transactional
     @Override
-    public OrderResponseDto cancelOrder(Long id) {
-        Order order = orderRepository.findById(id)
+    public void cancelOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("주문을 찾을 수 없습니다."));
 
         // 배송 상태가 READY인 경우에만 취소 가능
@@ -218,12 +159,14 @@ public class OrderServiceImpl implements OrderService{
 
         order.updateStatus(OrderStatus.CANCEL);
 
-        for(OrderDetail orderDetail:order.getOrderDetails()){
-            orderDetail.cancel();
-        }
+        order.getOrderDetails().forEach(orderDetail ->
+                productRepository.findById(orderDetail.getProduct().getId()).ifPresentOrElse(
+                    productDetail -> {}, // TODO: {} 안에서 productDetail.updateQuantity() 호출
+                        () -> new ResourceNotFoundException("상품이 존재하지 않습니다.")
+                ));
+    }
 
-        orderRepository.save(order);
-
-        return OrderMapper.toDto(order);
-     }
+    private boolean isExistUser(Long userId) {
+        return userRepository.existsById(userId);
+    }
 }
