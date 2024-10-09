@@ -8,7 +8,26 @@
 </head>
 <body>
 
-<div class="chat-container">
+<!-- 우클릭 메뉴를 표시할 div -->
+<div id="contextMenu" class="context-menu">
+    <ul>
+        <li id="editMessage">메시지 수정</li>
+    </ul>
+</div>
+
+<div class="chat-setup" id="chat-setup">
+    <label for="categorySelect">카테고리 선택: </label>
+    <select id="categorySelect">
+        <option value="inquiry_order_refund">주문/환불 문의</option>
+        <option value="inquiry_delivery">배송 문의</option>
+        <option value="inquiry_damage">파손 문의</option>
+        <option value="inquiry_etc">기타 문의</option>
+        <option value="inquiry_previous">이전 문의 내역</option>
+    </select>
+    <button id="createRoomButton">문의 하기</button>
+</div>
+
+<div class="chat-container" id="chat-Container" style="display: none;">
     <div class="header">
         편집에 문의하기
     </div>
@@ -22,8 +41,8 @@
         <button id="sendButton">전송</button>
     </div>
 </div>
-
-<script src="/js/chat/chat.js"></script>
+<script src="/js/chat/chatRoom.js"></script>
+<script src="/js/chat/chatMessage.js"></script>
 
 </body>
 </html>
