@@ -21,7 +21,7 @@ public class CategoryController {
     @GetMapping
     public ResponseEntity<List<CategoryResponse>> getCategories() {
 
-        List<CategoryResponse> categories = categoryService.getCategories();
+        List<CategoryResponse> categories = categoryService.newGetCategories();
 
         return ResponseEntity.status(HttpStatus.OK).body(categories);
     }
