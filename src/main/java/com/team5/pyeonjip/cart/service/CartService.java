@@ -26,7 +26,7 @@ public class CartService {
     private final ProductImageRepository productImageRepository;
 
    public Cart getCartByUserId(Long userId) {
-       Cart target = cartRepository.findByUserId(userId).orElseThrow(() -> new CartNotFoundException("[Cart not found, userId : " + userId + "]"));
+       Cart target = cartRepository.findByUserId(userId);
        return target;
    }
 
