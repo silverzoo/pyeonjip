@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @Entity
 @Table(name = "chat_message")
 public class ChatMessage extends BaseTimeEntity {
@@ -40,4 +40,8 @@ public class ChatMessage extends BaseTimeEntity {
     private ChatRoom chatRoom;
 
      */
+
+    public void updateMessage(String message){
+        this.message = message;
+    }
 }
