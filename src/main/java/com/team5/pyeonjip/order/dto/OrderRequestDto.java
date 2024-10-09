@@ -13,8 +13,6 @@ import java.util.List;
 @Builder
 public class OrderRequestDto {
 
-    private Long itemId;
-
     @NotBlank(message = "수령인은 필수 입력 항목입니다.")
     private String recipient;
 
@@ -27,5 +25,5 @@ public class OrderRequestDto {
     private List<OrderDetailDto> orderDetails;
 
     @NotBlank(message = "배송지는 필수 입력 항목입니다.")
-    private DeliveryRequestDto delivery;
+    private String address;
 }
