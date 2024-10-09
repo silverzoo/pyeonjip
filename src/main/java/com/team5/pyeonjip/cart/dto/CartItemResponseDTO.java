@@ -7,10 +7,12 @@ import java.util.List;
 
 @Getter @Setter
 public class CartItemResponseDTO {
-    private Long id;
+    private Long userId;
+    private Long productId;
+    private Long optionId;
     private String name;
     private String optionName;
-    private Long optionPrice;
+    private Long price;
     private Long quantity;
     private Long maxQuantity;
     private String url;

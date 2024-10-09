@@ -24,16 +24,29 @@ public class CartController {
     private final CartService cartService;
     private final ProductRepository productRepository;
 
+
+
     // 테스트 샌드박스용 페이지
     @GetMapping("/sandbox")
     public List<CartItemResponseDTO> sandbox() {
         List<CartItemResponseDTO> target = new ArrayList<>();
-        CartItemResponseDTO dto1 = cartService.getProduct(1L, 2L);
-        CartItemResponseDTO dto2 = cartService.getProduct(2L, 4L);
-        CartItemResponseDTO dto3 = cartService.getProduct(3L, 6L);
+        CartItemResponseDTO dto1 = cartService.getProduct(1L,1L);
+        CartItemResponseDTO dto2 = cartService.getProduct( 2L,1L);
+        CartItemResponseDTO dto3 = cartService.getProduct( 3L,1L);
+        CartItemResponseDTO dto4 = cartService.getProduct( 4L,1L);
+        CartItemResponseDTO dto5 = cartService.getProduct( 5L,1L);
+        CartItemResponseDTO dto6 = cartService.getProduct( 6L,1L);
+        CartItemResponseDTO dto7 = cartService.getProduct( 7L,1L);
+        CartItemResponseDTO dto8 = cartService.getProduct( 8L,1L);
+
         target.add(dto1);
         target.add(dto2);
         target.add(dto3);
+        target.add(dto4);
+        target.add(dto5);
+        target.add(dto6);
+        target.add(dto7);
+        target.add(dto8);
 
         return target;
     }

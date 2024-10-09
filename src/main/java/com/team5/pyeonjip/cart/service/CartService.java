@@ -38,17 +38,19 @@ public class CartService {
    }
 
 
-   public CartItemResponseDTO getProduct(Long productId, Long productDetailId) {
-       ProductResponse product = productService.getProductById(productId);
+   public CartItemResponseDTO getProduct(Long productDetailId, Long userId) {
+
        ProductDetail productDetail = productDetailRepository.findById(productDetailId).orElseThrow(() -> new RuntimeException(""));
+       ProductResponse product = productService.getProductById(productDetail.getProduct().getId());
        ProductImage productImage = productImageRepository.findById(productDetailId).orElseThrow(() -> new RuntimeException(""));
        CartItemResponseDTO dto = new CartItemResponseDTO();
 
-
-       dto.setId(product.getId());
+       dto.setUserId(userId);
+       dto.setProductId(product.getId());
+       dto.setOptionId(productDetailId);
        dto.setName(product.getName());
        dto.setOptionName(productDetail.getName());
-       dto.setOptionPrice(productDetail.getPrice());
+       dto.setPrice(productDetail.getPrice());
        dto.setQuantity(1L);
        dto.setMaxQuantity(productDetail.getQuantity());
        dto.setUrl(productImage.getImageUrl());
