@@ -20,5 +20,10 @@ public class GlobalExceptionHandler {
         log.error("Cart not found", ex);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
+
+    @ExceptionHandler(InvalidParentException.class)
+    public ResponseEntity<String> handleInvalidParent(InvalidParentException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
 }
 
