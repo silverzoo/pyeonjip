@@ -17,7 +17,7 @@ public class Refresh {
     private String email;
 
     @Lob
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "BLOB")
     private String refresh;
 
     @Column(nullable = false)
