@@ -125,6 +125,8 @@ class CategoryServiceTest {
 
         when(categoryRepository.findById(id)).thenReturn(Optional.of(category));
         when(categoryRepository.existsById(newParentId)).thenReturn(true);
+        when(categoryRepository.save(any(Category.class))).thenReturn(category);
+        when(categoryMapper.toResponse(any(Category.class))).thenReturn(new CategoryResponse(id, newName, newSort, newParentId, List.of()));
 
         // when
         CategoryResponse result = categoryService.updateCategory(id, request);
