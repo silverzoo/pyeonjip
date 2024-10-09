@@ -8,7 +8,6 @@ import java.util.List;
 @Getter @Setter
 public class CartItemResponseDTO {
     private Long userId;
-    private Long productId;
     private Long optionId;
     private String name;
     private String optionName;

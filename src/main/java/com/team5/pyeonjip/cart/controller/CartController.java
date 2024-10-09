@@ -38,6 +38,7 @@ public class CartController {
         CartItemResponseDTO dto6 = cartService.getProduct( 6L,1L);
         CartItemResponseDTO dto7 = cartService.getProduct( 7L,1L);
         CartItemResponseDTO dto8 = cartService.getProduct( 8L,1L);
+        CartItemResponseDTO dto9 = cartService.getProduct( 9L,1L);
 
         target.add(dto1);
         target.add(dto2);
