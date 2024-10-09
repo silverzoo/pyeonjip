@@ -27,9 +27,9 @@ public class AdminOrderApiController {
     }
 
     // 관리자 - 주문 수정
-    @PatchMapping("/{orderId}")
+    @PutMapping("order/{orderId}")
     public ResponseEntity<OrderResponseDto> updateDeliveryStatus(
-            @PathVariable Long orderId,
+            @PathVariable("orderId") Long orderId,
             @RequestBody OrderUpdateRequestDto orderUpdateRequestDto) {
 
         // 배송 상태 변경 처리
@@ -39,6 +39,11 @@ public class AdminOrderApiController {
     }
 
     // 관리자 - 주문 삭제
+    @DeleteMapping("order/{orderId}")
+    public ResponseEntity<Void> deleteOrder(@PathVariable("orderId") Long orderId) {
+        // 주문 삭제 처리
+        orderService.deleteOrderById(orderId);
 
-
+        return ResponseEntity.noContent().build();
+    }
 }

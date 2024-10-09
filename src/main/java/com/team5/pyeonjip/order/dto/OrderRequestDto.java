@@ -8,11 +8,12 @@ import java.util.List;
 
 // 주문 요청
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class OrderRequestDto {
+
+    private Long itemId;
 
     @NotBlank(message = "수령인은 필수 입력 항목입니다.")
     private String recipient;
@@ -27,10 +28,4 @@ public class OrderRequestDto {
 
     @NotBlank(message = "배송지는 필수 입력 항목입니다.")
     private DeliveryRequestDto delivery;
-
-    private Long totalPrice;
-
-    private String quantity;
-
-    private Long deliveryPrice;
 }

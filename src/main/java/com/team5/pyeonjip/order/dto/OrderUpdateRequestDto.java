@@ -4,7 +4,6 @@ import com.team5.pyeonjip.order.enums.DeliveryStatus;
 import lombok.*;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

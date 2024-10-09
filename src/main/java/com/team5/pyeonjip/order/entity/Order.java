@@ -8,16 +8,19 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class Order extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false)
     private Long id;
 
     @Column(name = "recipient", nullable = false)
@@ -49,21 +52,12 @@ public class Order extends BaseTimeEntity {
     private List<OrderDetail> orderDetails;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "delivery_id")
+    @JoinColumn(name = "delivery_id", referencedColumnName = "id")
     private Delivery delivery;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    // == 주문 수정 메서드 == //
-    public void updateOrder(String recipient, String phoneNumber, String requirement, Long deliveryPrice, Long totalPrice) {
-        this.recipient = recipient;
-        this.phoneNumber = phoneNumber;
-        this.requirement = requirement;
-        this.deliveryPrice = deliveryPrice;
-        this.totalPrice = totalPrice;
-    }
 
     // == 연관관계 메서드 == //
     public void addOrderDetail(OrderDetail orderDetail) {
@@ -73,14 +67,12 @@ public class Order extends BaseTimeEntity {
 
     // == 비즈니스 로직 == //
 
-    // 주문 취소
-    public void cancel(){
-        if(delivery.getStatus() == DeliveryStatus.COMPLETED){
-           throw new RuntimeException("이미 배송완료된 상품은 취소가 불가능합니다.");
-        }
+    // 주문 상태 변경 메서드
+    public void updateStatus(OrderStatus status) {
+        this.status = status;
     }
 
-    // 주문 가격 조회
+    // 주문 가격
     public int getOrderPrice(){
         int totalPrice = 0;
         for (OrderDetail orderDetail : orderDetails) {

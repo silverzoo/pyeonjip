@@ -1,27 +1,39 @@
 package com.team5.pyeonjip.order.mapper;
 
 import com.team5.pyeonjip.order.dto.DeliveryRequestDto;
+import com.team5.pyeonjip.order.dto.OrderDetailDto;
 import com.team5.pyeonjip.order.dto.OrderRequestDto;
 import com.team5.pyeonjip.order.dto.OrderResponseDto;
 import com.team5.pyeonjip.order.entity.Delivery;
 import com.team5.pyeonjip.order.entity.Order;
-import com.team5.pyeonjip.order.entity.OrderDetail;
 import com.team5.pyeonjip.order.enums.DeliveryStatus;
 import com.team5.pyeonjip.order.enums.OrderStatus;
 import com.team5.pyeonjip.user.entity.User;
 
-import java.util.List;
+import java.util.stream.Collectors;
 
 public class OrderMapper {
 
     // entity -> dto
     public static OrderResponseDto toDto(Order order) {
         return OrderResponseDto.builder()
+                .id(order.getId())
+                .recipient(order.getRecipient())
+                .phoneNumber(order.getPhoneNumber())
+                .status(order.getStatus())
+                .orderDetails(order.getOrderDetails().stream()
+                        .map(detail -> OrderDetailDto.builder()
+                                .productName(detail.getProductName())
+                                .productPrice(detail.getTotalPrice())
+                                .quantity(detail.getQuantity())
+                                .build())
+                        .collect(Collectors.toList()))
                 .build();
     }
 
     // dto -> entity
     public static Order toEntity(OrderRequestDto orderRequestDto, DeliveryRequestDto deliveryRequestDto, User user) {
+
         Delivery delivery = Delivery.builder()
                 .address(deliveryRequestDto.getAddress() != null ? deliveryRequestDto.getAddress() : user.getAddress()) // 배송지 주소, 유저 기본 주소 사용
                 .status(DeliveryStatus.READY)             // 기본적으로 배송 상태는 READY

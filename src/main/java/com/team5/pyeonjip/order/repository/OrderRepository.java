@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    List<Order> findAllByUser_Name(String userName);  // 유저 이름으로 주문 검색
+    List<Order> findAllOrdersByUserName(String userName);  // 유저 이름으로 주문 검색
 
-    List<Order> findAllByUserId(Long userId); // 사용자 ID로 모든 주문 조회
+    List<Order> findOrdersByUserId(Long userId); // 사용자 ID로 모든 주문 조회
 }

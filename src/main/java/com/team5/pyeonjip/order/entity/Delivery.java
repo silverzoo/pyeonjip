@@ -14,6 +14,7 @@ import org.hibernate.annotations.Comment;
 public class Delivery extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false)
     private Long id;
 
     @Enumerated(EnumType.STRING)

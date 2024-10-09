@@ -25,11 +25,11 @@ public interface OrderService {
     List<Order> findAllOrders();
 
     // 사용자 id로 주문 전체 조회
-    List<OrderResponseDto> findOrdersByUser(Long userId);
+    List<OrderResponseDto> findOrdersByUserId(Long userId);
 
     // 주문 상세 조회
     Order findOrderDetail(Long id);
 
     // 주문 취소
-    void cancelOrder(Long id);
+    OrderResponseDto cancelOrder(Long id);
 }
