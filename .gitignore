@@ -48,3 +48,6 @@ out/
 
 ### mapperImpl ###
 /src/main/generated/
+
+# Ignore AWS S3 설정 파일
+src/main/resources/s3bucket.yml
