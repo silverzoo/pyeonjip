@@ -11,6 +11,7 @@ import com.team5.pyeonjip.product.repository.ProductDetailRepository;
 import com.team5.pyeonjip.product.repository.ProductImageRepository;
 import com.team5.pyeonjip.product.service.ProductService;
 import com.team5.pyeonjip.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,7 @@ public class CartService {
     private final ProductImageRepository productImageRepository;
 
    public Cart getCartByUserId(Long userId) {
-       Cart target = cartRepository.findByUserId(userId).orElseThrow(() -> new CartNotFoundException("[Cart not found, userId : " + userId + "]"));
+       Cart target = cartRepository.findByUserId(userId);
        return target;
    }
 
@@ -33,9 +34,17 @@ public class CartService {
        return cartRepository.save(cart);
    }
 
+   @Transactional
    public void clearCart(Long userId) {
        cartRepository.deleteByUserId(userId);
    }
+
+
+    @Transactional
+    public void deleteCartItem(Long userId, Long optionId) {
+        cartRepository.deleteByUserIdAndOptionId(userId, optionId);
+    }
+
 
 
    public CartItemResponseDTO getProduct(Long productDetailId, Long userId) {
@@ -57,4 +66,8 @@ public class CartService {
 
        return dto;
    }
+
+    public boolean existsByUserIdAndOptionId(Long userId, Long optionId) {
+        return cartRepository.existsByUserIdAndOptionId(userId, optionId);
+    }
 }

@@ -11,10 +11,15 @@ import java.util.Optional;
 
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Long> {
-    Optional<Cart> findByUserId(Long userId);
+    Cart findByUserId(Long userId);
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM Cart c WHERE c.userId = ?1")
+    void deleteByUserIdAndOptionId(Long userId, Long optionId);
+
+    @Modifying
+    @Transactional
     void deleteByUserId(Long userId);
+
+    boolean existsByUserIdAndOptionId(Long userId, Long optionId);
 }

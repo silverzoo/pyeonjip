@@ -65,11 +65,33 @@ public class CartController {
         return ResponseEntity.ok(cart);
     }
 
-
+    // 장바구니 추가
     @PostMapping("/save")
     public ResponseEntity<Cart> saveCart(@RequestBody Cart cart) {
         Cart savedCart = cartService.saveCart(cart);
         return ResponseEntity.ok(savedCart);
+    }
+
+    @PostMapping("/clear")
+    public ResponseEntity<Cart> clearCart(@RequestBody Cart cart) {
+        cartService.clearCart(cart.getUserId());
+        return ResponseEntity.ok(cart);
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteCartItem(@RequestParam Long userId, @RequestParam Long optionId) {
+        if (!cartService.existsByUserIdAndOptionId(userId, optionId)) {
+            return ResponseEntity.notFound().build(); // 항목이 없으면 404 반환
+        }
+        cartService.deleteCartItem(userId, optionId);
+        return ResponseEntity.noContent().build();
+    }
+
+    // 중복체크 API 검사
+    @GetMapping("/checkDuplicate")
+    public ResponseEntity<Boolean> checkDuplicate(@RequestParam Long userId, @RequestParam Long optionId) {
+        boolean exists = cartService.existsByUserIdAndOptionId(userId, optionId);
+        return ResponseEntity.ok(exists);
     }
 }
 
