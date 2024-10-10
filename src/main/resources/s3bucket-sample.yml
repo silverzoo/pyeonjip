@@ -1,0 +1,11 @@
+aws:
+  s3:
+    bucket:
+      name: elice-project2
+      stack:
+        auto: false
+      region: us-west-2
+      url: https://elice-project2.s3.us-west-2.amazonaws.com/
+      credentials:
+        accessKey: abcdefghijk #더미 값 입니다 필요하시면 수정해서 사용해 주세요
+        secretAccessKey: abcdefghijk #더미 값 입니다 필요하시면 수정해서 사용해 주세요

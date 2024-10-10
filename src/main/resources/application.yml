@@ -16,3 +16,7 @@ spring:
     show-sql: 'true'
   jwt:
     secret: dc5e9dd80f65e4ac4f67b718c01d50f02cf84b697d5ba6cfe2f4dddf2ecda8ff
+
+  config:
+    import:
+      - s3bucket-sample.yml
