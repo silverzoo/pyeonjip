@@ -59,14 +59,9 @@ public class CategoryUtils {
         Long parentId = getCategory(id).getParentId();
         Long requestParentId = request.getParentId();
 
-        // 원래 최상위 카테고리인 경우
-        if (parentId == null) {
-            return;
-        }
-
-        // 최상위 카테고리로 변경
+        // 최상위 카테고리로 이동 (NPE 방지)
         if (requestParentId == null) {
-            throw new GlobalException(ErrorCode.CHANGE_TO_ROOT_CATEGORY);
+            return;
         }
 
         // 부모 id가 본인 id 인 경우
