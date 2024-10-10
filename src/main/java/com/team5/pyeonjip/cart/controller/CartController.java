@@ -7,6 +7,8 @@ import com.team5.pyeonjip.coupon.entity.Coupon;
 import com.team5.pyeonjip.coupon.repository.CouponRepository;
 import com.team5.pyeonjip.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/cart")
 @RequiredArgsConstructor
+@Slf4j
 public class CartController {
     private final CouponRepository couponRepository;
     private final CartService cartService;
@@ -56,10 +59,12 @@ public class CartController {
         return coupons;
     }
 
-    @GetMapping("/sync")
-    public ResponseEntity<Cart> getCartByUserId(@PathVariable Long userId){
-        Cart cart = cartService.getCartByUserId(userId);
-        return ResponseEntity.ok(cart);
+    // 로컬 스토리지와의 동기화 로직
+    @PostMapping("/sync")
+    public ResponseEntity<List<CartDto>> syncCart(@RequestBody List<CartDto> localCartItems, @RequestParam Long userId) {
+        List<CartDto> dtos = cartService.syncCart(userId, localCartItems);
+
+        return ResponseEntity.status(HttpStatus.OK).body(dtos);
     }
 
     // 장바구니 추가
@@ -78,9 +83,11 @@ public class CartController {
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteCartItem(@RequestParam Long userId, @RequestParam Long optionId) {
         if (!cartService.existsByUserIdAndOptionId(userId, optionId)) {
+            log.error("Delete cart item fail");
             return ResponseEntity.notFound().build(); // 항목이 없으면 404 반환
         }
         cartService.deleteCartItem(userId, optionId);
+        log.info("Delete cart item success");
         return ResponseEntity.noContent().build();
     }
 
