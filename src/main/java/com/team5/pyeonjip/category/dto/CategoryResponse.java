@@ -21,6 +21,11 @@ public class CategoryResponse {
 
     private List<CategoryResponse> child = new ArrayList<>();
 
+    @Override
+    public String toString() {
+        return String.format("CategoryResponse{id=%d, name='%s'}", id, name);
+    }
+
 //    public static CategoryResponse toResponse(Category category) {
 //
 //        return new CategoryResponse(
