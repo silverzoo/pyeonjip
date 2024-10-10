@@ -11,5 +11,6 @@ public interface ChatRoomMapper {
     // Entity -> DTO
     @Mapping(source = "userId", target = "userId") // User 객체의 ID를 userId로 매핑
     @Mapping(source = "adminId", target = "adminId") // User 객체의 ID를 adminId로 매핑 (관리자와 사용자 모두 User)
+    @Mapping(source = "createdAt", target = "createdAt")
     ChatRoomDto toDTO(ChatRoom chatRoom);
 }
