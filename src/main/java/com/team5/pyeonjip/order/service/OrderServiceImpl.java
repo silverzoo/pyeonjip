@@ -4,17 +4,15 @@ import com.team5.pyeonjip.global.exception.ResourceNotFoundException;
 import com.team5.pyeonjip.order.dto.*;
 import com.team5.pyeonjip.order.entity.Delivery;
 import com.team5.pyeonjip.order.entity.Order;
-import com.team5.pyeonjip.order.entity.OrderDetail;
 import com.team5.pyeonjip.order.enums.DeliveryStatus;
 import com.team5.pyeonjip.order.enums.OrderStatus;
 import com.team5.pyeonjip.order.mapper.OrderMapper;
 import com.team5.pyeonjip.order.repository.DeliveryRepository;
 import com.team5.pyeonjip.order.repository.OrderDetailRepository;
 import com.team5.pyeonjip.order.repository.OrderRepository;
-import com.team5.pyeonjip.product.entity.Product;
 import com.team5.pyeonjip.product.entity.ProductDetail;
 import com.team5.pyeonjip.product.repository.ProductDetailRepository;
-import com.team5.pyeonjip.product.repository.ProductRepository;
+import com.team5.pyeonjip.product.service.ProductDetailService;
 import com.team5.pyeonjip.user.entity.Grade;
 import com.team5.pyeonjip.user.entity.User;
 import com.team5.pyeonjip.user.repository.UserRepository;
@@ -22,9 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +31,7 @@ public class OrderServiceImpl implements OrderService {
     private final DeliveryRepository deliveryRepository;
     private final OrderDetailRepository orderDetailRepository;
     private final ProductDetailRepository productRepository;
+    private final ProductDetailService productDetailService;
 
     private User getUserById(Long userId) {
         return userRepository.findById(userId)
@@ -161,7 +158,10 @@ public class OrderServiceImpl implements OrderService {
 
         order.getOrderDetails().forEach(orderDetail ->
                 productRepository.findById(orderDetail.getProduct().getId()).ifPresentOrElse(
-                    productDetail -> {}, // TODO: {} 안에서 productDetail.updateQuantity() 호출
+                    productDetail -> {
+                        // 주문 수량을 취소하여 상품 수량을 원래대로 복구
+                        productDetailService.updateDetailQuantity(productDetail.getId(), Math.toIntExact(orderDetail.getQuantity()));
+                    }, // TODO: {} 안에서 productDetail.updateQuantity() 호출
                         () -> new ResourceNotFoundException("상품이 존재하지 않습니다.")
                 ));
     }
