@@ -21,12 +21,9 @@ public class Category {
     @Column(nullable = false)
     private int sort; //낮을수록 먼저 반환
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn (name = "parent_id")
     @Column(name = "parent_id")
     private Long parentId;
 
-//    @OneToMany(mappedBy = "parentId", cascade = CascadeType.ALL)
     @OneToMany
     @JoinColumn(name = "parent_id", referencedColumnName = "id")
     private List<Category> children = new ArrayList<>();
@@ -43,26 +40,11 @@ public class Category {
     // toString() 무한 재귀호출 방지
     @Override
     public String toString() {
-        return String.format("Category{id=%d, name='%s'}", id, name);
+        return String.format("Category(id=%d, name='%s')", id, name);
     }
 
     public void addChild(Category child) {
         this.children.add(child);
         child.parentId = this.id;
     }
-
-//    public static List<Long> extractLowestCategoryIds(Category category) {
-//
-//        if (category.getChildren() == null || category.getChildren().isEmpty()) {
-//            return List.of(category.getId());
-//        }
-//
-//        return category.getChildren()
-//                .stream()
-//                //각 Category 객체를 List<Long>으로 변환하여 리스트의 스트림을 생성합니다. 즉, Stream<List<Long>>을 반환
-//                .map(Category::extractLowestCategoryIds)
-//                // 중첩된 스트림을 평탄화하여 하나의 스트림으로 만듬
-//                .flatMap(List::stream)
-//                .toList();
-//    }
 }
