@@ -19,11 +19,38 @@ function displayChatRooms(chatRooms) {
                 history.pushState(null, '', `/chat?chatRoomId=${room.id}`);
                 document.getElementById('chat-Container').style.display = 'flex'; // chat-container 표시
                 document.getElementById('chat-setup').style.display = 'none'; // chat-setup 숨기기
+
+                // 선택한 채팅방의 메시지 로드
+                loadChatMessages(room.id);
             };
             chatBody.appendChild(roomElement); // 채팅 목록에 추가
         });
     }
 }
+
+// 채팅 내역을 화면에 표시하는 함수
+function displayMessages(messages) {
+    const chatBody = document.getElementById('chatBody');
+    chatBody.innerHTML = ''; // 기존 메시지 초기화
+
+    messages.forEach(message => {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('chat-message');
+
+        // 메시지가 JSON 형식인지 확인 후 파싱
+        let messageContent;
+        try {
+            const parsedMessage = JSON.parse(message.message);
+            messageContent = parsedMessage.message; // JSON 형식이라면 이 필드 사용
+        } catch (error) {
+            messageContent = message.message; // JSON 형식이 아니면 원본 메시지 사용
+        }
+
+        messageElement.textContent = `${message.senderEmail}: ${messageContent}`;
+        chatBody.appendChild(messageElement);
+    });
+}
+
 
 // 채팅방 생성 버튼 클릭 시
 createRoomButton.onclick = function() {
@@ -82,3 +109,48 @@ createRoomButton.onclick = function() {
         }
     }
 };
+
+// 채팅방 클릭 시 메시지 불러오기
+function loadChatMessages(chatRoomId) {
+    fetch(`/api/chat/chat_message_history/${chatRoomId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('채팅 메시지를 불러오는 중 오류가 발생했습니다.');
+        }
+        return response.json();
+    })
+    .then(chatMessages => {
+        console.log(chatMessages);
+        const chatBody = document.getElementById('chatBody');
+        chatBody.innerHTML = ''; // 기존 채팅 내용 초기화
+
+        if (chatMessages.length === 0) {
+            chatBody.innerHTML = '<p>이전 메시지가 없습니다.</p>';
+        } else {
+            chatMessages.forEach(message => {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('chat-message');
+
+                // 메시지가 JSON 형식인지 확인 후 파싱
+                let messageContent;
+                try {
+                    const parsedMessage = JSON.parse(message.message);
+                    messageContent = parsedMessage.message; // JSON 형식이라면 이 필드 사용
+                } catch (error) {
+                    messageContent = message.message; // JSON 형식이 아니면 원본 메시지 사용
+                }
+
+                messageElement.textContent = `${message.senderEmail}: ${messageContent}`;
+                chatBody.appendChild(messageElement); // 채팅 메시지 목록에 추가
+            });
+        }
+    })
+    .catch(error => {
+        console.error('채팅 메시지 불러오기 중 오류가 발생했습니다:', error);
+    });
+}
