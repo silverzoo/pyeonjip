@@ -47,7 +47,7 @@ public class CategoryUtils {
                     .id(parent.getId())
                     .sort(parent.getSort())
                     .name(parent.getName())
-                    .child(children)
+                    .children(children)
                     .build();
 
             responses.add(parentResponses);
