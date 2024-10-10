@@ -14,7 +14,7 @@ public class GlobalExceptionHandler {
     }
 
 
-    //NOTE: 사용하면 안되는 코드. handleGlobalException() 메서드로 리팩토링하시면 됩니다.
+    //NOTE: 삭제 예정 코드
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<String> handleResourceNotFound(ResourceNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
