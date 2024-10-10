@@ -6,7 +6,8 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter @ToString
+@Getter
+@Builder
 @AllArgsConstructor
 public class CategoryResponse {
 
@@ -14,23 +15,22 @@ public class CategoryResponse {
 
     private String name;
 
-    private int dept;
+    private int sort;
 
     private Long parentId;
 
     private List<CategoryResponse> child = new ArrayList<>();
 
-    public static CategoryResponse toResponse(Category category) {
-
-        return new CategoryResponse(
-                category.getId(),
-                category.getName(),
-                category.getDept(),
-                category.getParent() != null ? category.getParent().getId() : null,
-                category.getChild()
-                        .stream()
-                        .map(CategoryResponse::toResponse)
-                        .toList()
-        );
-    }
+//    public static CategoryResponse toResponse(Category category) {
+//
+//        return new CategoryResponse(
+//                category.getId(),
+//                category.getName(),
+//                category.getParentId() != null ? category.getId() : null,
+//                category.getChild()
+//                        .stream()
+//                        .map(CategoryResponse::toResponse)
+//                        .toList()
+//        );
+//    }
 }

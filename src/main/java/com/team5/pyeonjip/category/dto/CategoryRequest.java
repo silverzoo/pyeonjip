@@ -18,7 +18,9 @@ public class CategoryRequest {
 
     private String name;
 
+    private int sort;
+
     private Long parentId;
 
-    private List<Category> child = new ArrayList<>();
+//    private List<Category> child = new ArrayList<>();
 }

@@ -19,11 +19,8 @@ public class Cart {
 
     private Long userId; // 사용자 식별
 
-    // private Long productId;
-
-    private Long optionId; // 사실 optionId가 있으면 productId도 필요없음..
+    private Long optionId; // optionId가 있으면 productId도 필요없다.
 
     private Long quantity; // 사용자가 선택한 수량 (기본값 : 1)
-
 
 }

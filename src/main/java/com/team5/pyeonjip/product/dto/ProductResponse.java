@@ -1,7 +1,6 @@
 package com.team5.pyeonjip.product.dto;
 
 import lombok.*;
-
 import java.util.List;
 
 @Getter
@@ -13,9 +12,21 @@ public class ProductResponse {
     private Long id;  // Product ID
     private String name;
     private String description;
-    private String mainImage;  // 대표 이미지 URL 필드 추가
-    private List<ProductDetailResponse> productDetails;
+    private List<ProductDetailResponse> productDetails; // 내부 클래스 사용
     private List<ProductImageResponse> productImages;   // 이미지 정보 목록
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ToString
+    public static class ProductDetailResponse {
+        private Long id;        // ProductDetail ID
+        private String name;    // 옵션 이름 (예: 색깔-사이즈)
+        private Long price;     // 가격
+        private Long quantity;  // 재고 수량
+        private String mainImage;  // ProductDetail의 대표 이미지
+    }
 
     @Getter
     @Setter

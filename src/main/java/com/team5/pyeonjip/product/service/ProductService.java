@@ -27,15 +27,18 @@ public class ProductService {
 
     @Transactional
     public ProductResponse createProduct(ProductRequest productRequest) {
-        // 1. Product 엔티티 생성 및 저장
         Product product = productMapper.toEntity(productRequest);
         Product savedProduct = productRepository.save(product);
 
-        // 2. 옵션 및 이미지 생성 및 저장 (각 서비스에 위임)
-        productDetailService.createProductDetails(savedProduct, productRequest.getProductDetails());
+        // ProductDetail 생성 및 저장
+        List<ProductDetail> productDetails = productRequest.getProductDetails().stream()
+                .map(detailRequest -> productMapper.toEntity(detailRequest, savedProduct))
+                .collect(Collectors.toList());
+        savedProduct.setProductDetails(productDetails);
+
+        // ProductImage 생성 및 저장
         productImageService.createProductImages(savedProduct, productRequest.getProductImages());
 
-        // 3. 최종적으로 DTO로 변환 후 반환
         return productMapper.toDto(savedProduct, savedProduct.getProductDetails(), savedProduct.getProductImages());
     }
 

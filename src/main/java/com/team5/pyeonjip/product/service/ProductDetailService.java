@@ -1,5 +1,6 @@
 package com.team5.pyeonjip.product.service;
 
+import com.team5.pyeonjip.global.exception.ResourceNotFoundException;
 import com.team5.pyeonjip.product.dto.ProductRequest;
 import com.team5.pyeonjip.product.entity.Product;
 import com.team5.pyeonjip.product.entity.ProductDetail;
@@ -53,5 +54,14 @@ public class ProductDetailService {
     public void deleteProductDetailsByProduct(Product product) {
         List<ProductDetail> existingDetails = productDetailRepository.findByProductId(product.getId());
         productDetailRepository.deleteAll(existingDetails);
+    }
+
+    // Quantity Update - 수량 조절 메서드 추가
+    @Transactional
+    public void updateDetailQuantity(Long detailId, int quantity) {
+        ProductDetail productDetail = productDetailRepository.findById(detailId)
+                .orElseThrow(() -> new ResourceNotFoundException("해당 상품 옵션을을 찾을 수 없습니다: " + detailId));
+        productDetail.setQuantity(productDetail.getQuantity() + quantity); // 수량 변경
+        productDetailRepository.save(productDetail);
     }
 }

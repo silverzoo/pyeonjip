@@ -21,7 +21,6 @@ public class Product {
 
     private String description;
 
-    private String mainImage;
 
     @ManyToOne
     @JoinColumn(name = "category_id")

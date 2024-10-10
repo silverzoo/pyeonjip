@@ -21,6 +21,8 @@ public class ProductDetail {
 
     private  Long quantity;
 
+    private String mainImage;
+
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
