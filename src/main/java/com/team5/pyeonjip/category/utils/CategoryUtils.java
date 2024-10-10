@@ -56,9 +56,26 @@ public class CategoryUtils {
 
     // 부모카테고리 유효성 검사
     public void validateParent(Long id, CategoryRequest request) {
-        if (request.getParentId().equals(id)) {
+        Long parentId = getCategory(id).getParentId();
+        Long requestParentId = request.getParentId();
+
+        // 원래 최상위 카테고리인 경우
+        if (parentId == null) {
+            return;
+        }
+
+        // 최상위 카테고리로 변경
+        if (requestParentId == null) {
+            throw new GlobalException(ErrorCode.CHANGE_TO_ROOT_CATEGORY);
+        }
+
+        // 부모 id가 본인 id 인 경우
+        if (requestParentId.equals(id)) {
             throw new GlobalException(ErrorCode.INVALID_PARENT_SELF);
-        } else if (!categoryRepository.existsById(request.getParentId())) {
+        }
+
+        // 부모 id가 존재하지 않는 id 인 경우
+        if (!categoryRepository.existsById(requestParentId)) {
             throw new GlobalException(ErrorCode.INVALID_PARENT);
         }
     }
