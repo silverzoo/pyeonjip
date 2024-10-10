@@ -5,7 +5,7 @@ import com.team5.pyeonjip.category.dto.CategoryResponse;
 import com.team5.pyeonjip.category.entity.Category;
 import com.team5.pyeonjip.category.mapper.CategoryMapper;
 import com.team5.pyeonjip.category.repository.CategoryRepository;
-import com.team5.pyeonjip.global.exception.InvalidParentException;
+import com.team5.pyeonjip.global.exception.GlobalException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -80,8 +79,7 @@ class CategoryServiceTest {
 
         // when & then
         assertThatThrownBy(() -> categoryService.updateCategory(id, request))
-                .isInstanceOf(InvalidParentException.class)
-                .hasMessage("해당 카테고리를 상위 카테고리로 수정할 수 없습니다.");
+                .isInstanceOf(GlobalException.class);
 
         verify(categoryRepository, times(1)).findById(id);
 
@@ -103,8 +101,7 @@ class CategoryServiceTest {
 
         // when & then
         assertThatThrownBy(() -> categoryService.updateCategory(id, request))
-                .isInstanceOf(InvalidParentException.class)
-                .hasMessage("해당 카테고리를 상위 카테고리로 수정할 수 없습니다.");
+                .isInstanceOf(GlobalException.class);
 
         verify(categoryRepository, times(1)).findById(id);
 
@@ -125,6 +122,8 @@ class CategoryServiceTest {
 
         when(categoryRepository.findById(id)).thenReturn(Optional.of(category));
         when(categoryRepository.existsById(newParentId)).thenReturn(true);
+        when(categoryRepository.save(any(Category.class))).thenReturn(category);
+        when(categoryMapper.toResponse(any(Category.class))).thenReturn(new CategoryResponse(id, newName, newSort, newParentId, List.of()));
 
         // when
         CategoryResponse result = categoryService.updateCategory(id, request);
