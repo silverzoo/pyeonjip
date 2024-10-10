@@ -6,68 +6,73 @@ import com.team5.pyeonjip.order.enums.OrderStatus;
 import com.team5.pyeonjip.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Comment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class Order extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false)
     private Long id;
 
     @Column(name = "recipient", nullable = false)
-    private String recipient; // 수령인
+    @Comment(value = "수령인")
+    private String recipient;
 
     @Column(name = "phone_number", nullable = false, length = 11)
-    private String phoneNumber; // 전화번호
+    @Comment(value = "연락처")
+    private String phoneNumber;
 
     @Column(name = "requirement")
-    private String requirement; // 주문 시 요청사항
+    @Comment(value = "주문 시 요청사항")
+    private String requirement;
 
     @Column(name = "total_price", nullable = false)
-    private Long totalPrice; // 총금액
+    @Comment(value = "주문 시 최종 금액")
+    private Long totalPrice;
 
     @Column(name = "delivery_price", nullable = false)
-    private Long deliveryPrice; // 배송비
+    @Comment(value = "배송비")
+    private Long deliveryPrice;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private OrderStatus status; // 주문 상태
+    @Comment(value = "주문 상태")
+    private OrderStatus status;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderDetail> orderDetails;  // 주문 상세 리스트
+    private List<OrderDetail> orderDetails;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "delivery_id")
-    private Delivery delivery;  // 배송 정보
+    @JoinColumn(name = "delivery_id", referencedColumnName = "id")
+    private Delivery delivery;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user; // 유저
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    // == 주문 수정 메서드 == //
-    public void updateOrder(String recipient, String phoneNumber, String requirement, Long deliveryPrice, Long totalPrice) {
-        this.recipient = recipient;
-        this.phoneNumber = phoneNumber;
-        this.requirement = requirement;
-        this.deliveryPrice = deliveryPrice;
-        this.totalPrice = totalPrice;
+    // == 연관관계 메서드 == //
+    public void addOrderDetail(OrderDetail orderDetail) {
+        this.orderDetails.add(orderDetail);
+        orderDetail.setOrder(this);  // OrderDetail 객체에 Order 설정
     }
 
     // == 비즈니스 로직 == //
 
-    // 주문 취소
-    public void cancel(){
-        if(delivery.getStatus() == DeliveryStatus.COMPLETED){
-           throw new RuntimeException("이미 배송완료된 상품은 취소가 불가능합니다.");
-        }
+    // 주문 상태 변경 메서드
+    public void updateStatus(OrderStatus status) {
+        this.status = status;
     }
 
-    // 주문 가격 조회
+    // 주문 가격
     public int getOrderPrice(){
         int totalPrice = 0;
         for (OrderDetail orderDetail : orderDetails) {
