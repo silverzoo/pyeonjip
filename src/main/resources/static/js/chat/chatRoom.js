@@ -2,6 +2,18 @@ const categorySelect = document.getElementById('categorySelect');
 const createRoomButton = document.getElementById('createRoomButton');
 let chatRoomId;
 
+function formatDate(dateString) {
+    const date = new Date(dateString);
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // 0부터 시작하므로 +1
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+}
+
 // 이전 채팅방 목록을 화면에 나열하는 함수
 function displayChatRooms(chatRooms) {
     const chatBody = document.getElementById('chatBody');
@@ -11,9 +23,13 @@ function displayChatRooms(chatRooms) {
         chatBody.innerHTML = '<p>이전 문의 내역이 없습니다.</p>';
     } else {
         chatRooms.forEach(room => {
+            console.log(room)
             const roomElement = document.createElement('div');
             roomElement.classList.add('chat-room');
-            roomElement.textContent = `채팅방 ID: ${room.id}, 카테고리: ${room.category}`;
+
+            const formattedDate = formatDate(room.createdAt); // 날짜 포맷 적용
+            roomElement.innerHTML = `<p>문의 일시: ${formattedDate}, 문의사항: ${room.category}</p>`
+
             roomElement.onclick = function() {
                 // 클릭 시 해당 채팅방으로 이동
                 history.pushState(null, '', `/chat?chatRoomId=${room.id}`);
@@ -27,6 +43,7 @@ function displayChatRooms(chatRooms) {
         });
     }
 }
+
 
 // 채팅 내역을 화면에 표시하는 함수
 function displayMessages(messages) {
@@ -55,7 +72,7 @@ function displayMessages(messages) {
 // 채팅방 생성 버튼 클릭 시
 createRoomButton.onclick = function() {
     console.log("문의하기 클릭됨");
-    if(categorySelect.value === 'inquiry_previous'){
+    if(categorySelect.value === '이전 문의 내역'){
         const userId = 2; // 실제 사용자 ID로 변경 필요
 
         // 이전 채팅방 내역 가져오기
