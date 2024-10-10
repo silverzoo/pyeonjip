@@ -5,8 +5,8 @@ import com.team5.pyeonjip.category.dto.CategoryResponse;
 import com.team5.pyeonjip.category.entity.Category;
 import com.team5.pyeonjip.category.mapper.CategoryMapper;
 import com.team5.pyeonjip.category.repository.CategoryRepository;
-import com.team5.pyeonjip.global.exception.InvalidParentException;
-import com.team5.pyeonjip.global.exception.ResourceNotFoundException;
+import com.team5.pyeonjip.global.exception.ErrorCode;
+import com.team5.pyeonjip.global.exception.GlobalException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,13 +28,17 @@ public class CategoryService {
     public List<CategoryResponse> newGetCategories() {
         List<Category> allCategories = categoryRepository.findAll();
 
-        List<Category> parentCategories = allCategories.stream()
-                .filter(category -> category.getParentId() == null)
-                .sorted(Comparator.comparingInt(Category::getSort))
-                .toList();
+        List<Category> parentCategories = getParentCategories(allCategories);
 
         List<CategoryResponse> responses = new ArrayList<>();
 
+        createChildrenCategories(parentCategories, allCategories, responses);
+
+        return responses;
+    }
+
+    // 부모-자식 카테고리 연결
+    private void createChildrenCategories(List<Category> parentCategories, List<Category> allCategories, List<CategoryResponse> responses) {
         for (Category parent : parentCategories) {
             List<CategoryResponse> children = allCategories.stream()
                     .filter(child -> parent.getId().equals(child.getParentId()))
@@ -51,40 +55,26 @@ public class CategoryService {
 
             responses.add(parentResponses);
         }
-
-        return responses;
     }
 
-    //NOTE: 미사용 코드( newGetCategories() 사용 중 )
-    public List<CategoryResponse> getCategories() {
-        List<Category> rootCategories = categoryRepository.findByParentIdIsNull();
-
-        return rootCategories.stream()
-                .map(categoryMapper::toResponse)
+    // 최상위 카테고리만 조회
+    private static List<Category> getParentCategories(List<Category> allCategories) {
+        return allCategories.stream()
+                .filter(category -> category.getParentId() == null)
+                .sorted(Comparator.comparingInt(Category::getSort))
                 .toList();
     }
+
 
     @Transactional
     public CategoryResponse updateCategory(Long id, CategoryRequest request) {
 
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("해당 카테고리를 찾을 수 없습니다: " + id));
+                .orElseThrow(() -> new GlobalException(ErrorCode.CATEGORY_NOT_FOUND));
 
-        if (request.getParentId() != null && (request.getParentId().equals(id) || !categoryRepository.existsById(request.getParentId()))) {
-            throw new InvalidParentException("해당 카테고리를 상위 카테고리로 수정할 수 없습니다.");
-        }
+        validateParent(id, request);
 
-        //sort를 수정할 때 형제 카테고리의 sort도 업데이트해준다.
-        List<Category> siblings = categoryRepository.findByParentId(category.getParentId());
-
-        for (Category sibling : siblings) {
-            if (sibling.getSort() >= request.getSort()) {
-                Category updatedSibling = sibling.toBuilder()
-                        .sort(sibling.getSort() + 1)
-                        .build();
-                categoryRepository.save(updatedSibling);
-            }
-        }
+        updateSiblingSort(request, category);
 
         Category updatedCategory = category.toBuilder()
                 .name(request.getName())
@@ -95,5 +85,38 @@ public class CategoryService {
         Category savedCategory = categoryRepository.save(updatedCategory);
 
         return categoryMapper.toResponse(savedCategory);
+    }
+
+
+    // sort 변경으로 인한 형제 카테고리 sort 업데이트
+    private void updateSiblingSort(CategoryRequest request, Category category) {
+        List<Category> siblings = categoryRepository.findByParentId(category.getParentId());
+
+        for (Category sibling : siblings) {
+            if (sibling.getSort() >= request.getSort()) {
+                Category updatedSibling = sibling.toBuilder()
+                        .sort(sibling.getSort() + 1)
+                        .build();
+                categoryRepository.save(updatedSibling);
+            }
+        }
+    }
+
+    // 부모 카테고리 유효성 검사
+    private void validateParent(Long id, CategoryRequest request) {
+        if (request.getParentId().equals(id)) {
+            throw new GlobalException(ErrorCode.INVALID_PARENT_SELF);
+        } else if (!categoryRepository.existsById(request.getParentId())) {
+            throw new GlobalException(ErrorCode.INVALID_PARENT);
+        }
+    }
+
+    //NOTE: 미사용 코드( newGetCategories() 사용 중 )
+    public List<CategoryResponse> getCategories() {
+        List<Category> rootCategories = categoryRepository.findByParentIdIsNull();
+
+        return rootCategories.stream()
+                .map(categoryMapper::toResponse)
+                .toList();
     }
 }
