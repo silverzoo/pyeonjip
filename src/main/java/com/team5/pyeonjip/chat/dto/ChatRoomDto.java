@@ -18,4 +18,5 @@ public class ChatRoomDto {
     private Timestamp closedAt;
     private Long userId;
     private Long adminId;
+    private Timestamp createdAt;
 }

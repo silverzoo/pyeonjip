@@ -5,10 +5,13 @@ import com.team5.pyeonjip.product.dto.ProductRequest;
 import com.team5.pyeonjip.product.entity.Product;
 import com.team5.pyeonjip.product.entity.ProductDetail;
 import com.team5.pyeonjip.product.repository.ProductDetailRepository;
+import com.team5.pyeonjip.product.service.S3BucketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +19,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductDetailService {
     private final ProductDetailRepository productDetailRepository;
+    private final S3BucketService s3BucketService;
 
     // Create - 옵션 생성
     @Transactional
@@ -63,5 +67,19 @@ public class ProductDetailService {
                 .orElseThrow(() -> new ResourceNotFoundException("해당 상품 옵션을을 찾을 수 없습니다: " + detailId));
         productDetail.setQuantity(productDetail.getQuantity() + quantity); // 수량 변경
         productDetailRepository.save(productDetail);
+    }
+
+    // 대표 이미지 업로드 및 저장
+    @Transactional
+    public String uploadAndSaveMainImage(Long productDetailId, MultipartFile mainImage) throws IOException {
+        ProductDetail productDetail = productDetailRepository.findById(productDetailId)
+                .orElseThrow(() -> new ResourceNotFoundException("해당 상품 옵션을 찾을 수 없습니다: " + productDetailId));
+
+        // S3에 업로드하고 대표 이미지 URL 설정
+        String mainImageUrl = s3BucketService.upload(mainImage, "main-images");
+        productDetail.setMainImage(mainImageUrl);
+        productDetailRepository.save(productDetail);
+
+        return mainImageUrl;
     }
 }
