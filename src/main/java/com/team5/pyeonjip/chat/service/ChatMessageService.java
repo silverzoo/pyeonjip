@@ -6,6 +6,8 @@ import com.team5.pyeonjip.chat.entity.ChatMessage;
 import com.team5.pyeonjip.chat.mapper.ChatMessageMapper;
 import com.team5.pyeonjip.chat.mapper.ChatRoomMapper;
 import com.team5.pyeonjip.chat.repository.ChatMessageRepository;
+import com.team5.pyeonjip.global.exception.ErrorCode;
+import com.team5.pyeonjip.global.exception.GlobalException;
 import com.team5.pyeonjip.global.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -47,7 +49,7 @@ public class ChatMessageService {
     @Transactional
     public ChatMessageDto modifyMessage(Long messageId, String message){
         ChatMessage chatMessage = chatMessageRepository.findById(messageId)
-                .orElseThrow(() -> new ResourceNotFoundException("메시지를 찾을 수 없습니다."));
+                .orElseThrow(() -> new GlobalException(ErrorCode.CHAT_MESSAGE_NOT_FOUND));
 
         chatMessage.updateMessage(message);
 
@@ -58,7 +60,7 @@ public class ChatMessageService {
 
     public void deleteMessage(Long messageId){
         ChatMessage chatMessage = chatMessageRepository.findById(messageId)
-                .orElseThrow(() -> new ResourceNotFoundException("메시지를 찾을 수 없습니다."));
+                .orElseThrow(() -> new GlobalException(ErrorCode.CHAT_MESSAGE_NOT_FOUND));
 
         chatMessageRepository.delete(chatMessage);
     }
