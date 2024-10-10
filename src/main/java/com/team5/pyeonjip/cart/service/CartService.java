@@ -109,7 +109,7 @@ public class CartService {
         return cartDtos;
     }
 
-    public CartDto getCartDto(Long optionId, Long userId) {
+    public CartDto getCartDto(Long userId, Long optionId) {
 
         ProductDetail productDetail = productDetailRepository.findById(optionId)
                 .orElseThrow(() -> new ResourceNotFoundException("[ProductDetail not found, id : " + optionId + "]"));
