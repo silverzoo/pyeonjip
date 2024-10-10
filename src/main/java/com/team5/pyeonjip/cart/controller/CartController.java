@@ -7,6 +7,8 @@ import com.team5.pyeonjip.coupon.entity.Coupon;
 import com.team5.pyeonjip.coupon.repository.CouponRepository;
 import com.team5.pyeonjip.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/cart")
 @RequiredArgsConstructor
+@Slf4j
 public class CartController {
     private final CouponRepository couponRepository;
     private final CartService cartService;
@@ -27,14 +30,14 @@ public class CartController {
     @GetMapping("/sandbox")
     public List<CartDto> sandbox() {
         List<CartDto> target = new ArrayList<>();
-        CartDto dto1 = cartService.getProduct(1L,1L);
-        CartDto dto2 = cartService.getProduct( 2L,1L);
-        CartDto dto3 = cartService.getProduct( 3L,1L);
-        CartDto dto4 = cartService.getProduct( 4L,1L);
-        CartDto dto5 = cartService.getProduct( 5L,1L);
-        CartDto dto6 = cartService.getProduct( 6L,1L);
-        CartDto dto7 = cartService.getProduct( 7L,1L);
-        CartDto dto8 = cartService.getProduct( 8L,1L);
+        CartDto dto1 = cartService.getCartDto(1L,1L);
+        CartDto dto2 = cartService.getCartDto( 2L,1L);
+        CartDto dto3 = cartService.getCartDto( 3L,1L);
+        CartDto dto4 = cartService.getCartDto( 4L,1L);
+        CartDto dto5 = cartService.getCartDto( 5L,1L);
+        CartDto dto6 = cartService.getCartDto( 6L,1L);
+        CartDto dto7 = cartService.getCartDto( 7L,1L);
+        CartDto dto8 = cartService.getCartDto( 8L,1L);
 
         target.add(dto1);
         target.add(dto2);
@@ -56,17 +59,26 @@ public class CartController {
         return coupons;
     }
 
-    @GetMapping("/sync")
-    public ResponseEntity<Cart> getCartByUserId(@PathVariable Long userId){
-        Cart cart = cartService.getCartByUserId(userId);
-        return ResponseEntity.ok(cart);
+    // 로컬 -> 서버
+    @PostMapping("/syncLocal")
+    public ResponseEntity<List<CartDto>> syncCart(@RequestBody List<CartDto> localCartItems, @RequestParam Long userId) {
+        List<CartDto> dtos = cartService.syncCart(userId, localCartItems);
+
+        return ResponseEntity.status(HttpStatus.OK).body(dtos);
+    }
+
+    // 서버 -> 로컬
+    @PostMapping("/syncServer")
+    public ResponseEntity<List<CartDto>> syncCart(@RequestParam Long userId) {
+        List<CartDto> dtos = cartService.getCartItemsByUserId(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(dtos);
     }
 
     // 장바구니 추가
     @PostMapping("/save")
     public ResponseEntity<Cart> saveCart(@RequestBody Cart cart) {
         Cart savedCart = cartService.saveCart(cart);
-        return ResponseEntity.ok(savedCart);
+        return ResponseEntity.status(HttpStatus.OK).body(savedCart);
     }
 
     @PostMapping("/clear")
@@ -78,9 +90,11 @@ public class CartController {
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteCartItem(@RequestParam Long userId, @RequestParam Long optionId) {
         if (!cartService.existsByUserIdAndOptionId(userId, optionId)) {
+            log.error("Delete cart item fail");
             return ResponseEntity.notFound().build(); // 항목이 없으면 404 반환
         }
         cartService.deleteCartItem(userId, optionId);
+        log.info("Delete cart item success");
         return ResponseEntity.noContent().build();
     }
 
