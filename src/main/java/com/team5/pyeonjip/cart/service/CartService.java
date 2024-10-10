@@ -12,7 +12,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -26,25 +25,6 @@ public class CartService {
     private final CartRepository cartRepository;
     private final ProductService productService;
     private final ProductDetailRepository productDetailRepository;
-
-    public CartDto getProduct(Long productDetailId, Long userId) {
-
-        ProductDetail productDetail = productDetailRepository.findById(productDetailId)
-                .orElseThrow(() -> new ResourceNotFoundException("[ProductDetail not found, productDetailId : " + productDetailId + "]"));
-        ProductResponse product = productService.getProductById(productDetail.getProduct().getId());
-        CartDto dto = new CartDto();
-
-        dto.setUserId(userId);
-        dto.setOptionId(productDetailId);
-        dto.setName(product.getName());
-        dto.setOptionName(productDetail.getName());
-        dto.setPrice(productDetail.getPrice());
-        dto.setQuantity(1L);
-        dto.setMaxQuantity(productDetail.getQuantity());
-        dto.setUrl(productDetail.getMainImage());
-
-        return dto;
-    }
 
     public List<CartDto> syncCart(Long userId, List<CartDto> localCartItems) {
         // 서버에서 현재 장바구니 아이템 조회
@@ -118,4 +98,33 @@ public class CartService {
     }
 
 
+    public List<CartDto> getCartItemsByUserId(Long userId) {
+        List<Cart> serverCartItems = cartRepository.findByUserId(userId);
+        // Cart Entity -> Cart DTO
+        List<CartDto> cartDtos = serverCartItems.stream()
+                .map(cart -> {
+                    return getCartDto(userId, cart.getOptionId());
+                })
+                .collect(Collectors.toList());
+        return cartDtos;
+    }
+
+    public CartDto getCartDto(Long optionId, Long userId) {
+
+        ProductDetail productDetail = productDetailRepository.findById(optionId)
+                .orElseThrow(() -> new ResourceNotFoundException("[ProductDetail not found, id : " + optionId + "]"));
+        ProductResponse product = productService.getProductById(productDetail.getProduct().getId());
+        CartDto dto = new CartDto();
+
+        dto.setUserId(userId);
+        dto.setOptionId(optionId);
+        dto.setName(product.getName());
+        dto.setOptionName(productDetail.getName());
+        dto.setPrice(productDetail.getPrice());
+        dto.setQuantity(1L);
+        dto.setMaxQuantity(productDetail.getQuantity());
+        dto.setUrl(productDetail.getMainImage());
+
+        return dto;
+    }
 }
