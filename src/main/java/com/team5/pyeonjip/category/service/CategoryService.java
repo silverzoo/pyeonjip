@@ -28,27 +28,19 @@ public class CategoryService {
 
         List<Category> parentCategories = categoryUtils.getParentCategories(allCategories);
 
-        List<CategoryResponse> responses = new ArrayList<>();
-
-        categoryUtils.createChildrenCategories(parentCategories, allCategories, responses);
-
-        return responses;
+        return categoryUtils.createChildrenCategories(parentCategories, allCategories);
     }
 
     @Transactional
     public CategoryResponse updateCategory(Long id, CategoryRequest request) {
 
-        Category category = categoryUtils.getCategory(id);
+        categoryUtils.getCategory(id);
 
         categoryUtils.validateParent(id, request);
 
-        categoryUtils.updateSiblingSort(request, category);
+        categoryUtils.updateSiblingSort(request);
 
-        Category updatedCategory = category.toBuilder()
-                .name(request.getName())
-                .sort(request.getSort())
-                .parentId(request.getParentId())
-                .build();
+        Category updatedCategory = categoryMapper.toEntity(request);
 
         Category savedCategory = categoryRepository.save(updatedCategory);
 
@@ -62,5 +54,15 @@ public class CategoryService {
         return rootCategories.stream()
                 .map(categoryMapper::toResponse)
                 .toList();
+    }
+
+    @Transactional
+    public CategoryResponse createCategory(CategoryRequest request) {
+
+        Category category = categoryMapper.toEntity(request);
+
+        Category newCategory = categoryRepository.save(category);
+
+        return categoryMapper.toResponse(newCategory);
     }
 }

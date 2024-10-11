@@ -1,33 +1,26 @@
 package com.team5.pyeonjip.order.dto;
 
-import com.team5.pyeonjip.order.entity.Order;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.team5.pyeonjip.order.enums.DeliveryStatus;
 import com.team5.pyeonjip.order.enums.OrderStatus;
-import com.team5.pyeonjip.user.entity.Grade;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.List;
 
-// 관리자 - 주문 응답
+// 사용자 - 주문 응답
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class OrderResponseDto {
     private Long id; // 주문 id
-    private String userName; // 구매자
-    private String phoneNumber; // 연락처
-    private OrderStatus orderStatus; // 기본 ORDER
-    private Long totalPrice;
-    private LocalDateTime createdAt;
-    private DeliveryStatus deliveryStatus;
-    private List<OrderDetailDto> orderDetails; // 상품 명, 상품 수량
+    private OrderStatus orderStatus; // 주문 상태
 
-    public static OrderResponseDto from(Order order) {
-        return new OrderResponseDto(order.getId(),
-                order.getUser().getName(), order.getUser().getPhoneNumber(), order.getStatus(),
-                order.getTotalPrice(), order.getCreatedAt().toLocalDateTime(), order.getDelivery().getStatus(),
-                order.getOrderDetails().stream().map(OrderDetailDto::from).toList());
-    }
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private Timestamp createdAt; // 주문 일자
+    private DeliveryStatus deliveryStatus; // 배송 상태
+    private List<OrderDetailDto> orderDetails; // 상품 명, 상품 수량, 상품 총 금액
+    // 상품 이미지 추가?
 }

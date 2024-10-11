@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin/category")
-public class AdminCategoryApiController {
+public class AdminCategoryController {
 
     private final CategoryService categoryService;
 
@@ -27,7 +27,9 @@ public class AdminCategoryApiController {
     @PostMapping("/create")
     public ResponseEntity<CategoryResponse> createCategory(@RequestBody CategoryRequest request) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        CategoryResponse category = categoryService.createCategory(request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(category);
     }
 
     @DeleteMapping("/{categoryId}")

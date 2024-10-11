@@ -1,6 +1,5 @@
 package com.team5.pyeonjip.category.dto;
 
-import com.team5.pyeonjip.category.entity.Category;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -20,18 +19,5 @@ public class CategoryResponse {
 
     private Long parentId;
 
-    private List<CategoryResponse> child = new ArrayList<>();
-
-//    public static CategoryResponse toResponse(Category category) {
-//
-//        return new CategoryResponse(
-//                category.getId(),
-//                category.getName(),
-//                category.getParentId() != null ? category.getId() : null,
-//                category.getChild()
-//                        .stream()
-//                        .map(CategoryResponse::toResponse)
-//                        .toList()
-//        );
-//    }
+    private List<CategoryResponse> children = new ArrayList<>();
 }
