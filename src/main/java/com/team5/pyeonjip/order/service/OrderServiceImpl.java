@@ -1,5 +1,7 @@
 package com.team5.pyeonjip.order.service;
 
+import com.team5.pyeonjip.global.exception.ErrorCode;
+import com.team5.pyeonjip.global.exception.GlobalException;
 import com.team5.pyeonjip.global.exception.ResourceNotFoundException;
 import com.team5.pyeonjip.order.dto.*;
 import com.team5.pyeonjip.order.entity.Delivery;
@@ -30,20 +32,18 @@ public class OrderServiceImpl implements OrderService {
     private final UserRepository userRepository;
     private final DeliveryRepository deliveryRepository;
     private final OrderDetailRepository orderDetailRepository;
-    private final ProductDetailRepository productRepository;
     private final ProductDetailRepository productDetailRepository;
     private final ProductDetailService productDetailService;
 
-    private ProductDetail findProductById(Long productId) {
+    private ProductDetail findProductDetailById(Long productId) {
         return productDetailRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("상품이 존재하지 않습니다."));
+                .orElseThrow(() -> new GlobalException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND));
     }
 
     // 주문 생성
     @Transactional
     @Override
     public void createOrder(OrderRequestDto orderRequestDto, Long userId) {
-
         // 유저 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("유저를 찾을 수 없습니다."));
@@ -66,10 +66,17 @@ public class OrderServiceImpl implements OrderService {
 
         // 주문 상세 정보 생성
         orderRequestDto.getOrderDetails().forEach(orderDetailDto -> {
-            if (orderDetailDto.getProductDetailId() == null) {
-                throw new IllegalArgumentException("상품을 찾을 수 없습니다.");
+            ProductDetail productDetail = findProductDetailById(orderDetailDto.getProductDetailId());
+
+            // 재고 수량 확인
+            if (productDetail.getQuantity() < orderDetailDto.getQuantity()) {
+                throw new GlobalException(ErrorCode.OUT_OF_STOCK);
             }
-            orderDetailRepository.save(OrderMapper.toOrderDetailEntity(order, findProductById(orderDetailDto.getProductDetailId()), orderDetailDto));
+            orderDetailRepository.save(OrderMapper.toOrderDetailEntity(order, productDetail, orderDetailDto));
+
+            // 주문 후 재고 수량 감소
+            productDetail.setQuantity(productDetail.getQuantity() - orderDetailDto.getQuantity());
+            productDetailRepository.save(productDetail);
         });
     }
 
@@ -95,7 +102,6 @@ public class OrderServiceImpl implements OrderService {
 
     // 총 금액 계산
     private Long calculateTotalPrice(User user, Long cartTotalPrice) {
-
         // 1. 회원 등급에 따른 할인율 계산
         double discountRate = calculateDiscountRate(user);
 
@@ -114,9 +120,8 @@ public class OrderServiceImpl implements OrderService {
         List<Order> orders = orderRepository.findOrdersByUserId(userId);
 
         if (orders.isEmpty()) {
-            throw new ResourceNotFoundException("해당 사용자의 주문을 찾을 수 없습니다.");
+            throw new GlobalException(ErrorCode.USER_ORDER_NOT_FOUND);
         }
-
         // 주문 목록 -> OrderResponseDto로 변환
         return orders.stream()
                 .map(OrderMapper::toOrderResponseDto)
@@ -128,19 +133,18 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void cancelOrder(Long orderId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("주문을 찾을 수 없습니다."));
+                .orElseThrow(() -> new GlobalException(ErrorCode.ORDER_NOT_FOUND));
 
         // 배송 상태가 READY인 경우에만 취소 가능
         if (order.getDelivery().getStatus() != DeliveryStatus.READY) {
-            throw new IllegalStateException("배송이 시작된 주문은 취소할 수 없습니다.");
+            throw new GlobalException(ErrorCode.DELIVERY_ALREADY_STARTED);
         }
 
         order.updateStatus(OrderStatus.CANCEL);
 
         // 재고 복구
         order.getOrderDetails().forEach(orderDetail -> {
-            ProductDetail productDetail = productRepository.findById(orderDetail.getProduct().getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("상품이 존재하지 않습니다."));
+            ProductDetail productDetail = findProductDetailById(orderDetail.getProduct().getId());
             productDetailService.updateDetailQuantity(productDetail.getId(), orderDetail.getQuantity());
         });
     }
