@@ -9,7 +9,6 @@ import org.hibernate.annotations.Comment;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderDetail extends BaseTimeEntity {
 

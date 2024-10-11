@@ -7,12 +7,9 @@ import com.team5.pyeonjip.order.entity.Delivery;
 import com.team5.pyeonjip.order.entity.Order;
 import com.team5.pyeonjip.order.entity.OrderDetail;
 import com.team5.pyeonjip.order.enums.OrderStatus;
-import com.team5.pyeonjip.product.entity.Product;
 import com.team5.pyeonjip.product.entity.ProductDetail;
 import com.team5.pyeonjip.user.entity.Grade;
 import com.team5.pyeonjip.user.entity.User;
-
-import java.util.stream.Collectors;
 
 public class OrderMapper {
 
@@ -20,16 +17,16 @@ public class OrderMapper {
     public static OrderResponseDto toDto(Order order) {
         return OrderResponseDto.builder()
                 .id(order.getId())
-                .userName(order.getUser().getName())
-                .phoneNumber(order.getPhoneNumber())
                 .orderStatus(order.getStatus())
+                .deliveryStatus(order.getDelivery().getStatus())
+                .createdAt(order.getCreatedAt())
                 .orderDetails(order.getOrderDetails().stream()
                         .map(detail -> OrderDetailDto.builder()
                                 .productName(detail.getProductName())
                                 .productPrice(detail.getTotalPrice())
                                 .quantity(detail.getQuantity())
                                 .build())
-                        .collect(Collectors.toList()))
+                        .toList())
                 .build();
     }
 
@@ -47,13 +44,15 @@ public class OrderMapper {
                 .build();
     }
 
+    // dto -> entity
     public static OrderDetail toEntity(Order order, ProductDetail product, OrderDetailDto orderDetailDto) {
         return OrderDetail.builder()
                 .product(product)
                 .order(order)
                 .productName(orderDetailDto.getProductName())
                 .quantity(orderDetailDto.getQuantity())
-                .productPrice(orderDetailDto.getProductPrice()).build();
+                .productPrice(orderDetailDto.getProductPrice())
+                .build();
     }
 }
 

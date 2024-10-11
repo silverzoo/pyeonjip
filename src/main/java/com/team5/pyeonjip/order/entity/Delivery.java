@@ -10,7 +10,6 @@ import org.hibernate.annotations.Comment;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
 public class Delivery extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +27,12 @@ public class Delivery extends BaseTimeEntity {
 
     @OneToOne(mappedBy = "delivery")
     private Order order;
+
+    @Builder
+    public Delivery(String address, DeliveryStatus status) {
+        this.address = address;
+        this.status = DeliveryStatus.READY;
+    }
 
     // 배송 상태 변경 메서드
     public void updateStatus(DeliveryStatus newStatus) {
