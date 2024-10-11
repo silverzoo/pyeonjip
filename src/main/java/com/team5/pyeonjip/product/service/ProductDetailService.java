@@ -1,5 +1,7 @@
 package com.team5.pyeonjip.product.service;
 
+import com.team5.pyeonjip.global.exception.ErrorCode;
+import com.team5.pyeonjip.global.exception.GlobalException;
 import com.team5.pyeonjip.global.exception.ResourceNotFoundException;
 import com.team5.pyeonjip.product.dto.ProductRequest;
 import com.team5.pyeonjip.product.entity.Product;
@@ -62,9 +64,9 @@ public class ProductDetailService {
 
     // Quantity Update - 수량 조절 메서드 추가
     @Transactional
-    public void updateDetailQuantity(Long detailId, int quantity) {
+    public void updateDetailQuantity(Long detailId, Long quantity) {
         ProductDetail productDetail = productDetailRepository.findById(detailId)
-                .orElseThrow(() -> new ResourceNotFoundException("해당 상품 옵션을을 찾을 수 없습니다: " + detailId));
+                .orElseThrow(() -> new GlobalException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND));
         productDetail.setQuantity(productDetail.getQuantity() + quantity); // 수량 변경
         productDetailRepository.save(productDetail);
     }
@@ -73,7 +75,7 @@ public class ProductDetailService {
     @Transactional
     public String uploadAndSaveMainImage(Long productDetailId, MultipartFile mainImage) throws IOException {
         ProductDetail productDetail = productDetailRepository.findById(productDetailId)
-                .orElseThrow(() -> new ResourceNotFoundException("해당 상품 옵션을 찾을 수 없습니다: " + productDetailId));
+                .orElseThrow(() -> new GlobalException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND));
 
         // S3에 업로드하고 대표 이미지 URL 설정
         String mainImageUrl = s3BucketService.upload(mainImage, "main-images");

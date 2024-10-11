@@ -1,19 +1,16 @@
 package com.team5.pyeonjip.order.entity;
 
 import com.team5.pyeonjip.global.entity.BaseTimeEntity;
-import com.team5.pyeonjip.order.enums.DeliveryStatus;
 import com.team5.pyeonjip.order.enums.OrderStatus;
 import com.team5.pyeonjip.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
@@ -60,10 +57,10 @@ public class Order extends BaseTimeEntity {
     private User user;
 
     // == 연관관계 메서드 == //
-    public void addOrderDetail(OrderDetail orderDetail) {
-        this.orderDetails.add(orderDetail);
-        orderDetail.setOrder(this);  // OrderDetail 객체에 Order 설정
-    }
+//    public void addOrderDetail(OrderDetail orderDetail) {
+//        this.orderDetails.add(orderDetail);
+//        orderDetail.setOrder(this);  // OrderDetail 객체에 Order 설정
+//    }
 
     // == 비즈니스 로직 == //
 
@@ -73,11 +70,11 @@ public class Order extends BaseTimeEntity {
     }
 
     // 주문 가격
-    public int getOrderPrice(){
-        int totalPrice = 0;
-        for (OrderDetail orderDetail : orderDetails) {
-            totalPrice += orderDetail.getTotalPrice();
-        }
-        return totalPrice;
-    }
+//    public int getOrderPrice(){
+//        int totalPrice = 0;
+//        for (OrderDetail orderDetail : orderDetails) {
+//            totalPrice += orderDetail.getTotalPrice();
+//        }
+//        return totalPrice;
+//    }
 }
