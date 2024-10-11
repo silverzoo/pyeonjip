@@ -39,19 +39,26 @@ public class CartController {
         return ResponseEntity.status(HttpStatus.OK).body(dtos);
     }
 
-    // DetailDto 가져오기
+    // DetailDto
     @PostMapping("/detail")
     public ResponseEntity<List<CartDetailDto>> getCartDetail(@RequestBody List<CartDto> cartDtos) {
         List<CartDetailDto> detailDtos = cartService.getCartDetailsByCartDto(cartDtos);
 
         return ResponseEntity.status(HttpStatus.OK).body(detailDtos);
     }
-
+    // 추가
     @PostMapping("/add")
     public ResponseEntity<CartDto> addCart(@RequestBody CartDto cartDto, @RequestParam Long userId) {
            CartDto dto = cartService.addCartDto(cartDto,userId);
            return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
+    // 조회
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<CartDto>> getCartItems(@PathVariable Long userId) {
+        List<CartDto> cartItems = cartService.getCartItemsByUserId(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(cartItems);
+    }
+
 
 
     // 테스트 샌드박스용 페이지
