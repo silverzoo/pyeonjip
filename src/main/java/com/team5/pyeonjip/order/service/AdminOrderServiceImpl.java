@@ -1,5 +1,7 @@
 package com.team5.pyeonjip.order.service;
 
+import com.team5.pyeonjip.global.exception.ErrorCode;
+import com.team5.pyeonjip.global.exception.GlobalException;
 import com.team5.pyeonjip.global.exception.ResourceNotFoundException;
 import com.team5.pyeonjip.order.dto.AdminOrderResponseDto;
 import com.team5.pyeonjip.order.entity.Order;
@@ -21,15 +23,18 @@ public class AdminOrderServiceImpl implements AdminOrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
 
+    private Order findOrderById(Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.ORDER_NOT_FOUND));
+    }
+
     // 주문 수정
     @Transactional
     @Override
-    public void updateDeliveryStatus(Long id, DeliveryStatus deliveryStatus) {
-        Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("주문을 찾을 수 없습니다."));
+    public void updateDeliveryStatus(Long orderId, DeliveryStatus deliveryStatus) {
+        Order order = findOrderById(orderId);
         // 배송 상태 변경
         order.getDelivery().updateStatus(deliveryStatus);
-
         orderRepository.save(order);
     }
 
@@ -37,9 +42,7 @@ public class AdminOrderServiceImpl implements AdminOrderService {
     @Transactional
     @Override
     public void deleteOrderById(Long orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("주문을 찾을 수 없습니다."));
-
+        Order order = findOrderById(orderId);
         orderRepository.delete(order);
     }
 
@@ -58,7 +61,6 @@ public class AdminOrderServiceImpl implements AdminOrderService {
     public List<AdminOrderResponseDto> findOrdersByUserEmail(String userEmail) {
         // user 존재여부 확인
         User user = userRepository.findByEmail(userEmail);
-                //                 .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
 
         return orderRepository.findOrdersByUserEmail(user.getEmail()).stream()
                 .map(OrderMapper::toAdminOrderResponseDto)
