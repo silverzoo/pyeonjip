@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -47,5 +48,9 @@ public class CouponService {
     public Coupon saveCoupon(Coupon coupon) {
         log.info("Created coupon: {}", coupon);
         return couponRepository.save(coupon);
+    }
+
+    public List<Coupon> getAllCoupons() {
+        return couponRepository.findAll();
     }
 }
