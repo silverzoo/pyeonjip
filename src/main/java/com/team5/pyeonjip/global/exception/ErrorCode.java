@@ -16,14 +16,16 @@ public enum ErrorCode {
     CHAT_MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT_MESSAGE-01", "메시지를 불러올 수 없습니다."),
     PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "PRODUCT-01", "상품을 찾을 수 없습니다."),
     PRODUCT_DETAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "PRODUCT-02", "상품 옵션을 찾을 수 없습니다."),
-    PRODUCT_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "PRODUCT-03", "상품 이미지를 찾을 수 없습니다.");
-
+    PRODUCT_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "PRODUCT-03", "상품 이미지를 찾을 수 없습니다."),
+    // 주문
+    OUT_OF_STOCK(HttpStatus.BAD_REQUEST, "STOCK-01", "재고 수량이 부족합니다."),
+    ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER-01", "해당 주문을 찾을 수 없습니다."),
+    USER_ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER-02", "해당 사용자의 주문을 찾을 수 없습니다."),
+    DELIVERY_ALREADY_STARTED(HttpStatus.BAD_REQUEST, "DELIVERY-01", "배송이 시작된 주문은 취소할 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;
-
-
 }
 
 
