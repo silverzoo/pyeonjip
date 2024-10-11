@@ -1,6 +1,6 @@
 package com.team5.pyeonjip.order.controller;
 
-import com.team5.pyeonjip.order.dto.OrderResponseDto;
+import com.team5.pyeonjip.order.dto.AdminOrderResponseDto;
 import com.team5.pyeonjip.order.enums.DeliveryStatus;
 import com.team5.pyeonjip.order.service.AdminOrderService;
 import lombok.RequiredArgsConstructor;
@@ -18,17 +18,17 @@ public class AdminOrderApiController {
 
     // 관리자 - 주문 전체 조회
     @GetMapping("/orders")
-    public ResponseEntity<List<OrderResponseDto>> getAllOrders(){
+    public ResponseEntity<List<AdminOrderResponseDto>> getAllOrders(){
         // 전체 주문 목록 조회
-        List<OrderResponseDto> orders = orderService.findAllOrders();
+        List<AdminOrderResponseDto> orders = orderService.findAllOrders();
         return ResponseEntity.ok(orders);
     }
 
     // 관리자 - 특정 사용자 주문 조회
     @GetMapping("/orders/search")
-    public ResponseEntity<List<OrderResponseDto>> getOrdersByUserEmail(@RequestParam("userEmail") String userEmail) {
+    public ResponseEntity<List<AdminOrderResponseDto>> getOrdersByUserEmail(@RequestParam("userEmail") String userEmail) {
         // 사용자 이메일로 조회
-        List<OrderResponseDto> orders = orderService.findOrdersByUserEmail(userEmail);
+        List<AdminOrderResponseDto> orders = orderService.findOrdersByUserEmail(userEmail);
         return ResponseEntity.ok(orders);
     }
 
