@@ -4,6 +4,7 @@ import com.team5.pyeonjip.global.exception.ResourceNotFoundException;
 import com.team5.pyeonjip.order.dto.AdminOrderResponseDto;
 import com.team5.pyeonjip.order.entity.Order;
 import com.team5.pyeonjip.order.enums.DeliveryStatus;
+import com.team5.pyeonjip.order.mapper.OrderMapper;
 import com.team5.pyeonjip.order.repository.OrderRepository;
 import com.team5.pyeonjip.user.entity.User;
 import com.team5.pyeonjip.user.repository.UserRepository;
@@ -46,7 +47,9 @@ public class AdminOrderServiceImpl implements AdminOrderService {
     @Transactional(readOnly = true)
     @Override
     public List<AdminOrderResponseDto> findAllOrders() {
-        return orderRepository.findAll().stream().map(AdminOrderResponseDto::from).toList();
+        return orderRepository.findAll().stream()
+                .map(OrderMapper::toAdminOrderResponseDto)
+                .toList();
     }
 
     // 관리자 - 사용자 이메일로 주문 조회
@@ -58,7 +61,7 @@ public class AdminOrderServiceImpl implements AdminOrderService {
                 //                 .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
 
         return orderRepository.findOrdersByUserEmail(user.getEmail()).stream()
-                .map(AdminOrderResponseDto::from)
+                .map(OrderMapper::toAdminOrderResponseDto)
                 .toList();
     }
 }
