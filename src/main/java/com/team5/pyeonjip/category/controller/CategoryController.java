@@ -1,7 +1,5 @@
 package com.team5.pyeonjip.category.controller;
 
-
-import com.team5.pyeonjip.category.dto.CategoryRequest;
 import com.team5.pyeonjip.category.dto.CategoryResponse;
 import com.team5.pyeonjip.category.service.CategoryService;
 import lombok.RequiredArgsConstructor;

@@ -10,6 +10,7 @@ import com.team5.pyeonjip.global.exception.GlobalException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -21,8 +22,8 @@ public class CategoryUtils {
     private final CategoryRepository categoryRepository;
 
     // id 유효성 검사
-    public Category getCategory(Long id) {
-        return categoryRepository.findById(id)
+    public void getCategory(Long id) {
+        categoryRepository.findById(id)
                 .orElseThrow(() -> new GlobalException(ErrorCode.CATEGORY_NOT_FOUND));
     }
 
@@ -35,7 +36,10 @@ public class CategoryUtils {
     }
 
     // 부모-자식 카테고리 연결
-    public void createChildrenCategories(List<Category> parentCategories, List<Category> allCategories, List<CategoryResponse> responses) {
+    public List<CategoryResponse> createChildrenCategories(List<Category> parentCategories, List<Category> allCategories) {
+
+        List<CategoryResponse> responses = new ArrayList<>();
+
         for (Category parent : parentCategories) {
             List<CategoryResponse> children = allCategories.stream()
                     .filter(child -> parent.getId().equals(child.getParentId()))
@@ -47,26 +51,22 @@ public class CategoryUtils {
                     .id(parent.getId())
                     .sort(parent.getSort())
                     .name(parent.getName())
-                    .child(children)
+                    .children(children)
                     .build();
 
             responses.add(parentResponses);
         }
+
+        return responses;
     }
 
     // 부모카테고리 유효성 검사
     public void validateParent(Long id, CategoryRequest request) {
-        Long parentId = getCategory(id).getParentId();
         Long requestParentId = request.getParentId();
 
-        // 원래 최상위 카테고리인 경우
-        if (parentId == null) {
-            return;
-        }
-
-        // 최상위 카테고리로 변경
+        // 최상위 카테고리로 이동 (NPE 방지)
         if (requestParentId == null) {
-            throw new GlobalException(ErrorCode.CHANGE_TO_ROOT_CATEGORY);
+            return;
         }
 
         // 부모 id가 본인 id 인 경우
@@ -81,8 +81,8 @@ public class CategoryUtils {
     }
 
     // sort 변경으로 인한 형제 카테고리 sort 업데이트
-    public void updateSiblingSort(CategoryRequest request, Category category) {
-        List<Category> siblings = categoryRepository.findByParentId(category.getParentId());
+    public void updateSiblingSort(CategoryRequest request) {
+        List<Category> siblings = categoryRepository.findByParentId(request.getParentId());
 
         for (Category sibling : siblings) {
             if (sibling.getSort() >= request.getSort()) {
