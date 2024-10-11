@@ -61,7 +61,7 @@ public class OrderServiceImpl implements OrderService {
         Long totalPrice = calculateTotalPrice(user, cartTotalPrice);
 
         // 주문 생성
-        Order order = OrderMapper.toEntity(orderRequestDto, delivery, user, totalPrice);
+        Order order = OrderMapper.toOrderEntity(orderRequestDto, delivery, user, totalPrice);
         orderRepository.save(order);
 
         // 주문 상세 정보 생성
@@ -69,7 +69,7 @@ public class OrderServiceImpl implements OrderService {
             if (orderDetailDto.getProductDetailId() == null) {
                 throw new IllegalArgumentException("상품을 찾을 수 없습니다.");
             }
-            orderDetailRepository.save(OrderMapper.toEntity(order, findProductById(orderDetailDto.getProductDetailId()), orderDetailDto));
+            orderDetailRepository.save(OrderMapper.toOrderDetailEntity(order, findProductById(orderDetailDto.getProductDetailId()), orderDetailDto));
         });
     }
 
@@ -119,7 +119,7 @@ public class OrderServiceImpl implements OrderService {
 
         // 주문 목록 -> OrderResponseDto로 변환
         return orders.stream()
-                .map(OrderMapper::toDto)
+                .map(OrderMapper::toOrderResponseDto)
                 .toList();
     }
 
@@ -141,8 +141,7 @@ public class OrderServiceImpl implements OrderService {
         order.getOrderDetails().forEach(orderDetail -> {
             ProductDetail productDetail = productRepository.findById(orderDetail.getProduct().getId())
                     .orElseThrow(() -> new ResourceNotFoundException("상품이 존재하지 않습니다."));
-            // TODO : updateDetailQuantity에서 quantity를 Long 타입으로 변경
-            productDetailService.updateDetailQuantity(productDetail.getId(), Math.toIntExact(orderDetail.getQuantity()));
+            productDetailService.updateDetailQuantity(productDetail.getId(), orderDetail.getQuantity());
         });
     }
 }

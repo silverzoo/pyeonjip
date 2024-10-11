@@ -36,10 +36,6 @@ public class Order extends BaseTimeEntity {
     @Comment(value = "주문 시 최종 금액")
     private Long totalPrice;
 
-    @Column(name = "delivery_price", nullable = false)
-    @Comment(value = "배송비")
-    private Long deliveryPrice;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     @Comment(value = "주문 상태")
