@@ -30,7 +30,7 @@ public class CartService {
     @Transactional
     public List<CartDto> syncCart(Long userId, List<CartDto> localCartItems) {
         // 서버에서 현재 장바구니 아이템 조회
-        List<Cart> serverCartItems = cartRepository.findByUserId(userId);
+        List<Cart> serverCartItems = cartRepository.findAllByUserId(userId);
 
         // 서버 아이템을 Map으로 변환
         Map<Long, Cart> serverItemMap = serverCartItems.stream()
@@ -80,7 +80,7 @@ public class CartService {
     }
 
     public List<CartDto> getCartItemsByUserId(Long userId) {
-        List<Cart> serverCartItems = cartRepository.findByUserId(userId);
+        List<Cart> serverCartItems = cartRepository.findAllByUserId(userId);
         // Cart Entity -> Cart DTO
         List<CartDto> cartDtos = serverCartItems.stream()
                 .map(cart -> {
@@ -171,5 +171,18 @@ public class CartService {
 
             return savedCartDto;
         }
+    }
+
+    @Transactional
+    public CartDto updateCartItemQuantity(Long userId, Long optionId, CartDto dto) {
+        Cart target = cartRepository.findByUserIdAndOptionId(userId, optionId);
+        target.setQuantity(dto.getQuantity());
+        cartRepository.save(target);
+        return dto;
+    }
+
+    @Transactional
+    public void deleteCartItem(Long userId, Long optionId) {
+        cartRepository.deleteByUserIdAndOptionId(userId,optionId);
     }
 }

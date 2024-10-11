@@ -59,6 +59,25 @@ public class CartController {
         return ResponseEntity.status(HttpStatus.OK).body(cartItems);
     }
 
+    @PostMapping("/{userId}/cart-items/{optionId}")
+    public ResponseEntity<CartDto> updateCartItemQuantity(
+            @PathVariable Long userId,
+            @PathVariable Long optionId,
+            @RequestBody CartDto cartDto) {
+        CartDto dto = cartService.updateCartItemQuantity(userId, optionId, cartDto);
+        return ResponseEntity.status(HttpStatus.OK).body(dto);
+    }
+
+    @DeleteMapping("/{userId}/cart-items/{optionId}")
+    public ResponseEntity<Void> deleteCartItem(
+            @PathVariable Long userId,
+            @PathVariable Long optionId) {
+            cartService.deleteCartItem(userId,optionId);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+
+
 
 
     // 테스트 샌드박스용 페이지
