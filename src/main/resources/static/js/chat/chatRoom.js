@@ -76,7 +76,7 @@ createRoomButton.onclick = function() {
         const userId = 2; // 실제 사용자 ID로 변경 필요
 
         // 이전 채팅방 내역 가져오기
-        fetch(`/api/chat/chat_room_list/${userId}`, {
+        fetch(`/api/chat/chat-room-list/${userId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -103,7 +103,7 @@ createRoomButton.onclick = function() {
         const selectedCategory = categorySelect.value;
 
         if (selectedCategory) {
-            fetch('/api/chat/chat_room', {
+            fetch('/api/chat/chat-room', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -129,7 +129,7 @@ createRoomButton.onclick = function() {
 
 // 채팅방 클릭 시 메시지 불러오기
 function loadChatMessages(chatRoomId) {
-    fetch(`/api/chat/chat_message_history/${chatRoomId}`, {
+    fetch(`/api/chat/chat-message-history/${chatRoomId}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
