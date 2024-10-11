@@ -64,7 +64,7 @@ public class ProductDetailService {
 
     // Quantity Update - 수량 조절 메서드 추가
     @Transactional
-    public void updateDetailQuantity(Long detailId, int quantity) {
+    public void updateDetailQuantity(Long detailId, Long quantity) {
         ProductDetail productDetail = productDetailRepository.findById(detailId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND));
         productDetail.setQuantity(productDetail.getQuantity() + quantity); // 수량 변경
