@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class OrderDetailDto {
-    private Long productId;
+    private Long productDetailId;
     private String productName;
     private Long quantity;
-    private Long productPrice; // 상품 개별 가격
+    private Long productPrice;
 
     public static OrderDetailDto from(OrderDetail orderDetail) {
         return new OrderDetailDto(orderDetail.getProduct().getId(), orderDetail.getProductName(), orderDetail.getQuantity(), orderDetail.getProductPrice());
