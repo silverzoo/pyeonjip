@@ -20,11 +20,28 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class CartController {
-    private final CouponRepository couponRepository;
     private final CartService cartService;
-    private final ProductRepository productRepository;
 
+    // 장바구니 페이지
+        @GetMapping
+    public ResponseEntity<Void> cart(){
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        // 페이지 로드용이니까 void 반환가능하지 않을까?
+    }
 
+    // 로컬 -> 서버
+    @PostMapping("/syncLocal")
+    public ResponseEntity<List<CartDto>> syncCart(@RequestBody List<CartDto> localCartItems, @RequestParam Long userId) {
+        List<CartDto> dtos = cartService.syncCart(userId, localCartItems);
+        return ResponseEntity.status(HttpStatus.OK).body(dtos);
+    }
+
+    // 서버 -> 로컬
+    @PostMapping("/syncServer")
+    public ResponseEntity<List<CartDto>> syncCart(@RequestParam Long userId) {
+        List<CartDto> dtos = cartService.getCartItemsByUserId(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(dtos);
+    }
 
     // 테스트 샌드박스용 페이지
     @GetMapping("/sandbox")
@@ -49,58 +66,6 @@ public class CartController {
         target.add(dto8);
 
         return target;
-    }
-
-    // 장바구니 페이지
-        @GetMapping
-    public ResponseEntity<Void> cart(){
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        // 페이지 로드용이니까 void 반환가능하지 않을까?
-    }
-
-    // 로컬 -> 서버
-    @PostMapping("/syncLocal")
-    public ResponseEntity<List<CartDto>> syncCart(@RequestBody List<CartDto> localCartItems, @RequestParam Long userId) {
-        List<CartDto> dtos = cartService.syncCart(userId, localCartItems);
-        return ResponseEntity.status(HttpStatus.OK).body(dtos);
-    }
-
-    // 서버 -> 로컬
-    @PostMapping("/syncServer")
-    public ResponseEntity<List<CartDto>> syncCart(@RequestParam Long userId) {
-        List<CartDto> dtos = cartService.getCartItemsByUserId(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(dtos);
-    }
-
-    // 장바구니 추가
-    @PostMapping("/save")
-    public ResponseEntity<Cart> saveCart(@RequestBody Cart cart) {
-        Cart savedCart = cartService.saveCart(cart);
-        return ResponseEntity.status(HttpStatus.OK).body(savedCart);
-    }
-
-    @PostMapping("/clear")
-    public ResponseEntity<Cart> clearCart(@RequestBody Cart cart) {
-        cartService.clearCart(cart.getUserId());
-        return ResponseEntity.ok(cart);
-    }
-
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteCartItem(@RequestParam Long userId, @RequestParam Long optionId) {
-        if (!cartService.existsByUserIdAndOptionId(userId, optionId)) {
-            log.error("Delete cart item fail");
-            return ResponseEntity.notFound().build(); // 항목이 없으면 404 반환
-        }
-        cartService.deleteCartItem(userId, optionId);
-        log.info("Delete cart item success");
-        return ResponseEntity.noContent().build();
-    }
-
-    // 중복체크 API 검사
-    @GetMapping("/checkDuplicate")
-    public ResponseEntity<Boolean> checkDuplicate(@RequestParam Long userId, @RequestParam Long optionId) {
-        boolean exists = cartService.existsByUserIdAndOptionId(userId, optionId);
-        return ResponseEntity.ok(exists);
     }
 }
 

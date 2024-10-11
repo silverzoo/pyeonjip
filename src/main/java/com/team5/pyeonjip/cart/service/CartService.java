@@ -26,6 +26,7 @@ public class CartService {
     private final ProductService productService;
     private final ProductDetailRepository productDetailRepository;
 
+    @Transactional
     public List<CartDto> syncCart(Long userId, List<CartDto> localCartItems) {
         // 서버에서 현재 장바구니 아이템 조회
         List<Cart> serverCartItems = cartRepository.findByUserId(userId);
@@ -61,7 +62,6 @@ public class CartService {
                 }
             }
         }
-
         // 로컬 카트에 존재하지 않는 서버 항목을 삭제
         for (Cart serverItem : serverCartItems) {
             if (!localCartItems.stream().anyMatch(localItem -> localItem.getOptionId().equals(serverItem.getOptionId()))) {
@@ -73,30 +73,8 @@ public class CartService {
                 }
             }
         }
-
         return localCartItems;
     }
-
-
-    public Cart saveCart(Cart cart) {
-        return cartRepository.save(cart);
-    }
-
-    @Transactional
-    public void clearCart(Long userId) {
-        cartRepository.deleteByUserId(userId);
-    }
-
-
-    @Transactional
-    public void deleteCartItem(Long userId, Long optionId) {
-        cartRepository.deleteByUserIdAndOptionId(userId, optionId);
-    }
-
-    public boolean existsByUserIdAndOptionId(Long userId, Long optionId) {
-        return cartRepository.existsByUserIdAndOptionId(userId, optionId);
-    }
-
 
     public List<CartDto> getCartItemsByUserId(Long userId) {
         List<Cart> serverCartItems = cartRepository.findByUserId(userId);
@@ -109,13 +87,14 @@ public class CartService {
         return cartDtos;
     }
 
+    // Mapper 대신 사용중
+    // Cart Entity -> Cart DTO
     public CartDto getCartDto(Long userId, Long optionId) {
 
         ProductDetail productDetail = productDetailRepository.findById(optionId)
                 .orElseThrow(() -> new ResourceNotFoundException("[ProductDetail not found, id : " + optionId + "]"));
         ProductResponse product = productService.getProductById(productDetail.getProduct().getId());
         CartDto dto = new CartDto();
-
         dto.setUserId(userId);
         dto.setOptionId(optionId);
         dto.setName(product.getName());

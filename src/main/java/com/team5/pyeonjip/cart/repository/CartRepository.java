@@ -13,14 +13,4 @@ import java.util.Optional;
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Long> {
     List<Cart> findByUserId(Long userId);
-
-    @Modifying
-    @Transactional
-    void deleteByUserIdAndOptionId(Long userId, Long optionId);
-
-    @Modifying
-    @Transactional
-    void deleteByUserId(Long userId);
-
-    boolean existsByUserIdAndOptionId(Long userId, Long optionId);
 }
