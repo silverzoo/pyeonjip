@@ -1,6 +1,5 @@
 package com.team5.pyeonjip.category.dto;
 
-import com.team5.pyeonjip.category.entity.Category;
 import lombok.*;
 
 import java.util.ArrayList;
