@@ -1,5 +1,7 @@
 package com.team5.pyeonjip.product.service;
 
+import com.team5.pyeonjip.global.exception.ErrorCode;
+import com.team5.pyeonjip.global.exception.GlobalException;
 import com.team5.pyeonjip.global.exception.ResourceNotFoundException;
 import com.team5.pyeonjip.product.dto.ProductRequest;
 import com.team5.pyeonjip.product.entity.Product;
@@ -43,7 +45,7 @@ public class ProductImageService {
     @Transactional
     public void deleteProductImageById(Long imageId) {
         ProductImage image = productImageRepository.findById(imageId)
-                .orElseThrow(() -> new ResourceNotFoundException("해당 이미지를 찾을 수 없습니다: " + imageId));
+                .orElseThrow(() -> new GlobalException(ErrorCode.PRODUCT_IMAGE_NOT_FOUND));
 
         // S3에서 이미지 삭제
         s3BucketService.delete(image.getImageUrl());

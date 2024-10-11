@@ -13,7 +13,10 @@ public enum ErrorCode {
     INVALID_PARENT(HttpStatus.BAD_REQUEST, "CATEGORY-03", "존재하지 않는 카테고리를 상위 카테고리로 설정할 수 없습니다."),
     DUPLICATE_CATEGORY(HttpStatus.CONFLICT, "CATEGORY-04", "이미 존재하는 카테고리입니다."),
     CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT_ROOM-01", "채팅방을 찾을 수 없습니다."),
-    CHAT_MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT_MESSAGE-01", "메시지를 불러올 수 없습니다.");
+    CHAT_MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT_MESSAGE-01", "메시지를 불러올 수 없습니다."),
+    PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "PRODUCT-01", "상품을 찾을 수 없습니다."),
+    PRODUCT_DETAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "PRODUCT-02", "상품 옵션을 찾을 수 없습니다."),
+    PRODUCT_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "PRODUCT-03", "상품 이미지를 찾을 수 없습니다.");
 
 
     private final HttpStatus httpStatus;
