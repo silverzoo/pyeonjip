@@ -28,7 +28,7 @@ public class CartService {
     private final ProductDetailRepository productDetailRepository;
 
     @Transactional
-    public List<CartDetailDto> syncCart(Long userId, List<CartDetailDto> localCartItems) {
+    public List<CartDto> syncCart(Long userId, List<CartDto> localCartItems) {
         // 서버에서 현재 장바구니 아이템 조회
         List<Cart> serverCartItems = cartRepository.findByUserId(userId);
 
@@ -37,7 +37,7 @@ public class CartService {
                 .collect(Collectors.toMap(Cart::getOptionId, Function.identity()));
 
         // 로컬 카트 아이템을 순회하여 동기화
-        for (CartDetailDto localItem : localCartItems) {
+        for (CartDto localItem : localCartItems) {
             Cart serverItem = serverItemMap.get(localItem.getOptionId());
 
             if (serverItem != null) {
@@ -63,6 +63,7 @@ public class CartService {
                 }
             }
         }
+        /*
         // 로컬 카트에 존재하지 않는 서버 항목을 삭제
         for (Cart serverItem : serverCartItems) {
             if (!localCartItems.stream().anyMatch(localItem -> localItem.getOptionId().equals(serverItem.getOptionId()))) {
@@ -74,18 +75,22 @@ public class CartService {
                 }
             }
         }
+        */
         return localCartItems;
     }
 
-    public List<CartDetailDto> getCartItemsByUserId(Long userId) {
+    public List<CartDto> getCartItemsByUserId(Long userId) {
         List<Cart> serverCartItems = cartRepository.findByUserId(userId);
         // Cart Entity -> Cart DTO
-        List<CartDetailDto> cartDetailDtos = serverCartItems.stream()
+        List<CartDto> cartDtos = serverCartItems.stream()
                 .map(cart -> {
-                    return getCartDetailDto(cart.getOptionId());
+                    CartDto cartDto = new CartDto();
+                    cartDto.setOptionId(cart.getOptionId());
+                    cartDto.setQuantity(cart.getQuantity());
+                    return cartDto;
                 })
                 .collect(Collectors.toList());
-        return cartDetailDtos;
+        return cartDtos;
     }
 
     // Mapper 대신 사용
@@ -135,5 +140,36 @@ public class CartService {
         detailDto.setUrl(productDetail.getMainImage());
 
         return detailDto;
+    }
+
+    public CartDto addCartDto(CartDto cartDto, Long userId) {
+        Cart existingCart = cartRepository.findByUserIdAndOptionId(userId, cartDto.getOptionId());
+        // 존재할 경우 quantity++
+        if (existingCart != null) {
+            // Validation
+            existingCart.setQuantity(existingCart.getQuantity() + 1);
+            Cart updatedCart = cartRepository.save(existingCart);
+
+            CartDto updatedCartDto = new CartDto();
+            updatedCartDto.setOptionId(updatedCart.getOptionId());
+            updatedCartDto.setQuantity(updatedCart.getQuantity());
+
+            return updatedCartDto;
+        } else {
+            // 존재하지 않는 경우
+            Cart newCart = new Cart();
+            newCart.setUserId(userId);
+            newCart.setOptionId(cartDto.getOptionId());
+            newCart.setQuantity(cartDto.getQuantity() != null ? cartDto.getQuantity() : 1);  // 기본 수량 1
+
+            Cart savedCart = cartRepository.save(newCart);
+
+            // 저장된 Cart 엔티티를 CartDto로 변환하여 반환
+            CartDto savedCartDto = new CartDto();
+            savedCartDto.setOptionId(savedCart.getOptionId());
+            savedCartDto.setQuantity(savedCart.getQuantity());
+
+            return savedCartDto;
+        }
     }
 }
