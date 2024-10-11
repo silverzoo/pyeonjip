@@ -10,8 +10,9 @@ import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    @Query("SELECT o FROM Order o JOIN User u ON o.user.id = u.id WHERE u.name = :userName")
-    List<Order> findOrdersByUserName(@Param("userName") String userName); // 사용자 이름으로 주문 조회
+
+    @Query("SELECT o FROM Order o JOIN User u ON o.user.id = u.id WHERE u.email = :userEmail")
+    List<Order> findOrdersByUserEmail(@Param("userEmail") String userEmail); // 사용자 이름으로 주문 조회
 
     List<Order> findOrdersByUserId(Long userId); // 사용자 ID로 모든 주문 조회
 }
