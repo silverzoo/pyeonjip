@@ -52,18 +52,16 @@ public class CartController {
     }
 
     // 장바구니 페이지
-    @GetMapping
-    public List<Coupon> cart(){
-        List<Coupon> coupons = couponRepository.findAll();
-
-        return coupons;
+        @GetMapping
+    public ResponseEntity<Void> cart(){
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        // 페이지 로드용이니까 void 반환가능하지 않을까?
     }
 
     // 로컬 -> 서버
     @PostMapping("/syncLocal")
     public ResponseEntity<List<CartDto>> syncCart(@RequestBody List<CartDto> localCartItems, @RequestParam Long userId) {
         List<CartDto> dtos = cartService.syncCart(userId, localCartItems);
-
         return ResponseEntity.status(HttpStatus.OK).body(dtos);
     }
 
