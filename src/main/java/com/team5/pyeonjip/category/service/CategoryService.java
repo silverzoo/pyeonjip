@@ -55,4 +55,14 @@ public class CategoryService {
                 .map(categoryMapper::toResponse)
                 .toList();
     }
+
+    @Transactional
+    public CategoryResponse createCategory(CategoryRequest request) {
+
+        Category category = categoryMapper.toEntity(request);
+
+        Category newCategory = categoryRepository.save(category);
+
+        return categoryMapper.toResponse(newCategory);
+    }
 }

@@ -27,7 +27,9 @@ public class AdminCategoryController {
     @PostMapping("/create")
     public ResponseEntity<CategoryResponse> createCategory(@RequestBody CategoryRequest request) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        CategoryResponse category = categoryService.createCategory(request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(category);
     }
 
     @DeleteMapping("/{categoryId}")
