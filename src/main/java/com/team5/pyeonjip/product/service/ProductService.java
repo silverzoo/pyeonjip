@@ -46,10 +46,19 @@ public class ProductService {
         return productMapper.toDto(savedProduct, savedProduct.getProductDetails(), savedProduct.getProductImages());
     }
 
-    public ProductResponse getProductById(Long id) {
-        Product product = productRepository.findById(id)
+    // ProductId로 단일 상품 조회
+    @Transactional(readOnly = true)
+    public ProductResponse getProductById(Long productId) {
+        // Product 조회
+        Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.PRODUCT_NOT_FOUND));
-        return productMapper.toDto(product, product.getProductDetails(), product.getProductImages());
+
+        // 연관된 ProductDetail 및 ProductImage 조회
+        List<ProductDetail> productDetails = productDetailRepository.findByProductId(productId);
+        List<ProductImage> productImages = productImageRepository.findByProductId(productId);
+
+        // ProductResponse로 변환하여 반환
+        return productMapper.toDto(product, productDetails, productImages);
     }
 
     @Transactional

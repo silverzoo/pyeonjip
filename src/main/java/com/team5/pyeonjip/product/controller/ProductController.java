@@ -84,4 +84,11 @@ public class ProductController {
         List<ProductResponse> products = productService.getProductsByCategoryId(categoryId);
         return ResponseEntity.ok(products);
     }
+
+    // ProductId로 단일 상품 조회
+    @GetMapping("/{productId}")
+    public ResponseEntity<ProductResponse> getProductById(@PathVariable Long productId) {
+        ProductResponse productResponse = productService.getProductById(productId);
+        return ResponseEntity.ok(productResponse);
+    }
 }
