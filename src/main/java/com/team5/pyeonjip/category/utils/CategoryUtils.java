@@ -22,8 +22,9 @@ public class CategoryUtils {
     private final CategoryRepository categoryRepository;
 
     // id 유효성 검사
-    public void getCategory(Long id) {
-        categoryRepository.findById(id)
+    public Category findCategory(Long id) {
+
+        return categoryRepository.findById(id)
                 .orElseThrow(() -> new GlobalException(ErrorCode.CATEGORY_NOT_FOUND));
     }
 
@@ -81,16 +82,44 @@ public class CategoryUtils {
     }
 
     // sort 변경으로 인한 형제 카테고리 sort 업데이트
-    public void updateSiblingSort(CategoryRequest request) {
+    public Integer updateSiblingSort(CategoryRequest request) {
+
+        // 요청한 순서값이 없으면 재배치 하지 않아도 됨
+        if (request.getSort() == null) {
+            return null;
+        }
+
+        // 기존의 형제 리스트
         List<Category> siblings = categoryRepository.findByParentId(request.getParentId());
 
+        // 재정렬 할 형제 리스트
+        List<Category> updatedSiblings = new ArrayList<>();
+
+        // 새로 요청 들어온 sort 값
+        Integer newSort = request.getSort();
+
         for (Category sibling : siblings) {
-            if (sibling.getSort() >= request.getSort()) {
-                Category updatedSibling = sibling.toBuilder()
-                        .sort(sibling.getSort() + 1)
-                        .build();
-                categoryRepository.save(updatedSibling);
+            if (sibling.getSort() >= newSort) {
+                updatedSiblings.add(sibling.toBuilder().sort(sibling.getSort() + 1).build());
+            } else {
+                updatedSiblings.add(sibling);
             }
         }
+
+        categoryRepository.saveAll(updatedSiblings);
+
+        // 형제 카테고리 업데이트 후 빈 공간을 없애기 위해 다시 정렬
+        int currentSort = 0;
+        for (Category sibling : updatedSiblings) {
+            if (sibling.getSort() == newSort) {
+                sibling = sibling.toBuilder().sort(newSort).build();
+            } else {
+                sibling = sibling.toBuilder().sort(currentSort).build();
+            }
+            currentSort++;
+            categoryRepository.save(sibling);
+        }
+
+        return updatedSiblings.get(newSort).getSort()-1;
     }
 }

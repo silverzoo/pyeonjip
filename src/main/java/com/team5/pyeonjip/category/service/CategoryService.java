@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -34,26 +33,22 @@ public class CategoryService {
     @Transactional
     public CategoryResponse updateCategory(Long id, CategoryRequest request) {
 
-        categoryUtils.getCategory(id);
+        Category category = categoryUtils.findCategory(id);
 
         categoryUtils.validateParent(id, request);
 
-        categoryUtils.updateSiblingSort(request);
+        Integer newSort = categoryUtils.updateSiblingSort(request);
 
-        Category updatedCategory = categoryMapper.toEntity(request);
+        Category updatedCategory = category.toBuilder()
+                .id(id)
+                .name(request.getName() != null ? request.getName() : category.getName())
+                .sort(request.getSort() != null ? newSort : category.getSort())
+                .parentId(request.getParentId() != null ? request.getParentId() : null)
+                .build();
 
         Category savedCategory = categoryRepository.save(updatedCategory);
 
         return categoryMapper.toResponse(savedCategory);
-    }
-
-    //NOTE: 미사용 코드( newGetCategories() 사용 중 )
-    public List<CategoryResponse> getCategories() {
-        List<Category> rootCategories = categoryRepository.findByParentIdIsNull();
-
-        return rootCategories.stream()
-                .map(categoryMapper::toResponse)
-                .toList();
     }
 
     @Transactional
@@ -64,5 +59,19 @@ public class CategoryService {
         Category newCategory = categoryRepository.save(category);
 
         return categoryMapper.toResponse(newCategory);
+    }
+
+    public void deleteCategory(Long id) {
+
+        categoryRepository.delete(categoryUtils.findCategory(id));
+    }
+
+    //NOTE: 미사용 코드( newGetCategories() 사용 중 )
+    public List<CategoryResponse> getCategories() {
+        List<Category> rootCategories = categoryRepository.findByParentIdIsNull();
+
+        return rootCategories.stream()
+                .map(categoryMapper::toResponse)
+                .toList();
     }
 }
