@@ -22,8 +22,9 @@ public class CategoryUtils {
     private final CategoryRepository categoryRepository;
 
     // id 유효성 검사
-    public void getCategory(Long id) {
-        categoryRepository.findById(id)
+    public Category findCategory(Long id) {
+
+        return categoryRepository.findById(id)
                 .orElseThrow(() -> new GlobalException(ErrorCode.CATEGORY_NOT_FOUND));
     }
 
