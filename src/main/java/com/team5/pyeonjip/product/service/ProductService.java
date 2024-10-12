@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
 public class ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final ProductDetailRepository productDetailRepository;
+    private final ProductImageRepository productImageRepository;
     private final ProductDetailService productDetailService;
     private final ProductImageService productImageService;
 
@@ -72,8 +74,16 @@ public class ProductService {
     // CategoryId로 제품 리스트 조회
     public List<ProductResponse> getProductsByCategoryId(Long categoryId) {
         List<Product> products = productRepository.findByCategoryId(categoryId);
+
         return products.stream()
-                .map(productMapper::toDto)  // 오버로드된 메서드 사용
+                .map(product -> {
+                    // ProductDetail과 ProductImage 리스트를 각각 조회
+                    List<ProductDetail> productDetails = productDetailRepository.findByProductId(product.getId());
+                    List<ProductImage> productImages = productImageRepository.findByProductId(product.getId());
+
+                    // toDto 메서드에 Product와 함께 연관 엔티티들을 전달
+                    return productMapper.toDto(product, productDetails, productImages);
+                })
                 .collect(Collectors.toList());
     }
 }
