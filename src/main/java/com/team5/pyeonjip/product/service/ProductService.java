@@ -68,4 +68,12 @@ public class ProductService {
                 .orElseThrow(() -> new GlobalException(ErrorCode.PRODUCT_NOT_FOUND));
         productRepository.delete(product);
     }
+
+    // CategoryId로 제품 리스트 조회
+    public List<ProductResponse> getProductsByCategoryId(Long categoryId) {
+        List<Product> products = productRepository.findByCategoryId(categoryId);
+        return products.stream()
+                .map(productMapper::toDto)  // 오버로드된 메서드 사용
+                .collect(Collectors.toList());
+    }
 }

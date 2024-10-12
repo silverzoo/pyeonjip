@@ -35,4 +35,9 @@ public class ProductMapper {
 
         return new ProductResponse(product.getId(), product.getName(), product.getDescription(), detailResponses, imageResponses);
     }
+
+    //Product만 변환
+    public ProductResponse toDto(Product product) {
+        return new ProductResponse(product.getId(), product.getName(), product.getDescription(), null, null);
+    }
 }
