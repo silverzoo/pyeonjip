@@ -84,4 +84,30 @@ public class ProductDetailService {
 
         return mainImageUrl;
     }
+
+    // 단일 ProductDetail 생성
+    @Transactional
+    public ProductDetail createProductDetail(Long productId, ProductDetail productDetail) {
+        productDetail.setProduct(new Product(productId));  // Product와 연결
+        return productDetailRepository.save(productDetail);
+    }
+
+    // 단일 ProductDetail 삭제
+    @Transactional
+    public void deleteProductDetail(Long productId, Long detailId) {
+        ProductDetail productDetail = productDetailRepository.findById(detailId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND));
+        productDetailRepository.delete(productDetail);
+    }
+
+    // 단일 ProductDetail 수정
+    @Transactional
+    public ProductDetail updateProductDetail(Long productId, Long detailId, ProductDetail updatedDetail) {
+        ProductDetail existingDetail = productDetailRepository.findById(detailId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND));
+        existingDetail.setName(updatedDetail.getName());
+        existingDetail.setPrice(updatedDetail.getPrice());
+        existingDetail.setQuantity(updatedDetail.getQuantity());
+        return productDetailRepository.save(existingDetail);
+    }
 }
