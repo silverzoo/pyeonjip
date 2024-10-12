@@ -18,4 +18,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "LEFT JOIN FETCH p.productDetails d " +
             "LEFT JOIN FETCH p.productImages i")
     List<Product> findAllWithDetailsAndImages();
+
+    List<Product> findByCategoryId(Long categoryId);
 }
