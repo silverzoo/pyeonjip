@@ -13,4 +13,6 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
     Cart findByUserIdAndOptionId(Long userId, Long optionId);
 
     void deleteByUserIdAndOptionId(Long userId, Long optionId);
+
+    void deleteAllByUserId(Long userId);
 }

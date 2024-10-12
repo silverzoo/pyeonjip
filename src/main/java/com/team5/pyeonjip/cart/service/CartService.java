@@ -185,4 +185,9 @@ public class CartService {
     public void deleteCartItem(Long userId, Long optionId) {
         cartRepository.deleteByUserIdAndOptionId(userId,optionId);
     }
+
+    @Transactional
+    public void deleteCartItems(Long userId) {
+        cartRepository.deleteAllByUserId(userId);
+    }
 }
