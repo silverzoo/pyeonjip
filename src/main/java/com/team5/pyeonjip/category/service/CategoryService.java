@@ -33,13 +33,18 @@ public class CategoryService {
     @Transactional
     public CategoryResponse updateCategory(Long id, CategoryRequest request) {
 
-        categoryUtils.findCategory(id);
+        Category category = categoryUtils.findCategory(id);
 
         categoryUtils.validateParent(id, request);
 
-        categoryUtils.updateSiblingSort(request);
+        Integer newSort = categoryUtils.updateSiblingSort(request);
 
-        Category updatedCategory = categoryMapper.toEntity(request);
+        Category updatedCategory = category.toBuilder()
+                .id(id)
+                .name(request.getName() != null ? request.getName() : category.getName())
+                .sort(request.getSort() != null ? newSort : category.getSort())
+                .parentId(request.getParentId() != null ? request.getParentId() : null)
+                .build();
 
         Category savedCategory = categoryRepository.save(updatedCategory);
 

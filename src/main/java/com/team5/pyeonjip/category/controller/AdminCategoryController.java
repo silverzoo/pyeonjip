@@ -15,7 +15,7 @@ public class AdminCategoryController {
 
     private final CategoryService categoryService;
 
-    @PutMapping("/{categoryId}")
+    @PatchMapping("/{categoryId}")
     public ResponseEntity<CategoryResponse> updateCategory(@PathVariable("categoryId") Long id,
                                                            @RequestBody CategoryRequest request) {
 
