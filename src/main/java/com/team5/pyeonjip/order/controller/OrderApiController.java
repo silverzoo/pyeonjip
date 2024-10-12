@@ -5,8 +5,10 @@ import com.team5.pyeonjip.order.dto.OrderResponseDto;
 import com.team5.pyeonjip.order.service.OrderService;
 import com.team5.pyeonjip.user.entity.User;
 import com.team5.pyeonjip.user.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,10 +24,12 @@ public class OrderApiController {
     // 사용자 - 주문 생성
     @PostMapping("/order/create")
     public ResponseEntity<Void> createOrder(
-            @RequestBody OrderRequestDto orderRequestDto)
+            @Valid @RequestBody OrderRequestDto orderRequestDto)
        //     @RequestParam("userId") Long userId){
     {
-        Long userId = 1L;
+
+        Long userId = 1L; // 유저 테스트 Id
+
         // 주문 생성 처리
         orderService.createOrder(orderRequestDto, userId);
 
