@@ -33,8 +33,10 @@ public class AdminCategoryController {
     }
 
     @DeleteMapping("/{categoryId}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable("categoryId") Long id) {
+    public ResponseEntity<String> deleteCategory(@PathVariable("categoryId") Long id) {
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        categoryService.deleteCategory(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body("카테고리가 삭제되었습니다.");
     }
 }
