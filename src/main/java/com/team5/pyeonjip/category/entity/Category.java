@@ -19,7 +19,7 @@ public class Category {
     private String name;
 
     @Column(nullable = false)
-    private int sort; //낮을수록 먼저 반환
+    private Integer sort; //낮을수록 먼저 반환
 
     @Column(name = "parent_id")
     private Long parentId;
