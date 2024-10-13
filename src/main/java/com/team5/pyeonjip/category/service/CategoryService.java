@@ -11,7 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -61,9 +63,14 @@ public class CategoryService {
         return categoryMapper.toResponse(newCategory);
     }
 
-    public void deleteCategory(Long id) {
+    public Map<String, String> deleteCategory(Long id) {
 
         categoryRepository.delete(categoryUtils.findCategory(id));
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message: ", "카테고리가 삭제되었습니다.");
+
+        return response;
     }
 
     //NOTE: 미사용 코드( newGetCategories() 사용 중 )
