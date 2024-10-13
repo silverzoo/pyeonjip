@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin/category")
@@ -19,24 +21,26 @@ public class AdminCategoryController {
     public ResponseEntity<CategoryResponse> updateCategory(@PathVariable("categoryId") Long id,
                                                            @RequestBody CategoryRequest request) {
 
-        CategoryResponse category = categoryService.updateCategory(id, request);
-
-        return ResponseEntity.status(HttpStatus.OK).body(category);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(categoryService.updateCategory(id, request));
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<CategoryResponse> createCategory(@RequestBody CategoryRequest request) {
 
-        CategoryResponse category = categoryService.createCategory(request);
-
-        return ResponseEntity.status(HttpStatus.OK).body(category);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(categoryService.createCategory(request));
     }
 
     @DeleteMapping("/{categoryId}")
-    public ResponseEntity<String> deleteCategory(@PathVariable("categoryId") Long id) {
+    public ResponseEntity<Map<String, String>> deleteCategory(@PathVariable("categoryId") Long id) {
 
-        categoryService.deleteCategory(id);
-
-        return ResponseEntity.status(HttpStatus.OK).body("카테고리가 삭제되었습니다.");
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(categoryService.deleteCategory(id));
     }
+
+    //TODO: 전체 삭제, 부분 삭제용 컨트롤러 필요
 }
