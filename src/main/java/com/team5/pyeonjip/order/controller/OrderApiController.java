@@ -22,11 +22,9 @@ public class OrderApiController {
     private final UserService userService;
 
     // 사용자 - 주문 생성
-    @PostMapping("/order/create")
+    @PostMapping("/orders")
     public ResponseEntity<Void> createOrder(
-            @Valid @RequestBody OrderRequestDto orderRequestDto)
-       //     @RequestParam("userId") Long userId){
-    {
+            @Valid @RequestBody OrderRequestDto orderRequestDto) { // @AuthenticationPrincipal Users currentUser
 
         Long userId = 1L; // 유저 테스트 Id
 
@@ -38,7 +36,7 @@ public class OrderApiController {
 
     // 사용자 - 주문 목록 조회(마이페이지)
     @GetMapping("/orders")
-    public ResponseEntity<List<OrderResponseDto>> getUserOrders(@RequestParam("userId") Long userId) {
+    public ResponseEntity<List<OrderResponseDto>> getUserOrders(@RequestParam("userId") Long userId) { // @AuthenticationPrincipal Users user
 
         User user = userService.findUser(userId);
 
@@ -49,8 +47,8 @@ public class OrderApiController {
     }
 
     // 사용자 - 주문 취소
-    @PatchMapping("order/cancel/{orderId}")
-    public ResponseEntity<Void> cancelOrder(@PathVariable("orderId") Long orderId) {
+    @PatchMapping("orders/{orderId}")
+    public ResponseEntity<Void> cancelOrder(@PathVariable("orderId") Long orderId) { // @AuthenticationPrincipal Users authenticatedUser
         // 주문 취소 처리
         orderService.cancelOrder(orderId);
 

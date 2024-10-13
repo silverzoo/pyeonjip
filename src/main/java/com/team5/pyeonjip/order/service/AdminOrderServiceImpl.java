@@ -2,7 +2,6 @@ package com.team5.pyeonjip.order.service;
 
 import com.team5.pyeonjip.global.exception.ErrorCode;
 import com.team5.pyeonjip.global.exception.GlobalException;
-import com.team5.pyeonjip.global.exception.ResourceNotFoundException;
 import com.team5.pyeonjip.order.dto.AdminOrderResponseDto;
 import com.team5.pyeonjip.order.entity.Order;
 import com.team5.pyeonjip.order.enums.DeliveryStatus;
@@ -43,7 +42,7 @@ public class AdminOrderServiceImpl implements AdminOrderService {
     @Override
     public void deleteOrderById(Long orderId) {
         Order order = findOrderById(orderId);
-        orderRepository.delete(order);
+        orderRepository.delete(order); // TODO: soft delete
     }
 
     // 관리자 - 주문 전체 조회
