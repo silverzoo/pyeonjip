@@ -41,4 +41,6 @@ public class AdminCategoryController {
                 .status(HttpStatus.OK)
                 .body(categoryService.deleteCategory(id));
     }
+
+    //TODO: 전체 삭제, 부분 삭제용 컨트롤러 필요
 }
