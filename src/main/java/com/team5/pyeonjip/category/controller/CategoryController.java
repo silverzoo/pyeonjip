@@ -4,10 +4,13 @@ import com.team5.pyeonjip.category.dto.CategoryResponse;
 import com.team5.pyeonjip.category.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.springframework.web.servlet.function.RequestPredicates.contentType;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,7 +24,10 @@ public class CategoryController {
 
         List<CategoryResponse> categories = categoryService.newGetCategories();
 
-        return ResponseEntity.status(HttpStatus.OK).body(categories);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(categories);
     }
 
 
