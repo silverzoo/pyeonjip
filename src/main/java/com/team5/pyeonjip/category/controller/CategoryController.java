@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.web.servlet.function.RequestPredicates.contentType;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/category")
@@ -22,12 +20,10 @@ public class CategoryController {
     @GetMapping
     public ResponseEntity<List<CategoryResponse>> getCategories() {
 
-        List<CategoryResponse> categories = categoryService.newGetCategories();
-
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(categories);
+                .body(categoryService.newGetCategories());
     }
 
 
