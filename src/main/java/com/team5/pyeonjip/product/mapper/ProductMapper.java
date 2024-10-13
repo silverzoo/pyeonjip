@@ -35,4 +35,5 @@ public class ProductMapper {
 
         return new ProductResponse(product.getId(), product.getName(), product.getDescription(), detailResponses, imageResponses);
     }
+
 }
