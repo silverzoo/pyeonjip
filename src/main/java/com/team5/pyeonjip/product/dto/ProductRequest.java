@@ -12,6 +12,7 @@ import java.util.List;
 public class ProductRequest {
     private String name;
     private String description;
+    private Long categoryId;
     private List<ProductDetailRequest> productDetails; // 상세 정보 목록
     private List<ProductImageRequest> productImages;   // 이미지 정보 목록
 
