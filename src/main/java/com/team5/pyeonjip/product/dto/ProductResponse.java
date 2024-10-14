@@ -12,6 +12,7 @@ public class ProductResponse {
     private Long id;  // Product ID
     private String name;
     private String description;
+    private Long categoryId;  // 추가된 카테고리 ID
     private List<ProductDetailResponse> productDetails; // 내부 클래스 사용
     private List<ProductImageResponse> productImages;   // 이미지 정보 목록
 
