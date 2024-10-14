@@ -91,4 +91,11 @@ public class ProductController {
         ProductResponse productResponse = productService.getProductById(productId);
         return ResponseEntity.ok(productResponse);
     }
+
+    // 모든 상품 조회 (컨트롤러)
+    @GetMapping("/all")
+    public ResponseEntity<List<ProductResponse>> getAllProducts() {
+        List<ProductResponse> productResponse = productService.getAllProducts();
+        return ResponseEntity.ok(productResponse);
+    }
 }

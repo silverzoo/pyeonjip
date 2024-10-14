@@ -95,4 +95,18 @@ public class ProductService {
                 })
                 .collect(Collectors.toList());
     }
+
+
+    public List<ProductResponse> getAllProducts() {
+        List<Product> products = productRepository.findAll();
+
+        return products.stream()
+                .map(product -> {
+                    List<ProductDetail> productDetails = productDetailRepository.findByProductId(product.getId());
+                    List<ProductImage> productImages = productImageRepository.findByProductId(product.getId());
+                    return productMapper.toDto(product, productDetails, productImages);
+                })
+                .collect(Collectors.toList());
+
+    }
 }
