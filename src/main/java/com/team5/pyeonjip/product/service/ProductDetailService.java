@@ -102,12 +102,25 @@ public class ProductDetailService {
 
     // 단일 ProductDetail 수정
     @Transactional
-    public ProductDetail updateProductDetail(Long productId, Long detailId, ProductDetail updatedDetail) {
+    public ProductDetail updateProductDetail(Long detailId, ProductDetail updatedDetail) {
         ProductDetail existingDetail = productDetailRepository.findById(detailId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND));
+
         existingDetail.setName(updatedDetail.getName());
         existingDetail.setPrice(updatedDetail.getPrice());
         existingDetail.setQuantity(updatedDetail.getQuantity());
+        existingDetail.setMainImage(updatedDetail.getMainImage());
+
         return productDetailRepository.save(existingDetail);
+    }
+
+    // ProductId로 옵션 목록 조회
+    public List<ProductDetail> getProductDetailsByProductId(Long productId) {
+        return productDetailRepository.findByProductId(productId);
+    }
+
+    public ProductDetail getProductDetailById(Long detailId) {
+        return productDetailRepository.findById(detailId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND));
     }
 }
