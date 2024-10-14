@@ -33,7 +33,7 @@ public class ProductMapper {
                 .map(image -> new ProductResponse.ProductImageResponse(image.getId(), image.getImageUrl()))
                 .collect(Collectors.toList());
 
-        return new ProductResponse(product.getId(), product.getName(), product.getDescription(), detailResponses, imageResponses);
+        return new ProductResponse(product.getId(), product.getName(), product.getDescription(), product.getCategory().getId(), detailResponses, imageResponses);
     }
 
 }
