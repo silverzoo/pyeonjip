@@ -15,7 +15,7 @@ public class CategoryResponse {
 
     private String name;
 
-    private int sort;
+    private Integer sort;
 
     private Long parentId;
 

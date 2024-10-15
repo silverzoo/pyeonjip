@@ -33,6 +33,12 @@ public class Product {
     private List<ProductImage> productImages;
 
 
+    // ID만을 받는 생성자 추가
+    public Product(Long id) {
+        this.id = id;
+    }
+
+
 
 
 }

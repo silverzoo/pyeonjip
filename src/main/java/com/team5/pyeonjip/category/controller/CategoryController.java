@@ -4,6 +4,7 @@ import com.team5.pyeonjip.category.dto.CategoryResponse;
 import com.team5.pyeonjip.category.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,9 +20,10 @@ public class CategoryController {
     @GetMapping
     public ResponseEntity<List<CategoryResponse>> getCategories() {
 
-        List<CategoryResponse> categories = categoryService.newGetCategories();
-
-        return ResponseEntity.status(HttpStatus.OK).body(categories);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(categoryService.newGetCategories());
     }
 
 

@@ -51,4 +51,22 @@ public class ProductImageService {
         s3BucketService.delete(image.getImageUrl());
         productImageRepository.delete(image);
     }
+
+    // 단일 이미지 생성
+    @Transactional
+    public ProductImage createProductImage(Long productId, ProductImage productImage) {
+        productImage.setProduct(new Product(productId));  // Product와 연결
+        return productImageRepository.save(productImage);
+    }
+
+    // 단일 이미지 삭제
+    @Transactional
+    public void deleteProductImage(Long productId, Long imageId) {
+        ProductImage productImage = productImageRepository.findById(imageId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.PRODUCT_IMAGE_NOT_FOUND));
+
+        // S3에서 이미지 삭제
+        s3BucketService.delete(productImage.getImageUrl());
+        productImageRepository.delete(productImage);
+    }
 }

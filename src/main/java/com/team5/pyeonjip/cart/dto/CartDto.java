@@ -7,4 +7,12 @@ import lombok.Setter;
 public class CartDto {
     private Long optionId;
     private Long quantity;
+
+    public CartDto(Long optionId, Long quantity) {
+        this.optionId = optionId;
+        this.quantity = quantity;
+    }
+
+    public CartDto() {
+    }
 }

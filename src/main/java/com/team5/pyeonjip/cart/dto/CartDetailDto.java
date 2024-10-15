@@ -13,5 +13,5 @@ public class CartDetailDto {
     private Long quantity;
     private Long maxQuantity;
     private String url;
-    private boolean isChecked;
+    //private boolean isChecked;
 }
