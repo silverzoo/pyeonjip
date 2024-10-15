@@ -24,8 +24,7 @@ public class Category {
     @Column(name = "parent_id")
     private Long parentId;
 
-    @OneToMany
-    @JoinColumn(name = "parent_id", referencedColumnName = "id")
+    @OneToMany(mappedBy = "parentId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> children = new ArrayList<>();
 
     @Builder(toBuilder = true)
