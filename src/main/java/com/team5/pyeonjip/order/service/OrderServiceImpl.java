@@ -35,7 +35,7 @@ public class OrderServiceImpl implements OrderService {
     private final ProductDetailRepository productDetailRepository;
     private final ProductDetailService productDetailService;
 
-    private ProductDetail findProductDetailById(Long productId) {
+    private ProductDetail findProductDetailById(Long productId) { // 주문을 동시에 하게 되면, 재고 이상으로 주문이 될 수 있다.
         return productDetailRepository.findById(productId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND));
     }
@@ -44,7 +44,8 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public void createOrder(OrderRequestDto orderRequestDto, Long userId) {
-        // 유저 조회
+
+        // TODO: 유저 조회 -> 로그인 된 유저 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("유저를 찾을 수 없습니다."));
 
@@ -56,6 +57,8 @@ public class OrderServiceImpl implements OrderService {
         deliveryRepository.save(delivery);
 
         Long cartTotalPrice = 100000L; // 장바구니 쿠폰 적용 후 가격 예시
+
+        // TODO: 장바구니의 각 상품 주문에 추가
 
         // 전체 주문 금액
         Long totalPrice = calculateTotalPrice(user, cartTotalPrice);
@@ -131,9 +134,10 @@ public class OrderServiceImpl implements OrderService {
     // 주문 취소
     @Transactional
     @Override
-    public void cancelOrder(Long orderId) {
+    public void cancelOrder(Long orderId) { // User authenticatedUser
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.ORDER_NOT_FOUND));
+        // .filter(order -> order.getUser().getUserId().equals(authenticatedUser.getUserId())) // 주문자 확인
 
         // 배송 상태가 READY인 경우에만 취소 가능
         if (order.getDelivery().getStatus() != DeliveryStatus.READY) {

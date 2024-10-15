@@ -5,7 +5,6 @@ import com.team5.pyeonjip.cart.dto.CartDto;
 import com.team5.pyeonjip.cart.entity.Cart;
 import com.team5.pyeonjip.cart.repository.CartRepository;
 import com.team5.pyeonjip.global.exception.GlobalException;
-import com.team5.pyeonjip.global.exception.ResourceNotFoundException;
 import com.team5.pyeonjip.product.entity.ProductDetail;
 import com.team5.pyeonjip.product.repository.ProductDetailRepository;
 import com.team5.pyeonjip.product.service.ProductService;
@@ -105,12 +104,17 @@ public class CartService {
     }
 
     @Transactional
-    public void deleteCartItem(Long userId, Long optionId) {
+    public void deleteCartItemByUserIdAndOptionId(Long userId, Long optionId) {
         cartRepository.deleteByUserIdAndOptionId(userId,optionId);
     }
 
     @Transactional
     public void deleteAllCartItems(Long userId) {
         cartRepository.deleteAllByUserId(userId);
+    }
+
+    @Transactional
+    public void deleteCartItemByOptionId(Long optionId) {
+        cartRepository.deleteByOptionId(optionId);
     }
 }
