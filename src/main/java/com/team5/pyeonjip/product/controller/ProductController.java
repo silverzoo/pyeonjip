@@ -98,4 +98,11 @@ public class ProductController {
         List<ProductResponse> productResponse = productService.getAllProducts();
         return ResponseEntity.ok(productResponse);
     }
+
+    // 여러 CategoryId 로 제품 목록 조회
+    @GetMapping("/categories")
+    public ResponseEntity<List<ProductResponse>> getProductsByMultipleCategoryIds(
+            @RequestParam List<Long> categoryIds) {
+        return ResponseEntity.ok(productService.getProductsByMultipleCategoryIds(categoryIds));
+    }
 }

@@ -53,4 +53,8 @@ public class CouponService {
     public List<Coupon> getAllCoupons() {
         return couponRepository.findAll();
     }
+
+    public void deleteCouponById(Long id) {
+        couponRepository.deleteById(id);
+    }
 }
