@@ -8,8 +8,6 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface AdminOrderService {
-    // 사용자 이메일로 주문 내역 검색
-    Page<AdminOrderResponseDto> findOrdersByUserEmail(String userEmail, Pageable pageable);
 
     // 주문 수정(배송 상태)
     void updateDeliveryStatus(Long id, DeliveryStatus deliveryStatus);
@@ -18,5 +16,5 @@ public interface AdminOrderService {
     void deleteOrderById(Long orderId);
 
     // 주문 전체 조회
-    Page<AdminOrderResponseDto> findAllOrders(Pageable pageable);
+    Page<AdminOrderResponseDto> findAllOrders(int pageNumber, int size, String sortField, String sortDir, String keyword);
 }
