@@ -68,7 +68,7 @@ public class CartController {
     public ResponseEntity<Void> deleteCartItem(
             @RequestParam("userId") Long userId,
             @PathVariable("optionId") Long optionId) {
-            cartService.deleteCartItem(userId,optionId);
+            cartService.deleteCartItemByUserIdAndOptionId(userId,optionId);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
