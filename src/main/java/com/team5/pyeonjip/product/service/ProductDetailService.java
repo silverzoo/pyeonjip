@@ -1,5 +1,6 @@
 package com.team5.pyeonjip.product.service;
 
+import com.team5.pyeonjip.cart.repository.CartRepository;
 import com.team5.pyeonjip.global.exception.ErrorCode;
 import com.team5.pyeonjip.global.exception.GlobalException;
 import com.team5.pyeonjip.global.exception.ResourceNotFoundException;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 public class ProductDetailService {
     private final ProductDetailRepository productDetailRepository;
     private final S3BucketService s3BucketService;
+    private final CartRepository cartRepository;
 
     // Create - 옵션 생성
     @Transactional
@@ -55,10 +57,18 @@ public class ProductDetailService {
         productDetailRepository.saveAll(existingDetails);
     }
 
-    // Delete - 옵션 삭제
+    // Delete - 옵션 삭제 및 연관된 CartItem, OrderItem 삭제
     @Transactional
     public void deleteProductDetailsByProduct(Product product) {
         List<ProductDetail> existingDetails = productDetailRepository.findByProductId(product.getId());
+
+        // CartItem 및 OrderItem 삭제 로직 추가
+        for (ProductDetail detail : existingDetails) {
+            cartRepository.deleteByProductDetailId(detail.getId());  // 해당 ProductDetail과 연관된 CartItem 삭제
+
+        }
+
+        // ProductDetail 삭제
         productDetailRepository.deleteAll(existingDetails);
     }
 
@@ -97,6 +107,9 @@ public class ProductDetailService {
     public void deleteProductDetail(Long productId, Long detailId) {
         ProductDetail productDetail = productDetailRepository.findById(detailId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND));
+
+        cartRepository.deleteByProductDetailId(detailId);  // 해당 ProductDetail과 연관된 CartItem 삭제
+
         productDetailRepository.delete(productDetail);
     }
 
