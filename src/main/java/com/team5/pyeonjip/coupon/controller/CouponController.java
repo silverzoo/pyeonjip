@@ -16,7 +16,7 @@ public class CouponController {
     private final CouponService couponService;
 
     // 랜덤 쿠폰 생성 API
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<Coupon> createCoupon(@RequestParam Long discount) {
         Coupon coupon = couponService.createRandomCoupon(discount);
         return ResponseEntity.ok(coupon);

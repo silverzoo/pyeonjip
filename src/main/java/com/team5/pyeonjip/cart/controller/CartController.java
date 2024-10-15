@@ -2,7 +2,6 @@ package com.team5.pyeonjip.cart.controller;
 
 import com.team5.pyeonjip.cart.dto.CartDetailDto;
 import com.team5.pyeonjip.cart.dto.CartDto;
-import com.team5.pyeonjip.cart.dto.CartResponseDto;
 import com.team5.pyeonjip.cart.service.CartService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -77,19 +76,6 @@ public class CartController {
     public ResponseEntity<Void> deleteAllCartItems(@RequestParam("userId") Long userId) {
             cartService.deleteAllCartItems(userId);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
-
-    @GetMapping("/checkout")
-    public ResponseEntity<CartResponseDto> checkout(@RequestParam("userId") Long userId,
-                                                    @RequestParam("discountedTotalPrice") Long discountedTotalPrice) {
-        CartResponseDto responseDtos = new CartResponseDto();
-        List<CartDetailDto> detailDtos = cartService.mapCartDtosToCartDetails(cartService.getCartItemsByUserId(userId));
-
-        responseDtos.setCartDetail(detailDtos);
-        responseDtos.setUserId(userId);
-        responseDtos.setDiscountedTotalPrice(discountedTotalPrice);
-
-        return ResponseEntity.status(HttpStatus.OK).body(responseDtos);
     }
 
     // WIP
