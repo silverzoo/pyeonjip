@@ -1,6 +1,7 @@
 package com.team5.pyeonjip.user.service;
 
 import com.team5.pyeonjip.user.dto.SignUpDto;
+import com.team5.pyeonjip.user.dto.UserFindAccountDto;
 import com.team5.pyeonjip.user.mapper.UserMapper;
 import com.team5.pyeonjip.user.dto.UserUpdateDto;
 import com.team5.pyeonjip.user.entity.User;
@@ -50,30 +51,46 @@ public class UserService {
             return;
         }
 
-        User findedUser = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        User foundUser = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
 //      1. 주소만 변경하는 경우
         if (dto.getAddress() != null) {
-            findedUser.setAddress(dto.getAddress());
+            foundUser.setAddress(dto.getAddress());
         }
 
 //      2. 비밀번호 힌트만 변경하는 경우
         if (dto.getPasswordHint() != null) {
-            findedUser.setPasswordHint(dto.getPasswordHint());
+            foundUser.setPasswordHint(dto.getPasswordHint());
         }
 
-        userRepository.save(findedUser);
+        userRepository.save(foundUser);
     }
 
 
     // 유저 삭제
     public void deleteUser(Long userId) {
 
-        User findedUser = userRepository.findById(userId)
+        User foundUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-        userRepository.delete(findedUser);
+        userRepository.delete(foundUser);
+    }
+
+
+    // 계정 찾기
+    public User findAccount(UserFindAccountDto dto) {
+
+        if (!checkUser(dto)) {
+            return null;
+        }
+
+        return userRepository.findByNameAndPhoneNumber(dto.getName(), dto.getPhoneNumber());
+    }
+
+
+    // 계정을 찾기 위한 본인 확인 메서드
+    private Boolean checkUser(UserFindAccountDto dto) {
+        return userRepository.existsByNameAndPhoneNumber(dto.getName(), dto.getPhoneNumber());
     }
 
 
@@ -82,9 +99,9 @@ public class UserService {
     }
 
     public User findUser(Long userId) {
-        User findedUser = userRepository.findById(userId)
+        User foundUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-        return findedUser;
+        return foundUser;
     }
 }
