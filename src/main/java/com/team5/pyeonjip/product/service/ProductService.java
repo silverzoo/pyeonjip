@@ -78,7 +78,7 @@ public class ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new GlobalException(ErrorCode.PRODUCT_NOT_FOUND));
 
-        // 관련된 ProductDetail과 ProductImage 삭제
+        // 관련된 ProductDetail 삭제
         productDetailService.deleteProductDetailsByProduct(product); // ProductDetail 삭제 호출
 
         // Product 삭제

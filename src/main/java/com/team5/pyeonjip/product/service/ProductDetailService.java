@@ -64,7 +64,7 @@ public class ProductDetailService {
 
         // CartItem 및 OrderItem 삭제 로직 추가
         for (ProductDetail detail : existingDetails) {
-            cartRepository.deleteByProductDetailId(detail.getId());  // 해당 ProductDetail과 연관된 CartItem 삭제
+            cartRepository.deleteByOptionId(detail.getId());  // 해당 ProductDetail과 연관된 CartItem 삭제
 
         }
 
@@ -108,7 +108,7 @@ public class ProductDetailService {
         ProductDetail productDetail = productDetailRepository.findById(detailId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND));
 
-        cartRepository.deleteByProductDetailId(detailId);  // 해당 ProductDetail과 연관된 CartItem 삭제
+        cartRepository.deleteByOptionId(detailId);  // 해당 ProductDetail과 연관된 CartItem 삭제
 
         productDetailRepository.delete(productDetail);
     }
