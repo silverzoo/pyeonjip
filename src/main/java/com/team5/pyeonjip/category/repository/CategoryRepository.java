@@ -25,29 +25,34 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @EntityGraph(attributePaths = {"children"})
     List<Category> findByParentId(Long parentId);
 
-    // 주석을 달아놨으니 공부해보셔도 좋을거 같아요
+    // 네이티브 쿼리 적용
+    // Leaf (최하위 카테고리) 만을 찾아야 함) -> 나무의 나뭇잎 생각하면 편함
     @Query(value = """
-        WITH RECURSIVE CategoryTree AS (
-            -- 1. Anchor (시작조건 : parentId로 탐색을 시작)
-            SELECT id, name, parent_id
-            FROM Category
-            WHERE id = :parentId
+    WITH RECURSIVE CategoryTree AS (
+        -- 시작 카테고리를 선택 (주어진 ID)
+        SELECT id, name, parent_id, sort
+        FROM category
+        WHERE id = :parentId
 
-            UNION ALL
-            -- 2. Recursive (재귀단계 : 자식을 찾기 위해 이전 단게의 결과와 Join)
-            SELECT c.id, c.name, c.parent_id
-            FROM Category c
-            -- CategoryTree : 쿼리의 중간결과를 저장하는 가상 테이블
-            -- 부모 id = 자식의 Parent_id와 일치할 때 선택
-            JOIN CategoryTree ct ON c.parent_id = ct.id
-        )
-        -- Leaf : 최하위 카테고리 (나뭇잎 처럼 Tree 끝에 있음)
-        -- LEFT JOIN을 사용하여 id가 다른 카테고리의 parent로 존재하는지 확인
-        SELECT ct.* 
-        FROM CategoryTree ct
-        LEFT JOIN Category c ON ct.id = c.parent_id
-        WHERE c.parent_id IS NULL
-        """, nativeQuery = true)
-    List<Category> findLeafCategoriesByParentId(@Param("parentId") Long parentId);
+        -- SELECT 쿼리 결과 결합
+        UNION ALL
+
+        -- 재귀적으로 자식 카테고리를 찾기
+        -- LEFT JOIN 으로 Leaf 필터링
+        SELECT c.id, c.name, c.parent_id, c.sort
+        FROM category c
+        -- CategoryTree : 중간 결과를 저장하기 위한 임시 가상 테이블
+        JOIN CategoryTree ct ON c.parent_id = ct.id
+    )
+    -- 최종 SELECT : Leaf 카테고리만 필터링
+    SELECT ct.id, ct.name, ct.sort
+    FROM CategoryTree ct
+        -- LEFT JOIN 사용하여 Category 테이블과 다시 조인
+        -- 대신 LEAF 카테고리만 선택 
+    LEFT JOIN category c ON ct.id = c.parent_id
+    WHERE c.id IS NULL
+    ORDER BY ct.sort ASC
+    """, nativeQuery = true)
+    List<Object[]> findLeafCategories(@Param("parentId") Long parentId);
 }
 

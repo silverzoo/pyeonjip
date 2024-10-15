@@ -1,6 +1,7 @@
 package com.team5.pyeonjip.category.controller;
 
 import com.team5.pyeonjip.category.dto.CategoryResponse;
+import com.team5.pyeonjip.category.entity.Category;
 import com.team5.pyeonjip.category.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,13 @@ public class CategoryController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(categoryService.getCategories(categoryIds));
+    }
+
+    @GetMapping("/{parentId}/leaf")
+    public ResponseEntity<List<Long>> getLeafCategories(@PathVariable Long parentId) {
+        List<Long> leafCategories = categoryService.getLeafCategoryIds(parentId);
+        System.out.println(leafCategories.toString());
+        return ResponseEntity.status(HttpStatus.OK).body(leafCategories);
     }
 
 }

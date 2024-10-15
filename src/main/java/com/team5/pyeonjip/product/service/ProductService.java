@@ -109,4 +109,13 @@ public class ProductService {
                 .collect(Collectors.toList());
 
     }
+
+    // 여러 CategoryId로 제품 리스트 조회 후 Flat화
+    public List<ProductResponse> getProductsByMultipleCategoryIds(List<Long> categoryIds) {
+        return categoryIds.stream()
+                .flatMap(categoryId -> getProductsByCategoryId(categoryId).stream())
+                .collect(Collectors.toList());
+    }
+
+
 }

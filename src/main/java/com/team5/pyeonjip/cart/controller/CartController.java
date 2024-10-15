@@ -77,10 +77,5 @@ public class CartController {
             cartService.deleteAllCartItems(userId);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
-    // WIP
-    private Long getAuthenticatedUserId() {
-        return (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    }
 }
 

@@ -117,4 +117,14 @@ public class CategoryService {
 
         return response;
     }
+
+    public List<Long> getLeafCategoryIds(Long parentId) {
+        List<Object[]> results = categoryRepository.findLeafCategories(parentId);
+
+        // 쿼리 결과에서 첫 번째 요소인 ID만 추출하여 List<Long>로 매핑
+        // Repository 쪽에서 매핑하기 어려워서 서비스단에서 매핑했음
+        return results.stream()
+                .map(result -> (Long) result[0])
+                .toList();
+    }
 }
