@@ -1,6 +1,7 @@
 package com.team5.pyeonjip.user.controller;
 
 import com.team5.pyeonjip.user.dto.SignUpDto;
+import com.team5.pyeonjip.user.dto.UserFindAccountDto;
 import com.team5.pyeonjip.user.dto.UserUpdateDto;
 import com.team5.pyeonjip.user.entity.User;
 import com.team5.pyeonjip.user.service.UserService;
@@ -21,19 +22,17 @@ public class UserApiController {
 
 
     // 회원가입
-    @PostMapping
-    public ResponseEntity<String> createUser(@RequestBody SignUpDto dto) {
+    @PostMapping("/signup")
+    public ResponseEntity<String> signUp(@RequestBody SignUpDto dto) {
 
         try {
             // UserService의 유저 생성 메서드 실행
-            userService.createUser(dto);
+            userService.signUpProcess(dto);
 
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .location(URI.create("/"))
-                    .build();
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
+                    .body(null);
         }
     }
 
@@ -99,5 +98,21 @@ public class UserApiController {
                     .body(null);
         }
     }
+
+
+    // 계정 찾기
+//    @GetMapping("/account")
+//    public ResponseEntity<String> findAccount(UserFindAccountDto dto) {
+//
+//        try {
+//            // UserService의 계정 찾기 메서드 실행
+//            userService.findAccount(dto);
+//
+//            return ResponseEntity.ok().build();
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                    .body(null);
+//        }
+//    }
 
 }
