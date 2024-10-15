@@ -42,9 +42,4 @@ public class Category {
     public String toString() {
         return String.format("Category(id=%d, name='%s')", id, name);
     }
-
-    public void addChild(Category child) {
-        this.children.add(child);
-        child.parentId = this.id;
-    }
 }
