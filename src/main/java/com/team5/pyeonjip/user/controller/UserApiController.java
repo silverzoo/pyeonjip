@@ -20,8 +20,7 @@ public class UserApiController {
     private final UserService userService;
 
 
-    /* CREATE */
-
+    // 회원가입
     @PostMapping
     public ResponseEntity<String> createUser(@RequestBody SignUpDto dto) {
 
@@ -38,8 +37,6 @@ public class UserApiController {
         }
     }
 
-
-    /* READ */
 
     // 모든 유저 조회
     @GetMapping
@@ -72,8 +69,7 @@ public class UserApiController {
     }
 
 
-    /* UPDATE */
-
+    // 유저 삭제
     @PutMapping("/information/{userId}")
     public ResponseEntity<String> updateUserInfo(@PathVariable("userId") Long userId, @RequestBody UserUpdateDto dto) {
 
@@ -89,8 +85,7 @@ public class UserApiController {
     }
 
 
-    /* DELETE */
-
+    // 유저 삭제
     @DeleteMapping("/delete/{userId}")
     public ResponseEntity<String> deleteUser(@PathVariable("userId") Long userId) {
 
