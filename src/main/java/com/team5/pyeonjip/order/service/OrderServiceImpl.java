@@ -35,7 +35,7 @@ public class OrderServiceImpl implements OrderService {
     private final ProductDetailRepository productDetailRepository;
     private final ProductDetailService productDetailService;
 
-    private ProductDetail findProductDetailById(Long productId) {
+    private ProductDetail findProductDetailById(Long productId) { // 주문을 동시에 하게 되면, 재고 이상으로 주문이 될 수 있다.
         return productDetailRepository.findById(productId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND));
     }
@@ -44,7 +44,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public void createOrder(OrderRequestDto orderRequestDto, Long userId) {
-        //
+
         // TODO: 유저 조회 -> 로그인 된 유저 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("유저를 찾을 수 없습니다."));
@@ -134,7 +134,7 @@ public class OrderServiceImpl implements OrderService {
     // 주문 취소
     @Transactional
     @Override
-    public void cancelOrder(Long orderId) { // Users authenticatedUser
+    public void cancelOrder(Long orderId) { // User authenticatedUser
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.ORDER_NOT_FOUND));
         // .filter(order -> order.getUser().getUserId().equals(authenticatedUser.getUserId())) // 주문자 확인
