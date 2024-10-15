@@ -16,7 +16,6 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    /* CREATE */
 
     public void createUser(SignUpDto dto) {
         User user = UserMapper.INSTANCE.toEntity(dto);
@@ -25,8 +24,7 @@ public class UserService {
     }
 
 
-    /* UPDATE */
-
+    // 개인정보 변경
     public void updateUserInfo(Long userId, UserUpdateDto dto) {
 
 //      주소, 비밀번호 힌트 전부 null인 경우, 정보를 변경하지 않는다.
@@ -51,7 +49,15 @@ public class UserService {
     }
 
 
-    /* READ */
+    // 유저 삭제
+    public void deleteUser(Long userId) {
+
+        User findedUser = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+        userRepository.delete(findedUser);
+    }
+
 
     public List<User> findAllUsers() {
         return userRepository.findAll();
@@ -62,16 +68,5 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         return findedUser;
-    }
-
-
-    /* DELETE */
-
-    public void deleteUser(Long userId) {
-
-        User findedUser = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-
-        userRepository.delete(findedUser);
     }
 }
