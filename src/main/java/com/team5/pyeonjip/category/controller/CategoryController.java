@@ -18,13 +18,11 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping
-    public ResponseEntity<List<CategoryResponse>> getCategories() {
+    public ResponseEntity<List<CategoryResponse>> getCategories(@RequestParam(required = false) List<Long> categoryIds) {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(categoryService.newGetCategories());
+                .body(categoryService.getCategories(categoryIds));
     }
-
 
 }

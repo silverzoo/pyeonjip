@@ -28,6 +28,18 @@ public class CategoryUtils {
                 .orElseThrow(() -> new GlobalException(ErrorCode.CATEGORY_NOT_FOUND));
     }
 
+    public List<Category> findCategory(List<Long> ids) {
+
+        List<Category> categories = categoryRepository.findAllById(ids);
+
+        if (categories.size() != ids.size()) {
+            throw new GlobalException(ErrorCode.CATEGORY_NOT_FOUND);
+        }
+
+        return categories;
+
+    }
+
     // 최상위 카테고리만 조회
     public List<Category> getParentCategories(List<Category> allCategories) {
         return allCategories.stream()
