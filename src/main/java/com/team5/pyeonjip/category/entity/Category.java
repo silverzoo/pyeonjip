@@ -2,6 +2,7 @@ package com.team5.pyeonjip.category.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ public class Category {
     private String name;
 
     @Column(nullable = false)
+    @ColumnDefault("999")
     private Integer sort; //낮을수록 먼저 반환
 
     @Column(name = "parent_id")
