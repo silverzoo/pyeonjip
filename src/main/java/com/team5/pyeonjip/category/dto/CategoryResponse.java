@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Builder
 @ToString
+@Builder(toBuilder = true)
 @AllArgsConstructor
 public class CategoryResponse {
 

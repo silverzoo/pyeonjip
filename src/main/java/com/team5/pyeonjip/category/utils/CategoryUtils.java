@@ -47,7 +47,6 @@ public class CategoryUtils {
 
         return allCategories.stream()
                 .filter(category -> category.getParentId() == null)
-                .sorted(Comparator.comparingInt(Category::getSort))
                 .toList();
     }
 
@@ -55,26 +54,19 @@ public class CategoryUtils {
     public List<CategoryResponse> createChildrenCategories(List<Category> parentCategories,
                                                            List<Category> allCategories) {
 
-        List<CategoryResponse> responses = new ArrayList<>();
+        return parentCategories.stream()
+                .map(parent -> {
+                    List<CategoryResponse> children = allCategories.stream()
+                            .filter(child -> parent.getId().equals(child.getParentId()))
+                            .map(categoryMapper::toResponse)
+                            .toList();
 
-        for (Category parent : parentCategories) {
-            List<CategoryResponse> children = allCategories.stream()
-                    .filter(child -> parent.getId().equals(child.getParentId()))
-                    .sorted(Comparator.comparingInt(Category::getSort))
-                    .map(categoryMapper::toResponse)
-                    .toList();
-
-            CategoryResponse parentResponses = CategoryResponse.builder()
-                    .id(parent.getId())
-                    .sort(parent.getSort())
-                    .name(parent.getName())
-                    .children(children)
-                    .build();
-
-            responses.add(parentResponses);
-        }
-
-        return responses;
+                    // 부모 카테고리의 정보를 가진 CategoryResponse 객체를 생성
+                    return categoryMapper.toResponse(parent).toBuilder()
+                            .children(children)
+                            .build();
+                })
+                .toList();
     }
 
     // 부모카테고리 유효성 검사

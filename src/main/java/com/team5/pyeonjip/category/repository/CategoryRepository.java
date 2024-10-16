@@ -16,6 +16,7 @@ import java.util.Optional;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     @EntityGraph(attributePaths = {"children"})
+    @Query(value = "SELECT c FROM Category c ORDER BY c.sort")
     List<Category> findAll();
 
     @EntityGraph(attributePaths = {"children"})
@@ -60,8 +61,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Long> findLeafCategories(@Param("parentId") Long parentId);
 
     @Modifying
-    @Transactional
-    @Query(value = "DELETE FROM category WHERE id IN (:ids)", nativeQuery = true)
+    @Query("DELETE FROM Category c WHERE c.id IN :ids")
     void deleteAll(List<Long> ids);
 }
 
