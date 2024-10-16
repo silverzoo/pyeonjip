@@ -2,6 +2,7 @@ package com.team5.pyeonjip.user.service;
 
 import com.team5.pyeonjip.user.dto.SignUpDto;
 import com.team5.pyeonjip.user.dto.UserFindAccountDto;
+import com.team5.pyeonjip.user.dto.UserInfoDto;
 import com.team5.pyeonjip.user.mapper.UserMapper;
 import com.team5.pyeonjip.user.dto.UserUpdateDto;
 import com.team5.pyeonjip.user.entity.User;
@@ -40,6 +41,19 @@ public class UserService {
         user.setPassword(encodedPassword);
 
         userRepository.save(user);
+    }
+
+
+    // 마이페이지 조회
+    public UserInfoDto getUserInfo(String email) {
+
+        User user = userRepository.findByEmail(email);
+
+        return UserInfoDto.builder().name(user.getName())
+                                    .email(user.getEmail())
+                                    .phoneNumber(user.getPhoneNumber())
+                                    .address(user.getAddress())
+                                    .build();
     }
 
 

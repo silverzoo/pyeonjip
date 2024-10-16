@@ -2,6 +2,7 @@ package com.team5.pyeonjip.user.controller;
 
 import com.team5.pyeonjip.user.dto.SignUpDto;
 import com.team5.pyeonjip.user.dto.UserFindAccountDto;
+import com.team5.pyeonjip.user.dto.UserInfoDto;
 import com.team5.pyeonjip.user.dto.UserUpdateDto;
 import com.team5.pyeonjip.user.entity.User;
 import com.team5.pyeonjip.user.service.UserService;
@@ -37,35 +38,49 @@ public class UserApiController {
     }
 
 
-    // 모든 유저 조회
-    @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
+    // 마이페이지
+    @GetMapping("/mypage")
+    public ResponseEntity<UserInfoDto> mypage(@RequestParam String email) {
 
         try {
-            // UserService의 전체 유저 조회 메서드 실행
-            return ResponseEntity.ok(userService.findAllUsers());
-        } catch (Exception e) {
 
-            // Todo: 추후 구체적으로 작성할 것
+            return ResponseEntity.ok(userService.getUserInfo(email));
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(null);
         }
     }
 
 
-    // 단일 유저 조회
-    @GetMapping("/{userId}")
-    public ResponseEntity<User> getUser(@PathVariable("userId") Long userId) {
+//    // 모든 유저 조회
+//    @GetMapping
+//    public ResponseEntity<List<User>> getAllUsers() {
+//
+//        try {
+//            // UserService의 전체 유저 조회 메서드 실행
+//            return ResponseEntity.ok(userService.findAllUsers());
+//        } catch (Exception e) {
+//
+//            // Todo: 추후 구체적으로 작성할 것
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                    .body(null);
+//        }
+//    }
 
-        try {
-            // UserService의 단일 유저 조회 메서드 실행
-            return ResponseEntity.ok(userService.findUser(userId));
-        } catch (Exception e) {
-            // Todo: 위와 마찬가지
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(null);
-        }
-    }
+
+//    // 단일 유저 조회
+//    @GetMapping("/{userId}")
+//    public ResponseEntity<User> getUser(@PathVariable("userId") Long userId) {
+//
+//        try {
+//            // UserService의 단일 유저 조회 메서드 실행
+//            return ResponseEntity.ok(userService.findUser(userId));
+//        } catch (Exception e) {
+//            // Todo: 위와 마찬가지
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                    .body(null);
+//        }
+//    }
 
 
     // 유저 삭제
