@@ -1,5 +1,6 @@
 package com.team5.pyeonjip.category.service;
 
+import com.team5.pyeonjip.category.dto.CategoryCreateRequest;
 import com.team5.pyeonjip.category.dto.CategoryRequest;
 import com.team5.pyeonjip.category.dto.CategoryResponse;
 import com.team5.pyeonjip.category.entity.Category;
@@ -58,7 +59,9 @@ public class CategoryService {
 
         categoryUtils.validateParent(id, request);
 
-        //TODO: 이름 중복 유효성 검사
+        if (!request.getName().equals(category.getName())) {
+            categoryUtils.validateName(request.getName());
+        }
 
         Integer newSort = categoryUtils.updateSiblingSort(request);
 
@@ -69,15 +72,13 @@ public class CategoryService {
                 .parentId(request.getParentId() != null ? request.getParentId() : null)
                 .build();
 
-        Category savedCategory = categoryRepository.save(updatedCategory);
-
-        return categoryMapper.toResponse(savedCategory);
+        return categoryMapper.toResponse(categoryRepository.save(updatedCategory));
     }
 
     @Transactional
-    public CategoryResponse createCategory(CategoryRequest request) {
+    public CategoryResponse createCategory(CategoryCreateRequest request) {
 
-        //TODO: 이름 중복 유효성 검사
+        categoryUtils.validateName(request.getName());
 
         Category category = categoryMapper.toEntity(request);
 
@@ -95,12 +96,10 @@ public class CategoryService {
         if (ids == null || ids.isEmpty()) {
 
             response.put("message", "삭제할 카테고리가 없습니다.");
-            return response;
 
         } else {
 
             categoryUtils.deleteCategoriesAndUpdateProducts(ids);
-
             response.put("message", "카테고리가 삭제되었습니다.");
         }
 

@@ -45,6 +45,7 @@ public class CategoryUtils {
 
     // 최상위 카테고리만 조회
     public List<Category> getParentCategories(List<Category> allCategories) {
+
         return allCategories.stream()
                 .filter(category -> category.getParentId() == null)
                 .sorted(Comparator.comparingInt(Category::getSort))
@@ -52,7 +53,8 @@ public class CategoryUtils {
     }
 
     // 부모-자식 카테고리 연결
-    public List<CategoryResponse> createChildrenCategories(List<Category> parentCategories, List<Category> allCategories) {
+    public List<CategoryResponse> createChildrenCategories(List<Category> parentCategories,
+                                                           List<Category> allCategories) {
 
         List<CategoryResponse> responses = new ArrayList<>();
 
@@ -78,6 +80,7 @@ public class CategoryUtils {
 
     // 부모카테고리 유효성 검사
     public void validateParent(Long id, CategoryRequest request) {
+
         Long requestParentId = request.getParentId();
 
         // 최상위 카테고리로 이동 (NPE 방지)
@@ -114,6 +117,7 @@ public class CategoryUtils {
         Integer newSort = request.getSort();
 
         for (Category sibling : siblings) {
+
             if (sibling.getSort() >= newSort) {
                 updatedSiblings.add(sibling.toBuilder().sort(sibling.getSort() + 1).build());
             } else {
@@ -125,12 +129,15 @@ public class CategoryUtils {
 
         // 형제 카테고리 업데이트 후 빈 공간을 없애기 위해 다시 정렬
         int currentSort = 0;
+
         for (Category sibling : updatedSiblings) {
+
             if (sibling.getSort() == newSort) {
                 sibling = sibling.toBuilder().sort(newSort).build();
             } else {
                 sibling = sibling.toBuilder().sort(currentSort).build();
             }
+
             currentSort++;
             categoryRepository.save(sibling);
         }
@@ -146,7 +153,6 @@ public class CategoryUtils {
         for (Category category : categories) {
 
             List<Product> products = productRepository.findByCategoryId(category.getId());
-
             for (Product product : products) {
                 product.setCategory(null);
                 productRepository.save(product);
@@ -155,5 +161,13 @@ public class CategoryUtils {
             categoryRepository.delete(category);
         }
 
+    }
+
+    // 이름 중복 검사
+    public void validateName(String requestName) {
+
+        if (categoryRepository.existsByName(requestName)) {
+            throw new GlobalException(ErrorCode.DUPLICATE_CATEGORY);
+        }
     }
 }
