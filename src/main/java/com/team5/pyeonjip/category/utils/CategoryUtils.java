@@ -7,7 +7,6 @@ import com.team5.pyeonjip.category.mapper.CategoryMapper;
 import com.team5.pyeonjip.category.repository.CategoryRepository;
 import com.team5.pyeonjip.global.exception.ErrorCode;
 import com.team5.pyeonjip.global.exception.GlobalException;
-import com.team5.pyeonjip.product.entity.Product;
 import com.team5.pyeonjip.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -100,11 +99,11 @@ public class CategoryUtils {
     }
 
     // sort 변경으로 인한 형제 카테고리 sort 업데이트
-    public Integer updateSiblingSort(CategoryRequest request) {
+    public void updateSiblingSort(CategoryRequest request) {
 
         // 요청한 순서값이 없으면 재배치 하지 않아도 됨
         if (request.getSort() == null) {
-            return null;
+            return;
         }
 
         // 기존의 형제 리스트
@@ -142,7 +141,7 @@ public class CategoryUtils {
             categoryRepository.save(sibling);
         }
 
-        return updatedSiblings.get(newSort).getSort()-1;
+//        return updatedSiblings.get(newSort).getSort()-1;
     }
 
     // 카테고리 삭제 후, 연관된 프로덕트에 null 적용
@@ -150,17 +149,14 @@ public class CategoryUtils {
 
         List<Category> categories = validateAndFindCategory(ids);
 
-        for (Category category : categories) {
-
-            List<Product> products = productRepository.findByCategoryId(category.getId());
-            for (Product product : products) {
+        categories.forEach(category -> {
+            productRepository.findByCategoryId(category.getId()).forEach(product -> {
                 product.setCategory(null);
                 productRepository.save(product);
-            }
+            });
+        });
 
-            categoryRepository.delete(category);
-        }
-
+        categoryRepository.deleteAll(ids);
     }
 
     // 이름 중복 검사
