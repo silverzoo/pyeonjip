@@ -8,6 +8,7 @@ import com.team5.pyeonjip.product.entity.ProductImage;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -25,15 +26,20 @@ public class ProductMapper {
 
     // Product Entity -> ProductResponse DTO 변환
     public ProductResponse toDto(Product product, List<ProductDetail> productDetails, List<ProductImage> productImages) {
-        List<ProductResponse.ProductDetailResponse> detailResponses = productDetails.stream()
+        List<ProductResponse.ProductDetailResponse> detailResponses = Optional.ofNullable(productDetails)
+                .orElse(List.of()) // null인 경우 빈 리스트로 처리
+                .stream()
                 .map(detail -> new ProductResponse.ProductDetailResponse(detail.getId(), detail.getName(), detail.getPrice(), detail.getQuantity(), detail.getMainImage()))
                 .collect(Collectors.toList());
 
-        List<ProductResponse.ProductImageResponse> imageResponses = productImages.stream()
+        List<ProductResponse.ProductImageResponse> imageResponses = Optional.ofNullable(productImages)
+                .orElse(List.of()) // null인 경우 빈 리스트로 처리
+                .stream()
                 .map(image -> new ProductResponse.ProductImageResponse(image.getId(), image.getImageUrl()))
                 .collect(Collectors.toList());
 
-        return new ProductResponse(product.getId(), product.getName(), product.getDescription(), product.getCategory().getId(), detailResponses, imageResponses);
+        return new ProductResponse(product.getId(), product.getName(), product.getDescription(),
+                product.getCategory() != null ? product.getCategory().getId() : null, detailResponses, imageResponses);
     }
 
 }

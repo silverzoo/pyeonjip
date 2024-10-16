@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.team5.pyeonjip.category.entity.Category;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,11 +31,11 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     @JsonManagedReference
-    private List<ProductDetail> productDetails;
+    private List<ProductDetail> productDetails = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<ProductImage> productImages;
+    private List<ProductImage> productImages = new ArrayList<>();
 
 
     // ID만을 받는 생성자 추가

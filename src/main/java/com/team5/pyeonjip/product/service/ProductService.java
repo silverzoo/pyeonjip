@@ -1,5 +1,7 @@
 package com.team5.pyeonjip.product.service;
 
+import com.team5.pyeonjip.category.entity.Category;
+import com.team5.pyeonjip.category.repository.CategoryRepository;
 import com.team5.pyeonjip.global.exception.ErrorCode;
 import com.team5.pyeonjip.global.exception.GlobalException;
 import com.team5.pyeonjip.global.exception.ResourceNotFoundException;
@@ -28,11 +30,19 @@ public class ProductService {
     private final ProductImageRepository productImageRepository;
     private final ProductDetailService productDetailService;
     private final ProductImageService productImageService;
+    private final CategoryRepository categoryRepository;
 
     @Transactional
     public ProductResponse createProduct(ProductRequest productRequest) {
         Product product = productMapper.toEntity(productRequest);
         Product savedProduct = productRepository.save(product);
+
+        // 카테고리 조회
+        Category category = categoryRepository.findById(productRequest.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다. ID: " + productRequest.getCategoryId()));
+
+        // 카테고리 설정
+        product.setCategory(category);
 
         // ProductDetail 생성 및 저장
         List<ProductDetail> productDetails = productRequest.getProductDetails().stream()
