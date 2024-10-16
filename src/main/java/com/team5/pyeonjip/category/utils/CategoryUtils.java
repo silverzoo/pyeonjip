@@ -11,8 +11,6 @@ import com.team5.pyeonjip.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -91,32 +89,57 @@ public class CategoryUtils {
     }
 
     // sort 변경으로 인한 형제 카테고리 sort 업데이트
-    public void updateSiblingSort(Integer currentSort, CategoryRequest request) {
+    public void updateSiblingSort(Category old, CategoryRequest request) {
 
         // 요청한 순서값이 없으면 재배치 하지 않아도 됨
         if (request.getSort() == null) {
             return;
         }
 
-        List<Category> siblings = categoryRepository.findByParentId(request.getParentId());
-        Integer newSort = request.getSort();
+        List<Category> oldSiblings = categoryRepository.findByParentId(old.getParentId());
+        List<Category> newSiblings = categoryRepository.findByParentId(request.getParentId());
+        Integer oldSort = old.getSort(), newSort = request.getSort();
 
-        // 요청 sort 값이 현재 sort 값보다 클 경우
-        if (newSort > currentSort) {
+        // 형제 카테고리가 변하지 않는다면 해당 뎁스에서만 업데이트, 변한다면 양쪽 뎁스 모두 업데이트
+        if (old.getParentId().equals(request.getParentId())) {
 
-            siblings.stream()
-                    .filter(category -> category.getSort() > currentSort && category.getSort() <= newSort)
+            // 요청 sort 값이 현재 sort 값보다 클 경우
+            if (newSort > oldSort) {
+
+                newSiblings.stream()
+                        .filter(category -> category.getSort() > oldSort && category.getSort() <= newSort)
+                        .forEach(category -> {
+                            categoryRepository.save(category.toBuilder()
+                                    .sort(category.getSort() - 1)
+                                    .build());
+                        });
+
+            // 요청 sort 값이 현재 sort 값보다 작을 경우
+            } else if (newSort < oldSort) {
+
+                newSiblings.stream()
+                        .filter(category -> category.getSort() >= newSort && category.getSort() < oldSort)
+                        .forEach(category -> {
+                            categoryRepository.save(category.toBuilder()
+                                    .sort(category.getSort() + 1)
+                                    .build());
+                        });
+            }
+
+        } else {
+
+            //기존 형제 카테고리는 사라진 sort 번호를 채워줘야 함
+            oldSiblings.stream()
+                    .filter(category -> category.getSort() > oldSort)
                     .forEach(category -> {
                         categoryRepository.save(category.toBuilder()
-                                .sort(category.getSort() - 1)
+                                .sort(category.getSort()-1)
                                 .build());
                     });
 
-        // 요청 sort 값이 현재 sort 값보다 작을 경우
-        } else if (newSort < currentSort) {
-
-            siblings.stream()
-                    .filter(category -> category.getSort() >= newSort && category.getSort() < currentSort)
+            //새 형제 카테고리는 요청 sort 번호를 비워줘야 함
+            newSiblings.stream()
+                    .filter(category -> category.getSort() >= newSort)
                     .forEach(category -> {
                         categoryRepository.save(category.toBuilder()
                                 .sort(category.getSort() + 1)

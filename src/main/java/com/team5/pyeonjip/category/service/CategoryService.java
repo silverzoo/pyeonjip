@@ -55,20 +55,20 @@ public class CategoryService {
     @Transactional
     public CategoryResponse updateCategory(Long id, CategoryRequest request) {
 
-        Category category = categoryUtils.validateAndFindCategory(id);
+        Category old = categoryUtils.validateAndFindCategory(id);
 
         categoryUtils.validateParent(id, request);
 
-        if (!request.getName().equals(category.getName())) {
+        if (!request.getName().equals(old.getName())) {
             categoryUtils.validateName(request.getName());
         }
 
-        categoryUtils.updateSiblingSort(category.getSort(), request);
+        categoryUtils.updateSiblingSort(old, request);
 
-        Category updatedCategory = category.toBuilder()
+        Category updatedCategory = old.toBuilder()
                 .id(id)
-                .name(request.getName() != null ? request.getName() : category.getName())
-                .sort(request.getSort() != null ? request.getSort() : category.getSort())
+                .name(request.getName() != null ? request.getName() : old.getName())
+                .sort(request.getSort() != null ? request.getSort() : old.getSort())
                 .parentId(request.getParentId() != null ? request.getParentId() : null)
                 .build();
 
@@ -82,9 +82,7 @@ public class CategoryService {
 
         Category category = categoryMapper.toEntity(request);
 
-        Category newCategory = categoryRepository.save(category);
-
-        return categoryMapper.toResponse(newCategory);
+        return categoryMapper.toResponse(categoryRepository.save(category));
     }
 
     @Transactional
