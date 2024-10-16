@@ -6,7 +6,6 @@ import com.team5.pyeonjip.category.entity.Category;
 import com.team5.pyeonjip.category.mapper.CategoryMapper;
 import com.team5.pyeonjip.category.repository.CategoryRepository;
 import com.team5.pyeonjip.category.utils.CategoryUtils;
-import com.team5.pyeonjip.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,11 +19,11 @@ import java.util.*;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
-    private final ProductRepository productRepository;
     private final CategoryMapper categoryMapper;
     private final CategoryUtils categoryUtils;
 
     // 카테고리 전체, 일부 조회
+    @Transactional(readOnly = true)
     public List<CategoryResponse> getCategories(List<Long> ids) {
 
         // id 리스트가 없으면 전체 조회, 있으면 부분 조회
@@ -46,6 +45,7 @@ public class CategoryService {
     }
 
     // 상위 카테고리 id로 자식 카테고리 id 리스트 조회
+    @Transactional(readOnly = true)
     public List<Long> getLeafCategoryIds(Long parentId) {
 
         return categoryRepository.findLeafCategories(parentId);
