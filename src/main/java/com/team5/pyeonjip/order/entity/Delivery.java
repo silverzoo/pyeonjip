@@ -1,6 +1,7 @@
 package com.team5.pyeonjip.order.entity;
 
-import com.team5.pyeonjip.global.entity.BaseTimeEntity;
+import
+        com.team5.pyeonjip.global.entity.BaseTimeEntity;
 import com.team5.pyeonjip.order.enums.DeliveryStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -33,6 +34,8 @@ public class Delivery extends BaseTimeEntity {
         this.address = address;
         this.status = DeliveryStatus.READY;
     }
+
+    // == 비즈니스 로직 == //
 
     // 배송 상태 변경 메서드
     public void updateStatus(DeliveryStatus newStatus) {

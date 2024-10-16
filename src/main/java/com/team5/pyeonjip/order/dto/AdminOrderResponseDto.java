@@ -13,14 +13,14 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class AdminOrderResponseDto {
-    private Long id; // 주문 id
-    private String userName; // 구매자
+    private String userEmail; // 주문자 이메일
+    private String userName; // 주문자 명
     private String phoneNumber; // 연락처
     private OrderStatus orderStatus; // 기본 ORDER
-    private Long totalPrice;
+    private Long totalPrice; // 결제 금액 = 상품 가격 * 상품 수량
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Timestamp createdAt;
-    private DeliveryStatus deliveryStatus;
+    private DeliveryStatus deliveryStatus; // 배송 상태
     private List<OrderDetailDto> orderDetails; // 상품 명, 상품 수량
 }

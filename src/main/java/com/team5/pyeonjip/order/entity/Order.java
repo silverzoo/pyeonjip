@@ -52,25 +52,17 @@ public class Order extends BaseTimeEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // == 연관관계 메서드 == //
-//    public void addOrderDetail(OrderDetail orderDetail) {
-//        this.orderDetails.add(orderDetail);
-//        orderDetail.setOrder(this);  // OrderDetail 객체에 Order 설정
-//    }
-
     // == 비즈니스 로직 == //
+
+    // 주문 시 최종 금액
+    public Long getTotalPrice(){
+        return orderDetails.stream()
+                .mapToLong(detail -> detail.getProductPrice() * detail.getQuantity())
+                .sum();
+    }
 
     // 주문 상태 변경 메서드
     public void updateStatus(OrderStatus status) {
         this.status = status;
     }
-
-    // 주문 가격
-//    public int getOrderPrice(){
-//        int totalPrice = 0;
-//        for (OrderDetail orderDetail : orderDetails) {
-//            totalPrice += orderDetail.getTotalPrice();
-//        }
-//        return totalPrice;
-//    }
 }

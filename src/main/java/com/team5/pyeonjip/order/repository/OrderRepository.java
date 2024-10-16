@@ -15,8 +15,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Page<Order> findAll(Pageable pageable);
 
-    @Query("SELECT o FROM Order o JOIN User u ON o.user.id = u.id WHERE u.email = :userEmail")
-    Page<Order> findOrdersByUserEmail(@Param("userEmail") String userEmail, Pageable pageable); // 사용자 이름으로 주문 조회
+    @Query("SELECT o FROM Order o WHERE o.user.email LIKE %:userEmail%")
+    Page<Order> findOrdersByUserEmail(@Param("userEmail") String userEmail, Pageable pageable); // 사용자 이메일로 주문 조회
 
     List<Order> findOrdersByUserId(Long userId); // 사용자 ID로 모든 주문 조회
 }
