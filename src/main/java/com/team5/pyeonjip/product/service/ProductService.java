@@ -15,6 +15,8 @@ import com.team5.pyeonjip.product.repository.ProductDetailRepository;
 import com.team5.pyeonjip.product.repository.ProductImageRepository;
 import com.team5.pyeonjip.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -130,6 +132,17 @@ public class ProductService {
         return categoryIds.stream()
                 .flatMap(categoryId -> getProductsByCategoryId(categoryId).stream())
                 .collect(Collectors.toList());
+    }
+
+    // 서비스 페이지 네이션
+    public Page<ProductResponse> getAllProductspage(Pageable pageable) {
+        Page<Product> productsPage = productRepository.findAll(pageable);
+
+        return productsPage.map(product -> {
+            List<ProductDetail> productDetails = productDetailRepository.findByProductId(product.getId());
+            List<ProductImage> productImages = productImageRepository.findByProductId(product.getId());
+            return productMapper.toDto(product, productDetails, productImages);
+        });
     }
 
 
