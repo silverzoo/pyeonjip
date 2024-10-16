@@ -63,12 +63,12 @@ public class CategoryService {
             categoryUtils.validateName(request.getName());
         }
 
-        Integer newSort = categoryUtils.updateSiblingSort(request);
+        categoryUtils.updateSiblingSort(category.getSort(), request);
 
         Category updatedCategory = category.toBuilder()
                 .id(id)
                 .name(request.getName() != null ? request.getName() : category.getName())
-                .sort(request.getSort() != null ? newSort : category.getSort())
+                .sort(request.getSort() != null ? request.getSort() : category.getSort())
                 .parentId(request.getParentId() != null ? request.getParentId() : null)
                 .build();
 

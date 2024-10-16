@@ -99,49 +99,38 @@ public class CategoryUtils {
     }
 
     // sort 변경으로 인한 형제 카테고리 sort 업데이트
-    public void updateSiblingSort(CategoryRequest request) {
+    public void updateSiblingSort(Integer currentSort, CategoryRequest request) {
 
         // 요청한 순서값이 없으면 재배치 하지 않아도 됨
         if (request.getSort() == null) {
             return;
         }
 
-        // 기존의 형제 리스트
         List<Category> siblings = categoryRepository.findByParentId(request.getParentId());
-
-        // 재정렬 할 형제 리스트
-        List<Category> updatedSiblings = new ArrayList<>();
-
-        // 새로 요청 들어온 sort 값
         Integer newSort = request.getSort();
 
-        for (Category sibling : siblings) {
+        // 요청 sort 값이 현재 sort 값보다 클 경우
+        if (newSort > currentSort) {
 
-            if (sibling.getSort() >= newSort) {
-                updatedSiblings.add(sibling.toBuilder().sort(sibling.getSort() + 1).build());
-            } else {
-                updatedSiblings.add(sibling);
-            }
+            siblings.stream()
+                    .filter(category -> category.getSort() > currentSort && category.getSort() <= newSort)
+                    .forEach(category -> {
+                        categoryRepository.save(category.toBuilder()
+                                .sort(category.getSort() - 1)
+                                .build());
+                    });
+
+        // 요청 sort 값이 현재 sort 값보다 작을 경우
+        } else if (newSort < currentSort) {
+
+            siblings.stream()
+                    .filter(category -> category.getSort() >= newSort && category.getSort() < currentSort)
+                    .forEach(category -> {
+                        categoryRepository.save(category.toBuilder()
+                                .sort(category.getSort() + 1)
+                                .build());
+                    });
         }
-
-        categoryRepository.saveAll(updatedSiblings);
-
-        // 형제 카테고리 업데이트 후 빈 공간을 없애기 위해 다시 정렬
-        int currentSort = 0;
-
-        for (Category sibling : updatedSiblings) {
-
-            if (sibling.getSort() == newSort) {
-                sibling = sibling.toBuilder().sort(newSort).build();
-            } else {
-                sibling = sibling.toBuilder().sort(currentSort).build();
-            }
-
-            currentSort++;
-            categoryRepository.save(sibling);
-        }
-
-//        return updatedSiblings.get(newSort).getSort()-1;
     }
 
     // 카테고리 삭제 후, 연관된 프로덕트에 null 적용
