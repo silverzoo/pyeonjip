@@ -19,7 +19,6 @@ public class Category {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
     @ColumnDefault("999")
     private Integer sort; //낮을수록 먼저 반환
 
