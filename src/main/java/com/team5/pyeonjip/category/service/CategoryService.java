@@ -58,6 +58,8 @@ public class CategoryService {
 
         categoryUtils.validateParent(id, request);
 
+        //TODO: 이름 중복 유효성 검사
+
         Integer newSort = categoryUtils.updateSiblingSort(request);
 
         Category updatedCategory = category.toBuilder()
@@ -74,6 +76,8 @@ public class CategoryService {
 
     @Transactional
     public CategoryResponse createCategory(CategoryRequest request) {
+
+        //TODO: 이름 중복 유효성 검사
 
         Category category = categoryMapper.toEntity(request);
 
