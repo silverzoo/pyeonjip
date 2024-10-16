@@ -1,5 +1,6 @@
 package com.team5.pyeonjip.product.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.team5.pyeonjip.category.entity.Category;
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,10 +27,12 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product")
+    @JsonManagedReference
     private List<ProductDetail> productDetails;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<ProductImage> productImages;
 
 

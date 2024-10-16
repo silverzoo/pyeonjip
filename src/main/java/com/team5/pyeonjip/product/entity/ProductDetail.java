@@ -1,5 +1,6 @@
 package com.team5.pyeonjip.product.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,6 +26,7 @@ public class ProductDetail {
 
     @ManyToOne
     @JoinColumn(name = "product_id")
+    @JsonBackReference
     private Product product;
 
     // 필요한 필드만 사용하는 커스텀 생성자 추가

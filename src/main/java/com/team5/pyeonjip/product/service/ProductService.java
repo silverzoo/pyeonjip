@@ -77,6 +77,11 @@ public class ProductService {
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new GlobalException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        // 관련된 ProductDetail 삭제
+        productDetailService.deleteProductDetailsByProduct(product); // ProductDetail 삭제 호출
+
+        // Product 삭제
         productRepository.delete(product);
     }
 
