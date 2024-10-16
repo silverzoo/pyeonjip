@@ -6,7 +6,6 @@ import com.team5.pyeonjip.category.entity.Category;
 import com.team5.pyeonjip.category.mapper.CategoryMapper;
 import com.team5.pyeonjip.category.repository.CategoryRepository;
 import com.team5.pyeonjip.category.utils.CategoryUtils;
-import com.team5.pyeonjip.product.entity.Product;
 import com.team5.pyeonjip.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +37,7 @@ public class CategoryService {
 
         } else {
 
-            List<Category> categories = categoryUtils.findCategory(ids);
+            List<Category> categories = categoryUtils.validateAndFindCategory(ids);
 
             return categories.stream()
                     .map(categoryMapper::toResponse)
@@ -55,7 +54,7 @@ public class CategoryService {
     @Transactional
     public CategoryResponse updateCategory(Long id, CategoryRequest request) {
 
-        Category category = categoryUtils.findCategory(id);
+        Category category = categoryUtils.validateAndFindCategory(id);
 
         categoryUtils.validateParent(id, request);
 
@@ -96,32 +95,13 @@ public class CategoryService {
 
         } else {
 
+            categoryUtils.deleteCategoriesAndUpdateProducts(ids);
 
-            List<String>  deletedNames = new ArrayList<>();
-
-            List<Category> categories = categoryUtils.findCategory(ids);
-
-            for (Category category : categories) {
-
-                List<Product> products = productRepository.findByCategoryId(category.getId());
-
-                for (Product product : products) {
-                    product.setCategory(null);
-                    productRepository.save(product);
-                }
-
-                categoryRepository.delete(category);
-
-                deletedNames.add(category.getName());
-            }
-
-            // 삭제 리스트가 현재 조회되는 전체 카테고리 길이와 일치한다면 전체 삭제 메시지 반환
-
-            String message = String.format("%s 카테고리가 삭제되었습니다.", String.join(", ", deletedNames));
-
-            response.put("message", message);
+            response.put("message", "카테고리가 삭제되었습니다.");
         }
 
         return response;
     }
+
+
 }

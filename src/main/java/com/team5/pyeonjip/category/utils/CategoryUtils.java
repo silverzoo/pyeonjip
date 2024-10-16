@@ -7,6 +7,8 @@ import com.team5.pyeonjip.category.mapper.CategoryMapper;
 import com.team5.pyeonjip.category.repository.CategoryRepository;
 import com.team5.pyeonjip.global.exception.ErrorCode;
 import com.team5.pyeonjip.global.exception.GlobalException;
+import com.team5.pyeonjip.product.entity.Product;
+import com.team5.pyeonjip.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -20,15 +22,16 @@ public class CategoryUtils {
 
     private final CategoryMapper categoryMapper;
     private final CategoryRepository categoryRepository;
+    private  final ProductRepository productRepository;
 
     // id 유효성 검사
-    public Category findCategory(Long id) {
+    public Category validateAndFindCategory(Long id) {
 
         return categoryRepository.findById(id)
                 .orElseThrow(() -> new GlobalException(ErrorCode.CATEGORY_NOT_FOUND));
     }
 
-    public List<Category> findCategory(List<Long> ids) {
+    public List<Category> validateAndFindCategory(List<Long> ids) {
 
         List<Category> categories = categoryRepository.findAllById(ids);
 
@@ -133,5 +136,24 @@ public class CategoryUtils {
         }
 
         return updatedSiblings.get(newSort).getSort()-1;
+    }
+
+    // 카테고리 삭제 후, 연관된 프로덕트에 null 적용
+    public void deleteCategoriesAndUpdateProducts(List<Long> ids) {
+
+        List<Category> categories = validateAndFindCategory(ids);
+
+        for (Category category : categories) {
+
+            List<Product> products = productRepository.findByCategoryId(category.getId());
+
+            for (Product product : products) {
+                product.setCategory(null);
+                productRepository.save(product);
+            }
+
+            categoryRepository.delete(category);
+        }
+
     }
 }
