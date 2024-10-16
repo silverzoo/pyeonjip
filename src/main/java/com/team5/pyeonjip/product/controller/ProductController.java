@@ -111,5 +111,6 @@ public class ProductController {
     public ResponseEntity<ProductDetail> getProductDetailById(@PathVariable Long detailId) {
         ProductDetail productDetail = productDetailService.getProductDetailById(detailId);
         return ResponseEntity.ok(productDetail);
+
     }
 }
