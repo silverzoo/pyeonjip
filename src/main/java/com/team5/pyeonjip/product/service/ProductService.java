@@ -1,5 +1,7 @@
 package com.team5.pyeonjip.product.service;
 
+import com.team5.pyeonjip.category.entity.Category;
+import com.team5.pyeonjip.category.repository.CategoryRepository;
 import com.team5.pyeonjip.global.exception.ErrorCode;
 import com.team5.pyeonjip.global.exception.GlobalException;
 import com.team5.pyeonjip.global.exception.ResourceNotFoundException;
@@ -13,6 +15,8 @@ import com.team5.pyeonjip.product.repository.ProductDetailRepository;
 import com.team5.pyeonjip.product.repository.ProductImageRepository;
 import com.team5.pyeonjip.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,11 +32,19 @@ public class ProductService {
     private final ProductImageRepository productImageRepository;
     private final ProductDetailService productDetailService;
     private final ProductImageService productImageService;
+    private final CategoryRepository categoryRepository;
 
     @Transactional
     public ProductResponse createProduct(ProductRequest productRequest) {
         Product product = productMapper.toEntity(productRequest);
         Product savedProduct = productRepository.save(product);
+
+        // 카테고리 조회
+        Category category = categoryRepository.findById(productRequest.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다. ID: " + productRequest.getCategoryId()));
+
+        // 카테고리 설정
+        product.setCategory(category);
 
         // ProductDetail 생성 및 저장
         List<ProductDetail> productDetails = productRequest.getProductDetails().stream()
@@ -120,6 +132,17 @@ public class ProductService {
         return categoryIds.stream()
                 .flatMap(categoryId -> getProductsByCategoryId(categoryId).stream())
                 .collect(Collectors.toList());
+    }
+
+    // 서비스 페이지 네이션
+    public Page<ProductResponse> getAllProductspage(Pageable pageable) {
+        Page<Product> productsPage = productRepository.findAll(pageable);
+
+        return productsPage.map(product -> {
+            List<ProductDetail> productDetails = productDetailRepository.findByProductId(product.getId());
+            List<ProductImage> productImages = productImageRepository.findByProductId(product.getId());
+            return productMapper.toDto(product, productDetails, productImages);
+        });
     }
 
 

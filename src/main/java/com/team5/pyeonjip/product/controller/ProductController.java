@@ -8,6 +8,8 @@ import com.team5.pyeonjip.product.service.ProductDetailService;
 import com.team5.pyeonjip.product.service.ProductImageService;
 import com.team5.pyeonjip.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -119,5 +121,14 @@ public class ProductController {
         ProductDetail productDetail = productDetailService.getProductDetailById(detailId);
         return ResponseEntity.ok(productDetail);
 
+    }
+
+    // 컨트롤러 페이지 네이션
+    @GetMapping("/all-pages")
+    public ResponseEntity<Page<ProductResponse>> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size) {
+        Page<ProductResponse> productResponse = productService.getAllProductspage(PageRequest.of(page, size));
+        return ResponseEntity.ok(productResponse);
     }
 }
