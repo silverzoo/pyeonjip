@@ -59,7 +59,7 @@ public class ProductController {
 
     // 6. 제품 디테일 수정
     @PutMapping("/details/{detailId}")
-    public ResponseEntity<ProductDetail> updateProductDetail(@PathVariable Long productId, @PathVariable Long detailId, @RequestBody ProductDetail productDetail) {
+    public ResponseEntity<ProductDetail> updateProductDetail(@PathVariable Long detailId, @RequestBody ProductDetail productDetail) {
         ProductDetail updatedDetail = productDetailService.updateProductDetail(detailId, productDetail);
         return ResponseEntity.ok(updatedDetail);
     }
