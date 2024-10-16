@@ -45,7 +45,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
         JOIN CategoryTree ct ON c.parent_id = ct.id
     )
     -- 최종 SELECT : Leaf 카테고리만 필터링
-    SELECT ct.id, ct.name, ct.sort
+    SELECT ct.id
     FROM CategoryTree ct
         -- LEFT JOIN 사용하여 Category 테이블과 다시 조인
         -- 대신 LEAF 카테고리만 선택 
@@ -53,6 +53,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     WHERE c.id IS NULL
     ORDER BY ct.sort ASC
     """, nativeQuery = true)
-    List<Object[]> findLeafCategories(@Param("parentId") Long parentId);
+    List<Long> findLeafCategories(@Param("parentId") Long parentId);
 }
 

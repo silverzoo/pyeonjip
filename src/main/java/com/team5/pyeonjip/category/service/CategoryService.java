@@ -25,6 +25,7 @@ public class CategoryService {
     private final CategoryMapper categoryMapper;
     private final CategoryUtils categoryUtils;
 
+    // 카테고리 전체, 일부 조회
     public List<CategoryResponse> getCategories(List<Long> ids) {
 
         // id 리스트가 없으면 전체 조회, 있으면 부분 조회
@@ -43,6 +44,12 @@ public class CategoryService {
                     .map(categoryMapper::toResponse)
                     .toList();
         }
+    }
+
+    // 상위 카테고리 id로 자식 카테고리 id 리스트 조회
+    public List<Long> getLeafCategoryIds(Long parentId) {
+
+        return categoryRepository.findLeafCategories(parentId);
     }
 
     @Transactional
@@ -116,15 +123,5 @@ public class CategoryService {
         }
 
         return response;
-    }
-
-    public List<Long> getLeafCategoryIds(Long parentId) {
-        List<Object[]> results = categoryRepository.findLeafCategories(parentId);
-
-        // 쿼리 결과에서 첫 번째 요소인 ID만 추출하여 List<Long>로 매핑
-        // Repository 쪽에서 매핑하기 어려워서 서비스단에서 매핑했음
-        return results.stream()
-                .map(result -> (Long) result[0])
-                .toList();
     }
 }
