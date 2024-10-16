@@ -41,28 +41,4 @@ public class ChatController {
 
         return ResponseEntity.ok().body(chatMessage);
     }
-
-    // 메시지 보내기
-    @PostMapping("/message")
-    public ResponseEntity<ChatMessageDto> sendMessage( @RequestParam("chatRoomId") Long chatRoomId, @RequestBody String message){
-        ChatMessageDto createdMessage = chatMessageService.sendMessage(chatRoomId, message);
-
-        return ResponseEntity.ok().body(createdMessage);
-    }
-
-    // 메시지 수정
-    @PutMapping("/message/{messageId}")
-    public ResponseEntity<ChatMessageDto> modifyMessage(@PathVariable("messageId") Long messageId, @RequestBody String message){
-        ChatMessageDto modifiedMessage = chatMessageService.modifyMessage(messageId, message);
-
-        return ResponseEntity.ok().body(modifiedMessage);
-    }
-
-    // 메시지 삭제
-    @DeleteMapping("/message/{messageId}")
-    public ResponseEntity<Void> deleteMessage(@PathVariable("messageId") Long messageId){
-        chatMessageService.deleteMessage(messageId);
-
-        return ResponseEntity.ok().build();
-    }
 }
