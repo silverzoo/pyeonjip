@@ -49,6 +49,8 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public List<Long> getLeafCategoryIds(Long parentId) {
 
+        categoryUtils.validateAndFindCategory(parentId);
+
         return categoryRepository.findLeafCategories(parentId);
     }
 
@@ -57,13 +59,19 @@ public class CategoryService {
 
         Category old = categoryUtils.validateAndFindCategory(id);
 
-        categoryUtils.validateParent(id, request);
+        categoryUtils.validateNoChanges(request, old);
+
+        if (!Objects.equals(request.getParentId(), old.getParentId())) {
+            categoryUtils.validateParent(request);
+        }
 
         if (!request.getName().equals(old.getName())) {
             categoryUtils.validateName(request.getName());
         }
 
-        categoryUtils.updateSiblingSort(old, request);
+        if (!request.getSort().equals(old.getSort())) {
+            categoryUtils.updateSiblingSort(old, request);
+        }
 
         Category updatedCategory = old.toBuilder()
                 .id(id)
@@ -74,6 +82,8 @@ public class CategoryService {
 
         return categoryMapper.toResponse(categoryRepository.save(updatedCategory));
     }
+
+
 
     @Transactional
     public CategoryResponse createCategory(CategoryCreateRequest request) {

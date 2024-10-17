@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -68,7 +69,7 @@ public class CategoryUtils {
     }
 
     // 부모카테고리 유효성 검사
-    public void validateParent(Long id, CategoryRequest request) {
+    public void validateParent(CategoryRequest request) {
 
         Long requestParentId = request.getParentId();
 
@@ -78,13 +79,26 @@ public class CategoryUtils {
         }
 
         // 부모 id가 본인 id 인 경우
-        if (requestParentId.equals(id)) {
+        if (requestParentId.equals(request.getId())) {
             throw new GlobalException(ErrorCode.INVALID_PARENT_SELF);
         }
 
         // 부모 id가 존재하지 않는 id 인 경우
         if (!categoryRepository.existsById(requestParentId)) {
             throw new GlobalException(ErrorCode.INVALID_PARENT);
+        }
+    }
+
+    // 수정사항이 없는지 검사
+    public void validateNoChanges(CategoryRequest request, Category old) {
+
+        boolean isSame = Objects.equals(request.getName(), old.getName()) &&
+                Objects.equals(request.getSort(), old.getSort()) &&
+                Objects.equals(request.getParentId(), old.getParentId());
+
+        // 모든 값이 같을 경우 No Content 204
+        if (isSame) {
+            throw new GlobalException(ErrorCode.CATEGORY_NO_MODIFY);
         }
     }
 
@@ -101,7 +115,7 @@ public class CategoryUtils {
         Integer oldSort = old.getSort(), newSort = request.getSort();
 
         // 형제 카테고리가 변하지 않는다면 해당 뎁스에서만 업데이트, 변한다면 양쪽 뎁스 모두 업데이트
-        if (old.getParentId().equals(request.getParentId())) {
+        if (Objects.equals(old.getParentId(), request.getParentId())) {
 
             // 요청 sort 값이 현재 sort 값보다 클 경우
             if (newSort > oldSort) {

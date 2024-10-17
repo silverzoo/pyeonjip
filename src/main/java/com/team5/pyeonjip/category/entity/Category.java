@@ -27,7 +27,7 @@ public class Category {
     @Column(name = "parent_id")
     private Long parentId;
 
-    @OneToMany(mappedBy = "parentId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "parentId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Category> children = new ArrayList<>();
 
     // toString() 무한 재귀호출 방지
