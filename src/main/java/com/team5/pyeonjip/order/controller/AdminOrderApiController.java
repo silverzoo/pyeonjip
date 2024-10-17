@@ -18,7 +18,7 @@ public class AdminOrderApiController {
 
     // 관리자 - 주문 전체 조회
     @GetMapping("/orders")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Page<AdminOrderResponseDto>> getOrders(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
@@ -34,7 +34,7 @@ public class AdminOrderApiController {
 
     // 관리자 - 주문 수정
     @PatchMapping("orders/{orderId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> updateDeliveryStatus(
             @PathVariable("orderId") Long orderId,
             @RequestParam("deliveryStatus") DeliveryStatus deliveryStatus) {
@@ -47,7 +47,7 @@ public class AdminOrderApiController {
     // 관리자 - 주문 삭제
     // TODO : 복수 삭제, soft delete (/orders/ 지워야 할 데이터를 바디에 보내는 것)
     @DeleteMapping("orders/{orderId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteOrder(@PathVariable("orderId") Long orderId) {
         // 주문 삭제 처리
         orderService.deleteOrderById(orderId);
