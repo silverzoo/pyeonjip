@@ -21,6 +21,6 @@ public class OrderResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Timestamp createdAt; // 주문 일자
     private DeliveryStatus deliveryStatus; // 배송 상태
-    private List<OrderDetailDto> orderDetails; // 상품 명, 상품 수량, 상품 총 금액
+    private List<OrderDetailDto> orderDetails; // 상품 명, 상품 수량, 상품*수량 금액
     // 상품 이미지 추가?
 }
