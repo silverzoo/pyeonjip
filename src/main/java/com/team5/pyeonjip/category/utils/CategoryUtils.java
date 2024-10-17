@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -68,7 +69,7 @@ public class CategoryUtils {
     }
 
     // 부모카테고리 유효성 검사
-    public void validateParent(Long id, CategoryRequest request) {
+    public void validateParent(CategoryRequest request) {
 
         Long requestParentId = request.getParentId();
 
@@ -78,7 +79,7 @@ public class CategoryUtils {
         }
 
         // 부모 id가 본인 id 인 경우
-        if (requestParentId.equals(id)) {
+        if (requestParentId.equals(request.getId())) {
             throw new GlobalException(ErrorCode.INVALID_PARENT_SELF);
         }
 
@@ -101,7 +102,7 @@ public class CategoryUtils {
         Integer oldSort = old.getSort(), newSort = request.getSort();
 
         // 형제 카테고리가 변하지 않는다면 해당 뎁스에서만 업데이트, 변한다면 양쪽 뎁스 모두 업데이트
-        if (old.getParentId().equals(request.getParentId())) {
+        if (Objects.equals(old.getParentId(), request.getParentId())) {
 
             // 요청 sort 값이 현재 sort 값보다 클 경우
             if (newSort > oldSort) {

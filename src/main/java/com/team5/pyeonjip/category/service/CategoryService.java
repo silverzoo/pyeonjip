@@ -57,7 +57,7 @@ public class CategoryService {
 
         Category old = categoryUtils.validateAndFindCategory(id);
 
-        categoryUtils.validateParent(id, request);
+        categoryUtils.validateParent(request);
 
         if (!request.getName().equals(old.getName())) {
             categoryUtils.validateName(request.getName());
