@@ -100,7 +100,7 @@ public class UserApiController {
 
 
     // 유저 삭제
-    @DeleteMapping("/delete/{userId}")
+    @DeleteMapping("/{userId}")
     public ResponseEntity<String> deleteUser(@PathVariable("userId") Long userId) {
 
         try {
