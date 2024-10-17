@@ -29,7 +29,7 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.PERSIST)
     @JsonManagedReference
     private List<ProductDetail> productDetails = new ArrayList<>();
 
