@@ -43,7 +43,7 @@ public class OrderServiceImpl implements OrderService {
     // 주문 생성
     @Transactional
     @Override
-    public void createOrder(OrderRequestDto orderRequestDto, Long userId) {
+    public void createOrder(CombinedOrderDto combinedOrderDto, Long userId) {
 
         // TODO: 유저 조회 -> 로그인 된 유저 조회
         User user = userRepository.findById(userId)
@@ -51,35 +51,36 @@ public class OrderServiceImpl implements OrderService {
 
         // 배송 정보 생성
         Delivery delivery = Delivery.builder()
-                .address(orderRequestDto.getAddress())  // 전달된 주소 사용
+                .address(combinedOrderDto.getOrderRequestDto().getAddress())  // 전달된 주소 사용
                 .status(DeliveryStatus.READY)  // 기본 상태를 READY로 설정
                 .build();
         deliveryRepository.save(delivery);
 
-        Long cartTotalPrice = 100000L; // 장바구니 쿠폰 적용 후 가격 예시
-
-        // TODO: 장바구니의 각 상품 주문에 추가
+        // 장바구니 쿠폰 적용된 가격
+        Long cartTotalPrice = combinedOrderDto.getOrderCartRequestDto().getCartTotalPrice();
 
         // 전체 주문 금액
         Long totalPrice = calculateTotalPrice(user, cartTotalPrice);
 
         // 주문 생성
-        Order order = OrderMapper.toOrderEntity(orderRequestDto, delivery, user, totalPrice);
+        Order order = OrderMapper.toOrderEntity(combinedOrderDto.getOrderRequestDto(), delivery, user, totalPrice);
         orderRepository.save(order);
 
         // 주문 상세 정보 생성
-        orderRequestDto.getOrderDetails().forEach(orderDetailDto -> {
+        combinedOrderDto.getOrderRequestDto().getOrderDetails().forEach(orderDetailDto -> {
             ProductDetail productDetail = findProductDetailById(orderDetailDto.getProductDetailId());
 
             // 재고 수량 확인
             if (productDetail.getQuantity() < orderDetailDto.getQuantity()) {
                 throw new GlobalException(ErrorCode.OUT_OF_STOCK);
             }
-            orderDetailRepository.save(OrderMapper.toOrderDetailEntity(order, productDetail, orderDetailDto));
 
             // 주문 후 재고 수량 감소
             productDetail.setQuantity(productDetail.getQuantity() - orderDetailDto.getQuantity());
             productDetailRepository.save(productDetail);
+
+            // 주문 상세 저장
+            orderDetailRepository.save(OrderMapper.toOrderDetailEntity(order, productDetail, orderDetailDto));
         });
     }
 
@@ -151,5 +152,26 @@ public class OrderServiceImpl implements OrderService {
             ProductDetail productDetail = findProductDetailById(orderDetail.getProduct().getId());
             productDetailService.updateDetailQuantity(productDetail.getId(), orderDetail.getQuantity());
         });
+    }
+
+    // 장바구니 데이터 가공
+    @Override
+    public OrderCartResponseDto getOrderSummary(OrderCartRequestDto orderCartRequestDto) {
+
+        Long userId = orderCartRequestDto.getUserId();
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("유저를 찾을 수 없습니다."));
+
+        Long cartTotalPrice = orderCartRequestDto
+                .getCartTotalPrice();
+
+        double discountRate = calculateDiscountRate(user);
+        Long deliveryPrice = calculateDeliveryPrice(user);
+        Long totalPrice = Math.round(cartTotalPrice * (1 - discountRate)) + deliveryPrice;
+
+        List<OrderDetailDto> orderDetails = orderCartRequestDto.getOrderDetails();
+
+        return new OrderCartResponseDto(cartTotalPrice, totalPrice, deliveryPrice, discountRate, orderDetails);
     }
 }
