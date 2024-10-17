@@ -74,8 +74,8 @@ public class SecurityConfig {
                                 // 허용 시간
                                 configuration.setMaxAge(3600L);
 
-                                // configuration.setExposedHeaders(Collections.singletonList("Authorization"));
-                                configuration.setExposedHeaders(Collections.singletonList("access"));
+                                // Authorization 헤더 노출
+                                configuration.setExposedHeaders(Collections.singletonList("Authorization"));
 
                                 return configuration;
                             }
@@ -96,9 +96,15 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/login", "/", "/signup").permitAll()
-                        .requestMatchers("/admin").hasAnyAuthority("ROLE_ADMIN")
+                        // 관리자만 접근 가능
+                        //.requestMatchers("/admin/**").hasRole("ADMIN")
+                        //.requestMatchers("/api/admin").hasRole("ADMIN")
+                        // 로그인 한 사용자만 접근 가능
+
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/reissue").permitAll()
+
+                        // 토큰 리이슈
+                        .requestMatchers("/api/user/reissue").permitAll()
                         // 개발 편의를 위해 전체 허용
                         .anyRequest().permitAll());
 //                        .anyRequest().authenticated());

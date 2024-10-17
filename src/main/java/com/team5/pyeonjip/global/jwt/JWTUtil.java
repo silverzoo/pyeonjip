@@ -98,7 +98,7 @@ public class JWTUtil {
     public String createJwt(String category, String email, String role, Long expiredMs) {
 
         return Jwts.builder()
-                .setHeaderParam("typ", "JWP")
+                .setHeaderParam("typ", "JWT")
                 // 키에 대한 특정 데이터를 담는다.
                 .claim("category", category)
                 .claim("email", email)

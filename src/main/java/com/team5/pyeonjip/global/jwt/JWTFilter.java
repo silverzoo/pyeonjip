@@ -29,10 +29,22 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        // 헤더에서 access키에 담긴 토큰을 꺼낸다.
-        String accessToken = request.getHeader("access");
+        // 1. request에서 Authorization 헤더를 가져온다.
+        String authorization = request.getHeader("Authorization");
 
-        // 토큰이 없다면 다음 필터로 넘긴다.
+        // 2. 헤더에 토큰이 담겨있는지, 접두사가 Bearer로 시작하는지 검증한다.
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
+
+            filterChain.doFilter(request, response);
+
+            // 조건에 해당되면 검증에 문제가 있는 것이므로, 메서드를 종료한다.
+            return;
+        }
+
+        // 3. 'Bearer ' 문자열을 제거한 순수한 토큰을 획득한다.
+        String accessToken = authorization.split(" ")[1];
+
+        // 4. 토큰이 존재하는지 확인한다.
         if (accessToken == null) {
 
             filterChain.doFilter(request, response);
@@ -40,9 +52,7 @@ public class JWTFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 토큰이 있다면,
-
-        // 토큰 만료 여부 확인. 만료시 오류를 출력하고 다음 필터로 넘기지 않는다.
+        // 5. 토큰 만료 여부 확인. 만료시 오류를 출력하고 다음 필터로 넘기지 않는다.
         try {
             jwtUtil.isExpired(accessToken);
         } catch (ExpiredJwtException e) {
@@ -56,30 +66,34 @@ public class JWTFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 토큰이 access인지 확인한다. (발급시 페이로드에 명시)
+        // 6. 토큰이 access인지 확인한다. (페이로드에 명시되어 있다.)
         String category = jwtUtil.getCategory(accessToken);
 
         if (!category.equals("access")) {
 
             //response body
             PrintWriter writer = response.getWriter();
-            writer.print("invalid access token");
+            writer.print("not an access token");
 
             //response status code
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
-        // email, role 값을 획득
+        // 토큰에서 email, role 값을 가져온다.
         String email = jwtUtil.getEmail(accessToken);
         String role = jwtUtil.getRole(accessToken);
 
+        // UserDetails에 유저 정보를 담는다.
         User user = new User();
         user.setEmail(email);
         user.setRole(Role.valueOf(role));
         CustomUserDetails customUserDetails = new CustomUserDetails(user);
 
+        // Spring Security 인증 토큰을 생성한다.
         Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+
+        // SecurityContextHolder에 사용자를 등록한다.
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         filterChain.doFilter(request, response);
