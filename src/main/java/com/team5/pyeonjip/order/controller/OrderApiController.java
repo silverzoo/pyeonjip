@@ -1,7 +1,6 @@
 package com.team5.pyeonjip.order.controller;
 
-import com.team5.pyeonjip.order.dto.OrderRequestDto;
-import com.team5.pyeonjip.order.dto.OrderResponseDto;
+import com.team5.pyeonjip.order.dto.*;
 import com.team5.pyeonjip.order.service.OrderService;
 import com.team5.pyeonjip.user.entity.User;
 import com.team5.pyeonjip.user.service.UserService;
@@ -24,15 +23,18 @@ public class OrderApiController {
     // 사용자 - 주문 생성
     @PostMapping("/orders")
     public ResponseEntity<Void> createOrder(
-            @Valid @RequestBody OrderRequestDto orderRequestDto, @RequestParam("userId") Long userId){
+            //@Valid
+            @RequestBody CombinedOrderDto combinedOrderDto,
+            @RequestParam("userId") Long userId){
             // @AuthenticationPrincipal User currentUser) {
 
         // Long userId = currentUser.getId();
 
+
         User user = userService.findUser(userId);
 
         // 주문 생성 처리
-        orderService.createOrder(orderRequestDto, user.getId());
+        orderService.createOrder(combinedOrderDto, user.getId());
 
         return ResponseEntity.ok().build();
     }
@@ -57,5 +59,12 @@ public class OrderApiController {
         orderService.cancelOrder(orderId);
 
         return ResponseEntity.ok().build();
+    }
+
+    // 주문 페이지
+    @PostMapping("/orders/checkout")
+    public ResponseEntity<OrderCartResponseDto> getOrderSummary(@RequestBody OrderCartRequestDto orderCartRequestDto) {
+        OrderCartResponseDto summary = orderService.getOrderSummary(orderCartRequestDto);
+        return ResponseEntity.ok(summary);
     }
 }
