@@ -1,5 +1,6 @@
 package com.team5.pyeonjip.category.controller;
 
+import com.team5.pyeonjip.category.dto.CategoryCreateRequest;
 import com.team5.pyeonjip.category.dto.CategoryRequest;
 import com.team5.pyeonjip.category.dto.CategoryResponse;
 import com.team5.pyeonjip.category.service.CategoryService;
@@ -28,7 +29,7 @@ public class AdminCategoryController {
     }
 
     @PostMapping()
-    public ResponseEntity<CategoryResponse> createCategory(@RequestBody CategoryRequest request) {
+    public ResponseEntity<CategoryResponse> createCategory(@RequestBody CategoryCreateRequest request) {
 
         return ResponseEntity
                 .status(HttpStatus.OK)

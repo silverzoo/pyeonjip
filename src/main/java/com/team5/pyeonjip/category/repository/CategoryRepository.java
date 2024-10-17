@@ -3,9 +3,11 @@ package com.team5.pyeonjip.category.repository;
 import com.team5.pyeonjip.category.entity.Category;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +16,7 @@ import java.util.Optional;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     @EntityGraph(attributePaths = {"children"})
+    @Query(value = "SELECT c FROM Category c ORDER BY c.sort")
     List<Category> findAll();
 
     @EntityGraph(attributePaths = {"children"})
@@ -24,6 +27,8 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     @EntityGraph(attributePaths = {"children"})
     List<Category> findByParentId(Long parentId);
+
+    Boolean existsByName(String name);
 
     // 네이티브 쿼리 적용
     // Leaf (최하위 카테고리) 만을 찾아야 함) -> 나무의 나뭇잎 생각하면 편함
@@ -54,5 +59,9 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     ORDER BY ct.sort ASC
     """, nativeQuery = true)
     List<Long> findLeafCategories(@Param("parentId") Long parentId);
+
+    @Modifying
+    @Query("DELETE FROM Category c WHERE c.id IN :ids")
+    void deleteAll(List<Long> ids);
 }
 

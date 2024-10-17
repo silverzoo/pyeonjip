@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/category")
-public class CategoryController {
+public class GetCategoryController {
 
     private final CategoryService categoryService;
 

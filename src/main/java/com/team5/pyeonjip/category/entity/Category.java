@@ -2,12 +2,15 @@ package com.team5.pyeonjip.category.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
+@Builder(toBuilder = true)
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Category {
 
@@ -18,7 +21,7 @@ public class Category {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @ColumnDefault("999")
     private Integer sort; //낮을수록 먼저 반환
 
     @Column(name = "parent_id")
@@ -26,15 +29,6 @@ public class Category {
 
     @OneToMany(mappedBy = "parentId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> children = new ArrayList<>();
-
-    @Builder(toBuilder = true)
-    public Category(Long id, String name, int sort, Long parentId, List<Category> children) {
-        this.id = id;
-        this.name = name;
-        this.sort = sort;
-        this.parentId = parentId;
-        this.children = children;
-    }
 
     // toString() 무한 재귀호출 방지
     @Override

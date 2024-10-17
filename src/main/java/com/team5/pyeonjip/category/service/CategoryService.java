@@ -1,13 +1,12 @@
 package com.team5.pyeonjip.category.service;
 
+import com.team5.pyeonjip.category.dto.CategoryCreateRequest;
 import com.team5.pyeonjip.category.dto.CategoryRequest;
 import com.team5.pyeonjip.category.dto.CategoryResponse;
 import com.team5.pyeonjip.category.entity.Category;
 import com.team5.pyeonjip.category.mapper.CategoryMapper;
 import com.team5.pyeonjip.category.repository.CategoryRepository;
 import com.team5.pyeonjip.category.utils.CategoryUtils;
-import com.team5.pyeonjip.product.entity.Product;
-import com.team5.pyeonjip.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,11 +20,11 @@ import java.util.*;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
-    private final ProductRepository productRepository;
     private final CategoryMapper categoryMapper;
     private final CategoryUtils categoryUtils;
 
     // 카테고리 전체, 일부 조회
+    @Transactional(readOnly = true)
     public List<CategoryResponse> getCategories(List<Long> ids) {
 
         // id 리스트가 없으면 전체 조회, 있으면 부분 조회
@@ -38,7 +37,7 @@ public class CategoryService {
 
         } else {
 
-            List<Category> categories = categoryUtils.findCategory(ids);
+            List<Category> categories = categoryUtils.validateAndFindCategory(ids);
 
             return categories.stream()
                     .map(categoryMapper::toResponse)
@@ -47,6 +46,7 @@ public class CategoryService {
     }
 
     // 상위 카테고리 id로 자식 카테고리 id 리스트 조회
+    @Transactional(readOnly = true)
     public List<Long> getLeafCategoryIds(Long parentId) {
 
         return categoryRepository.findLeafCategories(parentId);
@@ -55,32 +55,34 @@ public class CategoryService {
     @Transactional
     public CategoryResponse updateCategory(Long id, CategoryRequest request) {
 
-        Category category = categoryUtils.findCategory(id);
+        Category old = categoryUtils.validateAndFindCategory(id);
 
         categoryUtils.validateParent(id, request);
 
-        Integer newSort = categoryUtils.updateSiblingSort(request);
+        if (!request.getName().equals(old.getName())) {
+            categoryUtils.validateName(request.getName());
+        }
 
-        Category updatedCategory = category.toBuilder()
+        categoryUtils.updateSiblingSort(old, request);
+
+        Category updatedCategory = old.toBuilder()
                 .id(id)
-                .name(request.getName() != null ? request.getName() : category.getName())
-                .sort(request.getSort() != null ? newSort : category.getSort())
+                .name(request.getName() != null ? request.getName() : old.getName())
+                .sort(request.getSort() != null ? request.getSort() : old.getSort())
                 .parentId(request.getParentId() != null ? request.getParentId() : null)
                 .build();
 
-        Category savedCategory = categoryRepository.save(updatedCategory);
-
-        return categoryMapper.toResponse(savedCategory);
+        return categoryMapper.toResponse(categoryRepository.save(updatedCategory));
     }
 
     @Transactional
-    public CategoryResponse createCategory(CategoryRequest request) {
+    public CategoryResponse createCategory(CategoryCreateRequest request) {
+
+        categoryUtils.validateName(request.getName());
 
         Category category = categoryMapper.toEntity(request);
 
-        Category newCategory = categoryRepository.save(category);
-
-        return categoryMapper.toResponse(newCategory);
+        return categoryMapper.toResponse(categoryRepository.save(category));
     }
 
     @Transactional
@@ -92,36 +94,15 @@ public class CategoryService {
         if (ids == null || ids.isEmpty()) {
 
             response.put("message", "삭제할 카테고리가 없습니다.");
-            return response;
 
         } else {
 
-
-            List<String>  deletedNames = new ArrayList<>();
-
-            List<Category> categories = categoryUtils.findCategory(ids);
-
-            for (Category category : categories) {
-
-                List<Product> products = productRepository.findByCategoryId(category.getId());
-
-                for (Product product : products) {
-                    product.setCategory(null);
-                    productRepository.save(product);
-                }
-
-                categoryRepository.delete(category);
-
-                deletedNames.add(category.getName());
-            }
-
-            // 삭제 리스트가 현재 조회되는 전체 카테고리 길이와 일치한다면 전체 삭제 메시지 반환
-
-            String message = String.format("%s 카테고리가 삭제되었습니다.", String.join(", ", deletedNames));
-
-            response.put("message", message);
+            categoryUtils.deleteCategoriesAndUpdateProducts(ids);
+            response.put("message", "카테고리가 삭제되었습니다.");
         }
 
         return response;
     }
+
+
 }
