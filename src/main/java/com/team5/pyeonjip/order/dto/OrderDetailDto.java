@@ -14,5 +14,7 @@ public class OrderDetailDto {
     private Long productDetailId;
     private String productName;
     private Long quantity;
-    private Long productPrice;
+    private Long productPrice; // 상품 1개 가격
+    private Long subTotalPrice; // 상품 1개 가격 * 수량
+    private String productImage; // 상품 이미지
 }

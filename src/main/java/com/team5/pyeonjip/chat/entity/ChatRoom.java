@@ -1,6 +1,7 @@
 package com.team5.pyeonjip.chat.entity;
 
 import com.team5.pyeonjip.global.entity.BaseTimeEntity;
+import com.team5.pyeonjip.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,17 +36,15 @@ public class ChatRoom extends BaseTimeEntity {
     @Column(name = "admin_id", nullable = false)
     private Long adminId;
 
-    /* mapping
 
-    @ManyToOne
-    @JoinColumn(name = "user_id",referencedColumnName = "id", nullable = false)
-    private User user;
+//    @ManyToOne
+//    @JoinColumn(name = "user_id",referencedColumnName = "id", nullable = false)
+//    private User user;
+//
+//    @ManyToOne
+//    @JoinColumn(name = "admin_id", referencedColumnName = "id", nullable = false)
+//    private User admin;
 
-    @ManyToOne
-    @JoinColumn(name = "admin_id", referencedColumnName = "id", nullable = false)
-    private User admin;
-
-     */
 
     // 채팅방 종료 상태 업데이트
     public void closeChatRoom(){
@@ -58,6 +57,5 @@ public class ChatRoom extends BaseTimeEntity {
         this.isClosed = isClosed;
         this.userId = userId;
         this.adminId = adminId;
-
     }
 }

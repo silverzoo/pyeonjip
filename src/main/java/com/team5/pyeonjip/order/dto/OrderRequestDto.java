@@ -1,6 +1,5 @@
 package com.team5.pyeonjip.order.dto;
 
-import com.team5.pyeonjip.order.entity.Delivery;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -26,4 +25,6 @@ public class OrderRequestDto {
     private String requirement;
 
     private List<OrderDetailDto> orderDetails;
+
+    private Long userId;
 }

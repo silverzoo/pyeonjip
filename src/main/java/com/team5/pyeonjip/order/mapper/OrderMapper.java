@@ -23,29 +23,31 @@ public class OrderMapper {
                 .orderDetails(order.getOrderDetails().stream()
                         .map(detail -> OrderDetailDto.builder()
                                 .productName(detail.getProductName())
-                                .productPrice(detail.getTotalPrice())
+                                .productPrice(detail.getProductPrice())
                                 .quantity(detail.getQuantity())
                                 .build())
                         .toList())
                 .build();
     }
 
-    // entity -> dto
+    // 관리자 - entity -> dto
     public static AdminOrderResponseDto toAdminOrderResponseDto(Order order) {
         return AdminOrderResponseDto.builder()
-                .id(order.getId())
+                .userEmail(order.getUser().getEmail())
                 .userName(order.getUser().getName())
                 .phoneNumber(order.getUser().getPhoneNumber())
                 .orderStatus(order.getStatus())
-                .totalPrice(order.getTotalPrice())
+                .totalPrice(order.getTotalPrice()) // 전체 주문 금액
                 .createdAt(order.getCreatedAt())
                 .deliveryStatus(order.getDelivery().getStatus())
                 .orderDetails(order.getOrderDetails().stream()
                         .map(detail -> OrderDetailDto.builder()
                                 .productDetailId(detail.getId())
                                 .productName(detail.getProductName())
-                                .productPrice(detail.getTotalPrice())
+                                .subTotalPrice(detail.getSubTotalPrice()) // 상품 상세 수량 * 가격
                                 .quantity(detail.getQuantity())
+                                .productPrice(detail.getProductPrice()) // 개당 가격
+                                .productImage(detail.getProduct().getMainImage())
                                 .build())
                         .toList())
                 .build();

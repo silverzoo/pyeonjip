@@ -68,19 +68,19 @@ public class UserApiController {
 //    }
 
 
-//    // 단일 유저 조회
-//    @GetMapping("/{userId}")
-//    public ResponseEntity<User> getUser(@PathVariable("userId") Long userId) {
-//
-//        try {
-//            // UserService의 단일 유저 조회 메서드 실행
-//            return ResponseEntity.ok(userService.findUser(userId));
-//        } catch (Exception e) {
-//            // Todo: 위와 마찬가지
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//                    .body(null);
-//        }
-//    }
+    // 단일 유저 조회
+    @GetMapping("/{userId}")
+    public ResponseEntity<User> getUser(@PathVariable("userId") Long userId) {
+
+        try {
+            // UserService의 단일 유저 조회 메서드 실행
+            return ResponseEntity.ok(userService.findUser(userId));
+        } catch (Exception e) {
+            // Todo: 위와 마찬가지
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(null);
+        }
+    }
 
 
     // 유저 삭제

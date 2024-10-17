@@ -1,5 +1,6 @@
 package com.team5.pyeonjip.category.controller;
 
+import com.team5.pyeonjip.category.dto.CategoryCreateRequest;
 import com.team5.pyeonjip.category.dto.CategoryRequest;
 import com.team5.pyeonjip.category.dto.CategoryResponse;
 import com.team5.pyeonjip.category.service.CategoryService;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -27,20 +29,19 @@ public class AdminCategoryController {
     }
 
     @PostMapping()
-    public ResponseEntity<CategoryResponse> createCategory(@RequestBody CategoryRequest request) {
+    public ResponseEntity<CategoryResponse> createCategory(@RequestBody CategoryCreateRequest request) {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(categoryService.createCategory(request));
     }
 
-    @DeleteMapping("/{categoryId}")
-    public ResponseEntity<Map<String, String>> deleteCategory(@PathVariable("categoryId") Long id) {
+    @DeleteMapping
+    public ResponseEntity<Map<String, String>> deleteCategories(@RequestParam(required = false) List<Long> categoryIds) {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(categoryService.deleteCategory(id));
+                .body(categoryService.deleteCategories(categoryIds));
     }
 
-    //TODO: 전체 삭제, 부분 삭제용 컨트롤러 필요
 }

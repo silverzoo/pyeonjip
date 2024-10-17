@@ -10,22 +10,28 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/coupon")
+@RequestMapping("/api/coupon")
 @RequiredArgsConstructor
 public class CouponController {
     private final CouponService couponService;
 
     // 랜덤 쿠폰 생성 API
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<Coupon> createCoupon(@RequestParam Long discount) {
         Coupon coupon = couponService.createRandomCoupon(discount);
-        return ResponseEntity.ok(coupon);
+        return ResponseEntity.status(HttpStatus.OK).body(coupon);
     }
 
     @GetMapping
     public ResponseEntity<List<Coupon>> getCoupons() {
         List<Coupon> coupons = couponService.getAllCoupons();
         return ResponseEntity.status(HttpStatus.OK).body(coupons);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Coupon> deleteCoupon(@RequestParam Long id) {
+        couponService.deleteCouponById(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
 

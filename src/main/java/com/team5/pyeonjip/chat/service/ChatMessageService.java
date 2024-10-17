@@ -10,12 +10,14 @@ import com.team5.pyeonjip.global.exception.ErrorCode;
 import com.team5.pyeonjip.global.exception.GlobalException;
 import com.team5.pyeonjip.global.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatMessageService {
@@ -35,21 +37,25 @@ public class ChatMessageService {
     }
 
     public ChatMessageDto sendMessage(Long chatRoomId, String message){
+
         ChatMessage chatMessage = ChatMessage.builder()
                 .chatRoomId(chatRoomId)
                 .message(message)
                 .senderEmail("abc@naver.com")
                 .build();
 
-        chatMessageRepository.save(chatMessage);
+        chatMessage = chatMessageRepository.save(chatMessage);
 
         return chatMessageMapper.toDTO(chatMessage);
     }
 
     @Transactional
-    public ChatMessageDto modifyMessage(Long messageId, String message){
+    public ChatMessageDto updateMessage(Long messageId, String message){
         ChatMessage chatMessage = chatMessageRepository.findById(messageId)
-                .orElseThrow(() -> new GlobalException(ErrorCode.CHAT_MESSAGE_NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.error("Message not found with ID: {}", messageId);
+                    return new GlobalException(ErrorCode.CHAT_MESSAGE_NOT_FOUND);
+                });
 
         chatMessage.updateMessage(message);
 
@@ -58,10 +64,16 @@ public class ChatMessageService {
         return chatMessageMapper.toDTO(chatMessage);
     }
 
-    public void deleteMessage(Long messageId){
+    @Transactional
+    public Long deleteMessage(Long messageId){
         ChatMessage chatMessage = chatMessageRepository.findById(messageId)
-                .orElseThrow(() -> new GlobalException(ErrorCode.CHAT_MESSAGE_NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.error("Message not found with ID: {}", messageId);
+                    return new GlobalException(ErrorCode.CHAT_MESSAGE_NOT_FOUND);
+                });
 
         chatMessageRepository.delete(chatMessage);
+
+        return messageId;
     }
 }

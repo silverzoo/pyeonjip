@@ -8,6 +8,8 @@ import com.team5.pyeonjip.product.service.ProductDetailService;
 import com.team5.pyeonjip.product.service.ProductImageService;
 import com.team5.pyeonjip.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,16 +53,16 @@ public class ProductController {
     }
 
     // 5. 제품 디테일 삭제
-    @DeleteMapping("/{productId}/details/{detailId}")
+    @DeleteMapping("/details/{detailId}")
     public ResponseEntity<Void> deleteProductDetail(@PathVariable Long productId, @PathVariable Long detailId) {
         productDetailService.deleteProductDetail(productId, detailId);
         return ResponseEntity.noContent().build();
     }
 
     // 6. 제품 디테일 수정
-    @PutMapping("/{productId}/details/{detailId}")
-    public ResponseEntity<ProductDetail> updateProductDetail(@PathVariable Long productId, @PathVariable Long detailId, @RequestBody ProductDetail productDetail) {
-        ProductDetail updatedDetail = productDetailService.updateProductDetail(productId, detailId, productDetail);
+    @PutMapping("/details/{detailId}")
+    public ResponseEntity<ProductDetail> updateProductDetail(@PathVariable Long detailId, @RequestBody ProductDetail productDetail) {
+        ProductDetail updatedDetail = productDetailService.updateProductDetail(detailId, productDetail);
         return ResponseEntity.ok(updatedDetail);
     }
 
@@ -72,7 +74,7 @@ public class ProductController {
     }
 
     // 8. 제품 이미지 삭제
-    @DeleteMapping("/{productId}/images/{imageId}")
+    @DeleteMapping("/images/{imageId}")
     public ResponseEntity<Void> deleteProductImage(@PathVariable Long productId, @PathVariable Long imageId) {
         productImageService.deleteProductImage(productId, imageId);
         return ResponseEntity.noContent().build();
@@ -96,6 +98,37 @@ public class ProductController {
     @GetMapping("/all")
     public ResponseEntity<List<ProductResponse>> getAllProducts() {
         List<ProductResponse> productResponse = productService.getAllProducts();
+        return ResponseEntity.ok(productResponse);
+    }
+
+    // 여러 CategoryId 로 제품 목록 조회
+    @GetMapping("/categories")
+    public ResponseEntity<List<ProductResponse>> getProductsByMultipleCategoryIds(
+            @RequestParam List<Long> categoryIds) {
+        return ResponseEntity.ok(productService.getProductsByMultipleCategoryIds(categoryIds));
+    }
+
+    // ProductId로 옵션 목록 조회
+    @GetMapping("/{productId}/details")
+    public ResponseEntity<List<ProductDetail>> getProductDetails(@PathVariable Long productId) {
+        List<ProductDetail> productDetails = productDetailService.getProductDetailsByProductId(productId);
+        return ResponseEntity.ok(productDetails);
+    }
+
+    // 특정 옵션(디테일) 조회
+    @GetMapping("/details/{detailId}")
+    public ResponseEntity<ProductDetail> getProductDetailById(@PathVariable Long detailId) {
+        ProductDetail productDetail = productDetailService.getProductDetailById(detailId);
+        return ResponseEntity.ok(productDetail);
+
+    }
+
+    // 컨트롤러 페이지 네이션
+    @GetMapping("/all-pages")
+    public ResponseEntity<Page<ProductResponse>> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size) {
+        Page<ProductResponse> productResponse = productService.getAllProductspage(PageRequest.of(page, size));
         return ResponseEntity.ok(productResponse);
     }
 }
