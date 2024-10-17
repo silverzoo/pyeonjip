@@ -5,6 +5,7 @@ import com.team5.pyeonjip.global.jwt.JWTFilter;
 import com.team5.pyeonjip.global.jwt.JWTUtil;
 import com.team5.pyeonjip.global.jwt.LoginFilter;
 import com.team5.pyeonjip.user.repository.RefreshRepository;
+import com.team5.pyeonjip.user.service.ReissueService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +32,7 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
     private final RefreshRepository refreshRepository;
+    private final ReissueService reissueService;
 
 
     @Bean
@@ -72,7 +74,8 @@ public class SecurityConfig {
                                 // 허용 시간
                                 configuration.setMaxAge(3600L);
 
-                                configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+                                // configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+                                configuration.setExposedHeaders(Collections.singletonList("access"));
 
                                 return configuration;
                             }
@@ -106,7 +109,7 @@ public class SecurityConfig {
                 .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 //      LoginFilter
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshRepository), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshRepository, reissueService), UsernamePasswordAuthenticationFilter.class);
 //      LogoutFilter
         http
                 .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);

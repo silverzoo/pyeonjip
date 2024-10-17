@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.team5.pyeonjip.user.dto.CustomUserDetails;
 import com.team5.pyeonjip.user.entity.Refresh;
 import com.team5.pyeonjip.user.repository.RefreshRepository;
+import com.team5.pyeonjip.user.service.ReissueService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -29,6 +30,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
     private final RefreshRepository refreshRepository;
+    private final ReissueService reissueService;
+
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -73,7 +76,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         // 응답 설정
         response.setHeader("access", access);
-        response.addCookie(createCookie("refresh", refresh));
+        response.addCookie(reissueService.createCookie("refresh", refresh));
         response.setStatus(HttpStatus.OK.value());
     }
 
@@ -114,22 +117,4 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         }
     }
 
-
-    // value에는 JWT가 들어감.
-    private Cookie createCookie(String key, String value) {
-
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24 * 60 * 60);
-
-        // https 통신 시
-        // cookie.setSecure(true);
-
-        // 쿠키가 적용될 범위
-        // cookie.setPath("/");
-
-        // js 등에서 쿠키에 접근하지 못하도록.
-        cookie.setHttpOnly(true);
-
-        return cookie;
-    }
 }
