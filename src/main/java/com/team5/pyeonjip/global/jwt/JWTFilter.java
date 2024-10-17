@@ -70,16 +70,20 @@ public class JWTFilter extends OncePerRequestFilter {
             return;
         }
 
-        // email, role 값을 획득
+        // 토큰에서 email, role 값을 가져온다.
         String email = jwtUtil.getEmail(accessToken);
         String role = jwtUtil.getRole(accessToken);
 
+        // UserDetails에 유저 정보를 담는다.
         User user = new User();
         user.setEmail(email);
         user.setRole(Role.valueOf(role));
         CustomUserDetails customUserDetails = new CustomUserDetails(user);
 
+        // Spring Security 인증 토큰을 생성한다.
         Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+
+        // SecurityContextHolder에 사용자를 등록한다.
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         filterChain.doFilter(request, response);
