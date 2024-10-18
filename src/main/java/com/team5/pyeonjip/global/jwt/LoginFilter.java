@@ -1,6 +1,8 @@
 package com.team5.pyeonjip.global.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.team5.pyeonjip.global.exception.ErrorCode;
+import com.team5.pyeonjip.global.exception.GlobalException;
 import com.team5.pyeonjip.user.dto.CustomUserDetails;
 import com.team5.pyeonjip.user.entity.Refresh;
 import com.team5.pyeonjip.user.repository.RefreshRepository;
@@ -40,49 +42,60 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         try {
             loginRequest = objectMapper.readValue(request.getInputStream(), LoginRequest.class);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new GlobalException(ErrorCode.INVALID_LOGIN_REQUEST);
         }
 
         //클라이언트 요청에서 email, password 추출
         String email = loginRequest.getEmail();
         String password = loginRequest.getPassword();
 
+        if (email == null || password == null) {
+            throw new GlobalException(ErrorCode.INVALID_LOGIN_REQUEST);
+        }
+
         // 세 번째 인자는 우선 null
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password, null);
 
-        // AuthenticationManager에 Token을 넘겨서 검증을 진행한다.
-        return authenticationManager.authenticate(authToken);
+        try {
+            // AuthenticationManager에 Token을 넘겨서 검증을 진행한다.
+            return authenticationManager.authenticate(authToken);
+        } catch (AuthenticationException e) {
+            throw new GlobalException(ErrorCode.AUTHENTICATION_FAILED);
+        }
     }
 
 
     // 로그인 시 access & refresh 토큰 발급
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
+        try {
+            // 토큰에 유저 정보와 role을 stream으로 받아온다.
+            String email = authentication.getName();
 
-        // 토큰에 유저 정보와 role을 stream으로 받아온다.
-        String email = authentication.getName();
+            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+            Iterator<? extends GrantedAuthority> iter = authorities.iterator();
+            GrantedAuthority auth = iter.next();
+            String role = auth.getAuthority();
 
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        Iterator<? extends GrantedAuthority> iter = authorities.iterator();
-        GrantedAuthority auth = iter.next();
-        String role = auth.getAuthority();
+            // access & refresh 토큰 생성
+            String access = jwtUtil.createJwt("access", email, role, 600000L);
+            String refresh = jwtUtil.createJwt("refresh", email, role, 86400000L);
 
-        // access & refresh 토큰 생성
-        String access = jwtUtil.createJwt("access", email, role, 600000L);
-        String refresh = jwtUtil.createJwt("refresh", email, role, 86400000L);
+            // Repository에 refresh 토큰 저장
+            addRefresh(email, refresh, 86400000L);
 
-        // Repository에 refresh 토큰 저장
-        addRefresh(email, refresh, 86400000L);
-
-        // 응답 설정
-        response.setHeader("Authorization", "Bearer " + access);
-        response.addCookie(reissueService.createCookie("refresh", refresh));
-        response.setStatus(HttpStatus.OK.value());
+            // 응답 설정
+            response.setHeader("Authorization", "Bearer " + access);
+            response.addCookie(reissueService.createCookie("refresh", refresh));
+            response.setStatus(HttpStatus.OK.value());
+        } catch (Exception e) {
+            throw new GlobalException(ErrorCode.LOGIN_PROCESSING_ERROR);
+        }
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        response.setStatus(401);
+        throw new GlobalException(ErrorCode.AUTHENTICATION_FAILED);
     }
 
 

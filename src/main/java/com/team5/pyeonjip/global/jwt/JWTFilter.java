@@ -1,5 +1,7 @@
 package com.team5.pyeonjip.global.jwt;
 
+import com.team5.pyeonjip.global.exception.ErrorCode;
+import com.team5.pyeonjip.global.exception.GlobalException;
 import com.team5.pyeonjip.user.dto.CustomUserDetails;
 import com.team5.pyeonjip.user.entity.Role;
 import com.team5.pyeonjip.user.entity.User;
@@ -49,7 +51,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
 
-            return;
+            throw new GlobalException(ErrorCode.MISSING_TOKEN);
         }
 
         // 5. 토큰 만료 여부 확인. 만료시 오류를 출력하고 다음 필터로 넘기지 않는다.
@@ -57,13 +59,7 @@ public class JWTFilter extends OncePerRequestFilter {
             jwtUtil.isExpired(accessToken);
         } catch (ExpiredJwtException e) {
 
-            //response body
-            PrintWriter writer = response.getWriter();
-            writer.print("access token expired");
-
-            //response status code
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
+            throw new GlobalException(ErrorCode.ACCESS_TOKEN_EXPIRED);
         }
 
         // 6. 토큰이 access인지 확인한다. (페이로드에 명시되어 있다.)
@@ -71,13 +67,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         if (!category.equals("access")) {
 
-            //response body
-            PrintWriter writer = response.getWriter();
-            writer.print("not an access token");
-
-            //response status code
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
+            throw new GlobalException(ErrorCode.INVALID_ACCESS_TOKEN);
         }
 
         // 토큰에서 email, role 값을 가져온다.
