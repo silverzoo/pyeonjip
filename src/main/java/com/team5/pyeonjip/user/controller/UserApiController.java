@@ -47,14 +47,15 @@ public class UserApiController {
     @GetMapping("/{userId}")
     public ResponseEntity<User> getUser(@PathVariable("userId") Long userId) {
 
-        try {
-            // UserService의 단일 유저 조회 메서드 실행
-            return ResponseEntity.ok(userService.findUser(userId));
-        } catch (Exception e) {
-            // Todo: 위와 마찬가지
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(null);
-        }
+        return ResponseEntity.ok(userService.findUser(userId));
+    }
+
+
+    // 단일 유저 조회(이메일)
+    @GetMapping("/{email}")
+    public ResponseEntity<User> getUserByEmail(@PathVariable("email") String email) {
+
+        return ResponseEntity.ok(userService.findUserByEmail(email));
     }
 
 
