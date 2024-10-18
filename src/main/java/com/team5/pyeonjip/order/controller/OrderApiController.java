@@ -4,7 +4,6 @@ import com.team5.pyeonjip.order.dto.*;
 import com.team5.pyeonjip.order.service.OrderService;
 import com.team5.pyeonjip.user.entity.User;
 import com.team5.pyeonjip.user.service.UserService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,18 +22,11 @@ public class OrderApiController {
     // 사용자 - 주문 생성
     @PostMapping("/orders")
     public ResponseEntity<Void> createOrder(
-            //@Valid
             @RequestBody CombinedOrderDto combinedOrderDto,
-            @RequestParam("userId") Long userId){
-            // @AuthenticationPrincipal User currentUser) {
-
-        // Long userId = currentUser.getId();
-
-
-        User user = userService.findUser(userId);
+            @RequestParam("userEmail") String userEmail){
 
         // 주문 생성 처리
-        orderService.createOrder(combinedOrderDto, user.getId());
+        orderService.createOrder(combinedOrderDto,userEmail);
 
         return ResponseEntity.ok().build();
     }
@@ -44,7 +36,6 @@ public class OrderApiController {
     public ResponseEntity<List<OrderResponseDto>> getUserOrders(@RequestParam("userId") Long userId) { // @AuthenticationPrincipal User currentUser
 
         User user = userService.findUser(userId);
-        // User user = currentUser.getId();
 
         // 사용자별 주문 목록 조회
         List<OrderResponseDto> orderList = orderService.findOrdersByUserId(user.getId());
@@ -61,7 +52,7 @@ public class OrderApiController {
         return ResponseEntity.ok().build();
     }
 
-    // 주문 페이지
+    // 주문 데이터(장바구니)
     @PostMapping("/orders/checkout")
     public ResponseEntity<OrderCartResponseDto> getOrderSummary(@RequestBody OrderCartRequestDto orderCartRequestDto) {
         OrderCartResponseDto summary = orderService.getOrderSummary(orderCartRequestDto);

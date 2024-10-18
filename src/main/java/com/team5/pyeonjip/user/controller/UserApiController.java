@@ -44,11 +44,11 @@ public class UserApiController {
 
 
     // 단일 유저 조회
-    @GetMapping("/{userId}")
-    public ResponseEntity<User> getUser(@PathVariable("userId") Long userId) {
-
-        return ResponseEntity.ok(userService.findUser(userId));
-    }
+//    @GetMapping("/{userId}")
+//    public ResponseEntity<User> getUser(@PathVariable("userId") Long userId) {
+//
+//        return ResponseEntity.ok(userService.findUser(userId));
+//    }
 
 
     // 단일 유저 조회(이메일)

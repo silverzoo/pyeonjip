@@ -1,7 +1,6 @@
 package com.team5.pyeonjip.order.entity;
 
-import
-        com.team5.pyeonjip.global.entity.BaseTimeEntity;
+import com.team5.pyeonjip.global.entity.BaseTimeEntity;
 import com.team5.pyeonjip.order.enums.DeliveryStatus;
 import jakarta.persistence.*;
 import lombok.*;

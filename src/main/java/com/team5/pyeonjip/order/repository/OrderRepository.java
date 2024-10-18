@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    Page<Order> findAll(Pageable pageable);
+    Page<Order> findAll(Pageable pageable); // 주문 전체 조회
 
     @Query("SELECT o FROM Order o WHERE o.user.email LIKE %:userEmail%")
     Page<Order> findOrdersByUserEmail(@Param("userEmail") String userEmail, Pageable pageable); // 사용자 이메일로 주문 조회
