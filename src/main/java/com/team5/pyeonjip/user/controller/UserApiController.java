@@ -83,9 +83,9 @@ public class UserApiController {
     }
 
 
-    // 유저 삭제
-    @PutMapping("/information/{userId}")
-    public ResponseEntity<String> updateUserInfo(@PathVariable("userId") Long userId, @RequestBody UserUpdateDto dto) {
+    // 유저 정보 업데이트
+    @PutMapping("/{email}")
+    public ResponseEntity<String> updateUserInfo(@PathVariable("email") String userId, @RequestBody UserUpdateDto dto) {
 
         try {
             // UserService의 유저 정보 수정 메서드 실행
