@@ -21,7 +21,17 @@ public enum ErrorCode {
     OUT_OF_STOCK(HttpStatus.BAD_REQUEST, "STOCK-01", "재고 수량이 부족합니다."),
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER-01", "해당 주문을 찾을 수 없습니다."),
     USER_ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER-02", "해당 사용자의 주문을 찾을 수 없습니다."),
-    DELIVERY_ALREADY_STARTED(HttpStatus.BAD_REQUEST, "DELIVERY-01", "배송이 시작된 주문은 취소할 수 없습니다.");
+    DELIVERY_ALREADY_STARTED(HttpStatus.BAD_REQUEST, "DELIVERY-01", "배송이 시작된 주문은 취소할 수 없습니다."),
+
+    // 유저
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER-01", "사용자를 찾을 수 없습니다."),
+    EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "USER-02", "이미 존재하는 이메일입니다."),
+    INVALID_USER_UPDATE(HttpStatus.BAD_REQUEST, "USER-03", "유효하지 않은 수정 요청입니다."),
+    ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "USER-04", "계정을 찾을 수 없습니다."),
+    USER_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "USER-05", "사용자 삭제에 실패했습니다."),
+    USER_SIGNUP_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "USER-06", "회원가입에 실패했습니다.");
+    // 유저 - Security
+
 
     private final HttpStatus httpStatus;
     private final String code;
