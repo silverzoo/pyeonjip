@@ -34,6 +34,8 @@ public class CommentController {
         return commentRepository.findById(id)
                 .map(existingComment -> {
                     existingComment.setContent(updatedComment.getContent());
+                    existingComment.setRating(updatedComment.getRating());
+                    existingComment.setTitle(updatedComment.getTitle());
                     existingComment.setCreatedAt(LocalDateTime.now());
                     Comment savedComment = commentRepository.save(existingComment);
                     return ResponseEntity.ok(savedComment);

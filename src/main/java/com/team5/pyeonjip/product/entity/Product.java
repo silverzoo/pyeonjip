@@ -38,8 +38,8 @@ public class Product {
     @JsonManagedReference
     private List<ProductImage> productImages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments = new ArrayList<>();
+//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Comment> comments = new ArrayList<>();
 
     // ID만을 받는 생성자 추가
     public Product(Long id) {
