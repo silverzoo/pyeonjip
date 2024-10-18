@@ -1,5 +1,7 @@
 package com.team5.pyeonjip.global.jwt;
 
+import com.team5.pyeonjip.global.exception.ErrorCode;
+import com.team5.pyeonjip.global.exception.GlobalException;
 import com.team5.pyeonjip.user.repository.RefreshRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -48,20 +50,24 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
         // Refresh 토큰을 가져온다.
         String refresh = null;
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
 
-            if (cookie.getName().equals("refresh")) {
+        try {
+            Cookie[] cookies = request.getCookies();
+            for (Cookie cookie : cookies) {
 
-                refresh = cookie.getValue();
+                if (cookie.getName().equals("refresh")) {
+
+                    refresh = cookie.getValue();
+                }
             }
+        } catch (ExpiredJwtException e) {
+            throw new GlobalException(ErrorCode.LOGOUT_MISSING_REFRESH_TOKEN);
         }
 
         // 토큰이 있는지 확인한다.
         if (refresh == null) {
 
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
+            throw new GlobalException(ErrorCode.LOGOUT_MISSING_REFRESH_TOKEN);
         }
 
         // 토큰이 만료되었는지 확인한다.
@@ -69,24 +75,21 @@ public class CustomLogoutFilter extends GenericFilterBean {
             jwtUtil.isExpired(refresh);
         } catch (ExpiredJwtException e) {
 
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
+            throw new GlobalException(ErrorCode.LOGOUT_REFRESH_TOKEN_EXPIRED);
         }
 
         // 가져온 토큰이 Refresh 토큰인지 확인한다. (발급시 페이로드에 명시)
         String category = jwtUtil.getCategory(refresh);
         if (!category.equals("refresh")) {
 
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
+            throw new GlobalException(ErrorCode.LOGOUT_MISSING_REFRESH_TOKEN);
         }
 
         // 해당 Refresh 토큰이 DB에 저장되어 있는지 확인한다.
         Boolean isExist = refreshRepository.existsByRefresh(refresh);
         if (!isExist) {
 
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
+            throw new GlobalException(ErrorCode.LOGOUT_MISSING_REFRESH_TOKEN);
         }
 
         //로그아웃 진행
