@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,16 +18,11 @@ import java.util.List;
 public class CartController {
     private final CartService cartService;
 
-    // 장바구니 페이지
-    @GetMapping
-    public ResponseEntity<Void> cart(){
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
-
-    // 로그인 동기화 (서버 -> 로컬)
+    // 로그인 동기화 (로컬 -> 서버)
     @PostMapping("/sync")
-    public ResponseEntity<List<CartDto>> syncCart(@RequestParam("optionId") Long userId){
-            return ResponseEntity.ok(cartService.getCartItemsByUserId(userId));
+    public ResponseEntity<List<CartDto>> sync(@RequestBody List<CartDto> localCartItems, @RequestParam String email) {
+        List<CartDto> dtos = cartService.sync(email, localCartItems);
+        return ResponseEntity.status(HttpStatus.OK).body(dtos);
     }
 
     // 세부 데이터 가져오기
@@ -42,39 +36,40 @@ public class CartController {
     }
 
     // 추가
-    @PostMapping("/cart-items")
-    public ResponseEntity<CartDto> addCart(@RequestBody CartDto cartDto, @RequestParam("userId") Long userId) {
-           return ResponseEntity.status(HttpStatus.CREATED).body(cartService.addCartDto(cartDto,userId));
+    @PostMapping
+    public ResponseEntity<CartDto> addCart(@RequestBody CartDto cartDto, @RequestParam("email") String email) {
+           return ResponseEntity.status(HttpStatus.CREATED).body(cartService.addCartDto(cartDto,email));
     }
 
     // 조회
-    @GetMapping("/cart-items")
-    public ResponseEntity<List<CartDetailDto>> getCartItems(@RequestParam("userId") Long userId) {
-        return ResponseEntity.status(HttpStatus.OK).body(cartService.mapCartDtosToCartDetails(cartService.getCartItemsByUserId(userId)));
+    @GetMapping
+    public ResponseEntity<List<CartDetailDto>> getCartItems(@RequestParam("email") String email) {
+        System.out.println("email : " + email);
+        return ResponseEntity.status(HttpStatus.OK).body(cartService.mapCartDtosToCartDetails(cartService.getCartItemsByEmail(email)));
     }
 
     // 수정
-    @PutMapping("/cart-items/{optionId}")
+    @PutMapping("/{optionId}")
     public ResponseEntity<CartDto> updateCartItemQuantity(
-            @RequestParam("userId") Long userId,
+            @RequestParam("email") String email,
             @PathVariable("optionId") Long optionId,
             @RequestBody CartDto cartDto) {
-        return ResponseEntity.status(HttpStatus.OK).body(cartService.updateCartItemQuantity(userId, optionId, cartDto));
+        return ResponseEntity.status(HttpStatus.OK).body(cartService.updateCartItemQuantity(email, optionId, cartDto));
     }
 
     // 개별 삭제
-    @DeleteMapping("/cart-items/{optionId}")
+    @DeleteMapping("/{optionId}")
     public ResponseEntity<Void> deleteCartItem(
-            @RequestParam("userId") Long userId,
+            @RequestParam("email") String email,
             @PathVariable("optionId") Long optionId) {
-            cartService.deleteCartItemByUserIdAndOptionId(userId,optionId);
+            cartService.deleteCartItemByEmailAndOptionId(email,optionId);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     // 전체 삭제
-    @DeleteMapping("/cart-items")
-    public ResponseEntity<Void> deleteAllCartItems(@RequestParam("userId") Long userId) {
-            cartService.deleteAllCartItems(userId);
+    @DeleteMapping
+    public ResponseEntity<Void> deleteAllCartItems(@RequestParam("email") String email) {
+            cartService.deleteAllCartItems(email);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

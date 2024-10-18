@@ -17,7 +17,7 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId; // 사용자 식별
+    private String email; // 사용자 식별
 
     private Long optionId; // optionId가 있으면 productId도 필요없다.
 
