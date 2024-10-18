@@ -21,8 +21,7 @@ public class CartController {
     // 로그인 동기화 (로컬 -> 서버)
     @PostMapping("/sync")
     public ResponseEntity<List<CartDto>> sync(@RequestBody List<CartDto> localCartItems, @RequestParam String email) {
-        List<CartDto> dtos = cartService.sync(email, localCartItems);
-        return ResponseEntity.status(HttpStatus.OK).body(dtos);
+        return ResponseEntity.status(HttpStatus.OK).body(cartService.sync(email, localCartItems));
     }
 
     // 세부 데이터 가져오기

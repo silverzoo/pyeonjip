@@ -2,6 +2,7 @@ package com.team5.pyeonjip.product.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.team5.pyeonjip.category.entity.Category;
+import com.team5.pyeonjip.comment.entity.Comment;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,6 +38,8 @@ public class Product {
     @JsonManagedReference
     private List<ProductImage> productImages = new ArrayList<>();
 
+//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Comment> comments = new ArrayList<>();
 
     // ID만을 받는 생성자 추가
     public Product(Long id) {

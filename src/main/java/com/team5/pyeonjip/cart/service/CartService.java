@@ -116,11 +116,6 @@ public class CartService {
     }
 
     @Transactional
-    public void deleteCartItemByOptionId(Long optionId) {
-        cartRepository.deleteByOptionId(optionId);
-    }
-
-    @Transactional
     public List<CartDto> sync(String email, List<CartDto> localCartItems) {
         // 서버에서 현재 장바구니 아이템 조회
         List<Cart> serverCartItems = cartRepository.findAllByEmail(email);
@@ -156,19 +151,6 @@ public class CartService {
                 }
             }
         }
-        /*
-        // 로컬 카트에 존재하지 않는 서버 항목을 삭제
-        for (Cart serverItem : serverCartItems) {
-            if (!localCartItems.stream().anyMatch(localItem -> localItem.getOptionId().equals(serverItem.getOptionId()))) {
-                try {
-                    cartRepository.delete(serverItem);
-                } catch (Exception e) {
-                    // 로깅 및 예외 처리
-                    log.error("Failed to delete cart item: {}", serverItem.getOptionId(), e);
-                }
-            }
-        }
-        */
         return localCartItems;
     }
 }
