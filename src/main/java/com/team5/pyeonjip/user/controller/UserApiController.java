@@ -100,12 +100,12 @@ public class UserApiController {
 
 
     // 유저 삭제
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<String> deleteUser(@PathVariable("userId") Long userId) {
+    @DeleteMapping("/{email}")
+    public ResponseEntity<String> deleteUser(@PathVariable("email") String email) {
 
         try {
             // UserService의 유저 삭제 메서드 실행
-            userService.deleteUser(userId);
+            userService.deleteUser(email);
 
             return ResponseEntity.ok().build();
         } catch (Exception e) {
