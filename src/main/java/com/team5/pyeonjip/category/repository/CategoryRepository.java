@@ -23,6 +23,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     Optional<Category> findById(Long id);
 
     @EntityGraph(attributePaths = {"children"})
+//    @Query(value = "SELECT c FROM Category c LEFT JOIN FETCH WHERE c.parentId IN :ids")
     List<Category> findAllById(Iterable<Long> ids);
 
     @EntityGraph(attributePaths = {"children"})
@@ -61,7 +62,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Long> findLeafCategories(@Param("parentId") Long parentId);
 
     @Modifying
-    @Query("DELETE FROM Category c WHERE c.id IN :ids")
-    void deleteAll(List<Long> ids);
+    @Query("DELETE FROM Category c WHERE c IN :categories")
+    void deleteAll(Iterable<? extends Category> categories);
 }
 

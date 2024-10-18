@@ -13,7 +13,6 @@ public enum ErrorCode {
     INVALID_PARENT_SELF(HttpStatus.BAD_REQUEST, "CATEGORY-02", "자기 자신을 상위 카테고리로 설정할 수 없습니다."),
     INVALID_PARENT(HttpStatus.BAD_REQUEST, "CATEGORY-03", "존재하지 않는 카테고리를 상위 카테고리로 설정할 수 없습니다."),
     DUPLICATE_CATEGORY(HttpStatus.CONFLICT, "CATEGORY-04", "이미 존재하는 카테고리입니다."),
-    CATEGORY_NO_MODIFY(HttpStatus.NO_CONTENT, "CATEGORY-05", "수정할 사항이 없습니다."),
 
     // 채팅
     CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT_ROOM-01", "채팅방을 찾을 수 없습니다."),

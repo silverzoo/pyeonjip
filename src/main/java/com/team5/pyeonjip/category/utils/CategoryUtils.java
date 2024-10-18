@@ -5,8 +5,6 @@ import com.team5.pyeonjip.category.dto.CategoryResponse;
 import com.team5.pyeonjip.category.entity.Category;
 import com.team5.pyeonjip.category.mapper.CategoryMapper;
 import com.team5.pyeonjip.category.repository.CategoryRepository;
-import com.team5.pyeonjip.global.exception.ErrorCode;
-import com.team5.pyeonjip.global.exception.GlobalException;
 import com.team5.pyeonjip.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -21,25 +19,7 @@ public class CategoryUtils {
     private final CategoryMapper categoryMapper;
     private final CategoryRepository categoryRepository;
     private  final ProductRepository productRepository;
-
-    // id 유효성 검사
-    public Category validateAndFindCategory(Long id) {
-
-        return categoryRepository.findById(id)
-                .orElseThrow(() -> new GlobalException(ErrorCode.CATEGORY_NOT_FOUND));
-    }
-
-    public List<Category> validateAndFindCategory(List<Long> ids) {
-
-        List<Category> categories = categoryRepository.findAllById(ids);
-
-        if (categories.size() != ids.size()) {
-            throw new GlobalException(ErrorCode.CATEGORY_NOT_FOUND);
-        }
-
-        return categories;
-
-    }
+    private final CategoryValidate categoryValidate;
 
     // 최상위 카테고리만 조회
     public List<Category> getParentCategories(List<Category> allCategories) {
@@ -66,40 +46,6 @@ public class CategoryUtils {
                             .build();
                 })
                 .toList();
-    }
-
-    // 부모카테고리 유효성 검사
-    public void validateParent(CategoryRequest request) {
-
-        Long requestParentId = request.getParentId();
-
-        // 최상위 카테고리로 이동 (NPE 방지)
-        if (requestParentId == null) {
-            return;
-        }
-
-        // 부모 id가 본인 id 인 경우
-        if (requestParentId.equals(request.getId())) {
-            throw new GlobalException(ErrorCode.INVALID_PARENT_SELF);
-        }
-
-        // 부모 id가 존재하지 않는 id 인 경우
-        if (!categoryRepository.existsById(requestParentId)) {
-            throw new GlobalException(ErrorCode.INVALID_PARENT);
-        }
-    }
-
-    // 수정사항이 없는지 검사
-    public void validateNoChanges(CategoryRequest request, Category old) {
-
-        boolean isSame = Objects.equals(request.getName(), old.getName()) &&
-                Objects.equals(request.getSort(), old.getSort()) &&
-                Objects.equals(request.getParentId(), old.getParentId());
-
-        // 모든 값이 같을 경우 No Content 204
-        if (isSame) {
-            throw new GlobalException(ErrorCode.CATEGORY_NO_MODIFY);
-        }
     }
 
     // sort 변경으로 인한 형제 카테고리 sort 업데이트
@@ -165,23 +111,14 @@ public class CategoryUtils {
     // 카테고리 삭제 후, 연관된 프로덕트에 null 적용
     public void deleteCategoriesAndUpdateProducts(List<Long> ids) {
 
-        List<Category> categories = validateAndFindCategory(ids);
+        List<Category> categories = categoryValidate.validateAndFindCategory(ids);
 
         categories.forEach(category -> {
             productRepository.findByCategoryId(category.getId()).forEach(product -> {
                 product.setCategory(null);
-                productRepository.save(product);
             });
         });
 
-        categoryRepository.deleteAll(ids);
-    }
-
-    // 이름 중복 검사
-    public void validateName(String requestName) {
-
-        if (categoryRepository.existsByName(requestName)) {
-            throw new GlobalException(ErrorCode.DUPLICATE_CATEGORY);
-        }
+        categoryRepository.deleteAll(categories);
     }
 }

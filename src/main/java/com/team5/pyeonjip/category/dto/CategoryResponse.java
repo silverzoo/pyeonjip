@@ -9,6 +9,7 @@ import java.util.List;
 @ToString
 @Builder(toBuilder = true)
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CategoryResponse {
 
     private Long id;
