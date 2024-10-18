@@ -26,9 +26,7 @@ public class AdminOrderApiController {
             @RequestParam(value = "sortDir", defaultValue = "desc") String sortDir,
             @RequestParam(value = "keyword", required = false) String keyword) {
 
-        // 구매자 이메일에 따른 주문 목록 조회
         Page<AdminOrderResponseDto> orders = orderService.findAllOrders(page, size, sortField, sortDir, keyword);
-
         return ResponseEntity.ok(orders);
     }
 
@@ -39,8 +37,7 @@ public class AdminOrderApiController {
             @PathVariable("orderId") Long orderId,
             @RequestParam("deliveryStatus") DeliveryStatus deliveryStatus) {
 
-        // 배송 상태 변경 처리
-        orderService.updateDeliveryStatus(orderId, deliveryStatus);
+        orderService.updateDeliveryStatus(orderId, deliveryStatus); // 배송 상태 변경 처리
         return ResponseEntity.ok().build();
     }
 
@@ -49,7 +46,6 @@ public class AdminOrderApiController {
     @DeleteMapping("orders/{orderId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteOrder(@PathVariable("orderId") Long orderId) {
-        // 주문 삭제 처리
         orderService.deleteOrderById(orderId);
         return ResponseEntity.ok().build();
     }

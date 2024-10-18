@@ -20,7 +20,7 @@ public class AdminOrderResponseDto {
     private Long totalPrice; // 결제 금액 = 상품 가격 * 상품 수량
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private Timestamp createdAt;
+    private Timestamp createdAt; // 생성 일
     private DeliveryStatus deliveryStatus; // 배송 상태
     private List<OrderDetailDto> orderDetails; // 상품 명, 상품 수량
 }

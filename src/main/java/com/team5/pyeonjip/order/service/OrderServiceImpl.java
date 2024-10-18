@@ -43,12 +43,13 @@ public class OrderServiceImpl implements OrderService {
     // 주문 생성
     @Transactional
     @Override
-    public void createOrder(CombinedOrderDto combinedOrderDto, Long userId) {
+    public void createOrder(CombinedOrderDto combinedOrderDto, String userEmail) {
 
-        // TODO: 유저 조회 -> 로그인 된 유저 조회
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("유저를 찾을 수 없습니다."));
-
+        if (user == null) {
+            throw new IllegalArgumentException("유저를 찾을 수 없습니다.");
+        }
         // 배송 정보 생성
         Delivery delivery = Delivery.builder()
                 .address(combinedOrderDto.getOrderRequestDto().getAddress())  // 전달된 주소 사용
@@ -158,10 +159,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderCartResponseDto getOrderSummary(OrderCartRequestDto orderCartRequestDto) {
 
-        Long userId = orderCartRequestDto.getUserId();
+        String userEmail = orderCartRequestDto.getEmail();
 
-        User user = userRepository.findById(userId)
+        // 이메일 로그 출력
+        System.out.println("요청된 이메일: " + userEmail);
+
+        User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("유저를 찾을 수 없습니다."));
+
+        System.out.println("요청된 findByEmail: " + userEmail);
 
         Long cartTotalPrice = orderCartRequestDto
                 .getCartTotalPrice();

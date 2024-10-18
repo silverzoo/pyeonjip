@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class CombinedOrderDto {
     private OrderRequestDto orderRequestDto;
     private OrderCartRequestDto orderCartRequestDto;
-    private Long userId;
+    private String userEmail;
 }
