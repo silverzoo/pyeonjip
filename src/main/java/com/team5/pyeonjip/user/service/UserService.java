@@ -58,14 +58,14 @@ public class UserService {
 
 
     // 개인정보 변경
-    public void updateUserInfo(Long userId, UserUpdateDto dto) {
+    public void updateUserInfo(String email, UserUpdateDto dto) {
 
 //      주소, 비밀번호 힌트 전부 null인 경우, 정보를 변경하지 않는다.
         if (dto.getAddress() == null && dto.getPasswordHint() == null) {
             return;
         }
 
-        User foundUser = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        User foundUser = userRepository.findByEmail(email);
 
 //      1. 주소만 변경하는 경우
         if (dto.getAddress() != null) {
