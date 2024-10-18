@@ -59,28 +59,22 @@ public class CategoryService {
 
         Category old = categoryUtils.validateAndFindCategory(id);
 
-        categoryUtils.validateNoChanges(request, old);
-
         if (!Objects.equals(request.getParentId(), old.getParentId())) {
             categoryUtils.validateParent(request);
+            old = old.toBuilder().parentId(request.getParentId() != null ? request.getParentId() : null).build();
         }
 
-        if (!request.getName().equals(old.getName())) {
+        if (!Objects.equals(request.getName(), old.getName())) {
             categoryUtils.validateName(request.getName());
+            old = old.toBuilder().name(request.getName() != null ? request.getName() : old.getName()).build();
         }
 
-        if (!request.getSort().equals(old.getSort())) {
+        if (!Objects.equals(request.getSort(), old.getSort())) {
             categoryUtils.updateSiblingSort(old, request);
+            old = old.toBuilder().sort(request.getSort() != null ? request.getSort() : old.getSort()).build();
         }
 
-        Category updatedCategory = old.toBuilder()
-                .id(id)
-                .name(request.getName() != null ? request.getName() : old.getName())
-                .sort(request.getSort() != null ? request.getSort() : old.getSort())
-                .parentId(request.getParentId() != null ? request.getParentId() : null)
-                .build();
-
-        return categoryMapper.toResponse(categoryRepository.save(updatedCategory));
+        return categoryMapper.toResponse(categoryRepository.save(old));
     }
 
 

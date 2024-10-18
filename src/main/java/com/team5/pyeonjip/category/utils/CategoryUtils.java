@@ -89,19 +89,6 @@ public class CategoryUtils {
         }
     }
 
-    // 수정사항이 없는지 검사
-    public void validateNoChanges(CategoryRequest request, Category old) {
-
-        boolean isSame = Objects.equals(request.getName(), old.getName()) &&
-                Objects.equals(request.getSort(), old.getSort()) &&
-                Objects.equals(request.getParentId(), old.getParentId());
-
-        // 모든 값이 같을 경우 No Content 204
-        if (isSame) {
-            throw new GlobalException(ErrorCode.CATEGORY_NO_MODIFY);
-        }
-    }
-
     // sort 변경으로 인한 형제 카테고리 sort 업데이트
     public void updateSiblingSort(Category old, CategoryRequest request) {
 
@@ -170,11 +157,10 @@ public class CategoryUtils {
         categories.forEach(category -> {
             productRepository.findByCategoryId(category.getId()).forEach(product -> {
                 product.setCategory(null);
-                productRepository.save(product);
             });
         });
 
-        categoryRepository.deleteAll(ids);
+        categoryRepository.deleteAll(categories);
     }
 
     // 이름 중복 검사
