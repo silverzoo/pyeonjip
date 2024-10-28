@@ -2,7 +2,7 @@ package com.team5.pyeonjip.category.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Comment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +23,9 @@ public class Category {
     @Column(nullable = false)
     private String name;
 
-//    @ColumnDefault("999")
-//    @Column(nullable = false)
-    private Integer sort; //낮을수록 먼저 반환
+    @Column(nullable = false)
+    @Comment("오름차순으로 반환")
+    private Integer sort;
 
     @Column(name = "parent_id")
     private Long parentId;
