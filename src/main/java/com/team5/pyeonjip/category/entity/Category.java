@@ -13,6 +13,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@ToString(exclude = "children")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Category {
 
@@ -42,9 +43,4 @@ public class Category {
         this.children = children;
     }
 
-    // toString() 무한 재귀호출 방지
-    @Override
-    public String toString() {
-        return String.format("Category(id=%d, name='%s', sort='%d')", id, name, sort);
-    }
 }
