@@ -1,4 +1,12 @@
-# 가구 쇼핑몰 프로젝트 '편집'
+# 공간을 편집하다: 편집
+
+🔎 [편집의 개발일지가 궁금하다면?](https://elice-track.notion.site/pyeonjip-notion)
+
+<img width="1462" alt="image" src="https://github.com/user-attachments/assets/91c84739-e3fc-4e7e-b081-796323cef29f" />
+
+## ERD
+![image](https://github.com/user-attachments/assets/ee4c6421-9bb0-43b8-acd0-565a8a353956)
+
 
 ## 서비스 소개
 우리 가구 쇼핑몰 ʻ편집’은,
@@ -107,8 +115,5 @@
 | 어드민     | 장바구니 - 조회    | 장바구니 - 분석    | 장바구니에 담긴 상품의 정보 분석                                       | 아이템 별 추가된 횟수, 방치된 빈도 등등을 분석                    |
 
 <br>
-
-## ERD
-![image](https://github.com/user-attachments/assets/ee4c6421-9bb0-43b8-acd0-565a8a353956)
 
 
